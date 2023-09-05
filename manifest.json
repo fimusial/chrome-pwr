@@ -1,9 +1,17 @@
 {
-    "manifest_version": 3,
-    "name": "Chrome PWR",
-    "description": "A custom pocketknife for the Chrome",
-    "version": "0.1",
-    "action": {
-      "default_popup": "chrome-pwr.html"
-    }
+  "manifest_version": 3,
+  "name": "Chrome PWR",
+  "description": "A custom pocketknife for the Chrome",
+  "version": "0.1",
+  "action": {
+    "default_popup": "chrome-pwr.html"
+  },
+  "permissions": [
+    "tabs",
+    "activeTab",
+    "scripting"
+  ],
+  "background": {
+    "service_worker": "service-worker.js"
   }
+}
