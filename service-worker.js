@@ -5,7 +5,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
 
             // https://developer.chrome.com/docs/extensions/mv3/content_scripts/#programmatic
-            chrome.scripting.executeScript({
+            await chrome.scripting.executeScript({
                 target: { tabId: tab.id },
                 files: [`blades/${request.triggerBlade}.js`]
             });
