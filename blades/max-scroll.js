@@ -1,14 +1,18 @@
-// kind: user-triggered
-// usage: maxScroll() to start, clearTimeout(maxScrollLastTimeoutId) to cancel
+export function blade_maxScrollStart() {
+	window.chromePwr_maxScrollPrevY = 0;
+	window.chromePwr_maxScrollLastTimeoutId = 0;
 
-var maxScrollPrevY = 0;
-var maxScrollLastTimeoutId = 0;
-var maxScroll = () => {
-	if (maxScrollPrevY <= window.scrollY) {
-		maxScrollPrevY = window.scrollY;
-		window.scrollTo(0, Number.MAX_SAFE_INTEGER);
-		maxScrollLastTimeoutId = setTimeout(maxScroll, 0);
-	};
-};
+	const next = () => {
+		if (window.chromePwr_maxScrollPrevY <= window.scrollY) {
+			window.chromePwr_maxScrollPrevY = window.scrollY;
+			window.scrollTo(0, Number.MAX_SAFE_INTEGER);
+			window.chromePwr_maxScrollLastTimeoutId = setTimeout(next, 0);
+		};
+	}
 
-maxScroll();
+	next();
+}
+
+export function blade_maxScrollCancel() {
+	clearTimeout(window.chromePwr_maxScrollLastTimeoutId);
+}
