@@ -1,8 +1,54 @@
 <html>
-<body style="width: 300px">
-    <h1>Chrome PWR</h1>
-    <button id="max-scroll-trigger">max-scroll-trigger</button>
-    <button id="max-scroll-cancel">max-scroll-cancel</button>
+<style>
+    @import url('https://fonts.cdnfonts.com/css/8bit-wonder');
+
+    body {
+        margin: 5px;
+        background-color: #222222;
+    }
+
+    button {
+        height: 40px;
+        border-radius: 5px;
+        outline: 2px solid #ff3d84;
+        background-color: #222222;
+        font-family: '8BIT WONDER', sans-serif;
+        font-size: 13px;
+        color: white;
+        transition: all 0.1s ease;
+    }
+
+    button:hover {
+        transform: scale(0.95);
+    }
+
+    #logo {
+        width: 300px;
+    }
+
+    #buttons-container {
+        display: grid;
+        grid-template-columns: 145px 145px;
+        grid-template-rows: auto;
+        gap: 10px 10px;
+        margin-top: 10px;
+    }
+
+    .wide-button {
+        grid-column: span 2;
+    }
+</style>
+<body>
+    <img id="logo" src="images/chrome-pwr.png">
+
+    <div id="buttons-container">
+        <button id="max-scroll-trigger">maxscroll trigger</button>
+        <button id="max-scroll-cancel">maxscroll cancel</button>
+        <button id="placeholder-1" class="wide-button">placeholder very wide button with a long text</button>
+        <button id="placeholder-2">add page css</button>
+        <button id="placeholder-3">clear page css</button>
+    </div>
+
     <script src="chrome-pwr.js"></script>
 </body>
 </html>
