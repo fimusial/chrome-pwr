@@ -1,4 +1,8 @@
 export function blade_maxScrollStart() {
+	if (window.chromePwr_maxScrollLastTimeoutId > 0) {
+		return;
+	}
+
 	window.chromePwr_maxScrollPrevY = 0;
 	window.chromePwr_maxScrollLastTimeoutId = 0;
 
@@ -15,4 +19,5 @@ export function blade_maxScrollStart() {
 
 export function blade_maxScrollCancel() {
 	clearTimeout(window.chromePwr_maxScrollLastTimeoutId);
+	window.chromePwr_maxScrollLastTimeoutId = 0;
 }
