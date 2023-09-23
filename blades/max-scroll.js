@@ -10,7 +10,7 @@ export function blade_maxScrollStart() {
 		if (window.prevY <= window.scrollY) {
 			window.prevY = window.scrollY;
 			window.scrollTo(0, Number.MAX_SAFE_INTEGER);
-			window.lastTimeoutId = setTimeout(next, 0);
+			window.lastTimeoutId = setTimeout(next, 100);
 		} else {
 			window.lastTimeoutId = 0;
 		};
