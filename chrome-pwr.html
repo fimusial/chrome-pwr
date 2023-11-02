@@ -22,11 +22,16 @@
         transform: scale(0.95);
     }
 
+    hr {
+        margin-top: 10px;
+        width: 100%;
+    }
+
     #logo {
         width: 300px;
     }
 
-    #buttons-container {
+    .buttons-container {
         display: grid;
         grid-template-columns: 145px 145px;
         grid-template-rows: auto;
@@ -41,14 +46,21 @@
 <body>
     <img id="logo" src="images/chrome-pwr.png">
 
-    <div id="buttons-container">
+    <div class="buttons-container">
         <button id="max-scroll-trigger">maxscroll trigger</button>
         <button id="max-scroll-cancel">maxscroll cancel</button>
         <button id="forced-css-add">add page css</button>
         <button id="forced-css-clear">clear page css</button>
         <button id="content-edit-on">content edit on</button>
         <button id="content-edit-off">content edit off</button>
-        <!-- <button id="placeholder-1" class="wide-button">placeholder very wide button with a long text</button> -->
+    </div>
+
+    <hr />
+
+    <div class="buttons-container">
+        <button id="macro-recorder-start">record macro</button>
+        <button id="macro-recorder-stop">stop recording</button>
+        <button id="macro-recorder-play" class="wide-button">play recorded macro</button>
     </div>
 
     <script src="chrome-pwr.js"></script>

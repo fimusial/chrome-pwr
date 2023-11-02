@@ -33,3 +33,21 @@ document.getElementById('content-edit-off').onclick = async () => {
         triggerBlade: 'contentEditOff'
     });
 };
+
+document.getElementById('macro-recorder-start').onclick = async () => {
+    await chrome.runtime.sendMessage({
+        triggerBlade: 'macroRecorderStart'
+    });
+};
+
+document.getElementById('macro-recorder-stop').onclick = async () => {
+    await chrome.runtime.sendMessage({
+        triggerBlade: 'macroRecorderStop'
+    });
+};
+
+document.getElementById('macro-recorder-play').onclick = async () => {
+    await chrome.runtime.sendMessage({
+        triggerBlade: 'macroRecorderPlay'
+    });
+};
