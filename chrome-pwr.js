@@ -46,8 +46,20 @@ document.getElementById('macro-recorder-stop').onclick = async () => {
     });
 };
 
-document.getElementById('macro-recorder-play').onclick = async () => {
+document.getElementById('macro-recorder-play-once').onclick = async () => {
     await chrome.runtime.sendMessage({
-        triggerBlade: 'macroRecorderPlay'
+        triggerBlade: 'macroRecorderPlayOnce'
+    });
+};
+
+document.getElementById('macro-recorder-play-loop-start').onclick = async () => {
+    await chrome.runtime.sendMessage({
+        triggerBlade: 'macroRecorderPlayLoopStart'
+    });
+};
+
+document.getElementById('macro-recorder-play-loop-stop').onclick = async () => {
+    await chrome.runtime.sendMessage({
+        triggerBlade: 'macroRecorderPlayLoopStop'
     });
 };
