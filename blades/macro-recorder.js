@@ -1,93 +1,59 @@
 export function blade_macroRecorderStart() {
-    document.captureClick = (event) => {
-        const capturedClick = {
-            timestamp: new Date().valueOf(),
-            clientX: event.clientX,
-            clientY: event.clientY,
-        };
+    if (!document.captureClick) {
+        console.error('chrome-pwr: macro functions not initialized');
+        return;
+    }
 
-        let recordedClicks = localStorage.getItem("chrome-pwr-macro");
-        recordedClicks = recordedClicks ? JSON.parse(recordedClicks) : [];
-        recordedClicks.push(capturedClick);
-        localStorage.setItem("chrome-pwr-macro", JSON.stringify(recordedClicks));
-    };
+    if (localStorage.getItem("chrome-pwr-macro-playback-in-progress")) {
+        console.warn('chrome-pwr: cannot record macro; playback in progress');
+        return;
+    }
 
-    document.macroNext = (index, clicks, loop) => {
-        if (index >= clicks.length) {
-            if (loop) {
-                index = 0;
-            }
-            else {
-                document.lastTimeoutId = 0;
-                return;
-            }
-        }
-
-        const event = clicks[index];
-        const element = document.elementFromPoint(event.clientX, event.clientY);
-        const parameters = { view: window, bubbles: true, cancelable: true, clientX: event.clientX, clientY: event.clientY, button: 0 };
-        element.dispatchEvent(new MouseEvent('mousedown', parameters));
-        element.dispatchEvent(new MouseEvent('mouseup', parameters));
-        element.dispatchEvent(new MouseEvent('click', parameters));
-
-        let delay = 200;
-        if (index + 1 < clicks.length) {
-            delay = clicks[index + 1].timestamp - clicks[index].timestamp;
-        }
-
-        document.lastTimeoutId = setTimeout(() => document.macroNext(index + 1, clicks, loop), delay);
-    };
-
-    document.playMacro = (loop) => {
-        if (document.lastTimeoutId > 0) {
-            return;
-        }
-
-        document.lastTimeoutId = 0;
-
-        let recordedClicks = localStorage.getItem("chrome-pwr-macro");
-        recordedClicks = recordedClicks ? JSON.parse(recordedClicks) : null;
-
-        if (!recordedClicks) {
-            return;
-        }
-
-        document.macroNext(0, recordedClicks, loop);
-    };
-
-    document.clearMacro = () => {
-        localStorage.removeItem("chrome-pwr-macro");
-    };
-
-    document.clearMacro();
+    localStorage.removeItem("chrome-pwr-macro");
+    localStorage.setItem("chrome-pwr-macro-recording-in-progress", true);
     document.addEventListener('mouseup', document.captureClick);
 }
 
 export function blade_macroRecorderStop() {
     if (!document.captureClick) {
+        console.error('chrome-pwr: macro functions not initialized');
         return;
     }
 
     document.removeEventListener('mouseup', document.captureClick);
+    localStorage.removeItem("chrome-pwr-macro-recording-in-progress");
 }
 
 export function blade_macroRecorderPlayOnce() {
     if (!document.playMacro) {
+        console.error('chrome-pwr: macro functions not initialized');
         return;
     }
 
-    document.playMacro(false);
+    if (localStorage.getItem("chrome-pwr-macro-recording-in-progress")) {
+        console.warn('chrome-pwr: cannot play macro; recording in progress');
+        return;
+    }
+
+    document.playMacro(0, false);
 }
 
 export function blade_macroRecorderPlayLoopStart() {
     if (!document.playMacro) {
+        console.error('chrome-pwr: macro functions not initialized');
         return;
     }
 
-    document.playMacro(true);
+    if (localStorage.getItem("chrome-pwr-macro-recording-in-progress")) {
+        console.warn('chrome-pwr: cannot play macro; recording in progress');
+        return;
+    }
+
+    document.playMacro(0, true);
 }
 
 export function blade_macroRecorderPlayLoopStop() {
     clearTimeout(document.lastTimeoutId);
     document.lastTimeoutId = 0;
+    localStorage.removeItem("chrome-pwr-macro-playback-in-progress");
 }
