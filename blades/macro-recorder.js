@@ -35,7 +35,7 @@ export function blade_macroRecorderPlayOnce() {
         return;
     }
 
-    document.playMacro(0, false);
+    document.playMacro(0, false, document.blade_macroRecorderPlayOnce_params.initialDelay);
 }
 
 export function blade_macroRecorderPlayLoopStart() {
@@ -49,7 +49,7 @@ export function blade_macroRecorderPlayLoopStart() {
         return;
     }
 
-    document.playMacro(0, true);
+    document.playMacro(0, true, document.blade_macroRecorderPlayLoopStart_params.initialDelay);
 }
 
 export function blade_macroRecorderPlayLoopStop() {
