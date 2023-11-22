@@ -48,13 +48,19 @@ document.getElementById('macro-recorder-stop').onclick = async () => {
 
 document.getElementById('macro-recorder-play-once').onclick = async () => {
     await chrome.runtime.sendMessage({
-        triggerBlade: 'macroRecorderPlayOnce'
+        triggerBlade: 'macroRecorderPlayOnce',
+        params: {
+            initialDelay: document.getElementById('macro-recorder-delay-slider').value
+        }
     });
 };
 
 document.getElementById('macro-recorder-play-loop-start').onclick = async () => {
     await chrome.runtime.sendMessage({
-        triggerBlade: 'macroRecorderPlayLoopStart'
+        triggerBlade: 'macroRecorderPlayLoopStart',
+        params: {
+            initialDelay: document.getElementById('macro-recorder-delay-slider').value
+        }
     });
 };
 
@@ -63,3 +69,7 @@ document.getElementById('macro-recorder-play-loop-stop').onclick = async () => {
         triggerBlade: 'macroRecorderPlayLoopStop'
     });
 };
+
+document.getElementById('macro-recorder-delay-slider').oninput = async (event) => {
+    document.getElementById('macro-recorder-delay-display').innerText = `initial / loop delay: ${event.target.value / 1000} sec`;
+}

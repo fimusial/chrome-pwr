@@ -2,20 +2,24 @@
 <style>
     @import url('https://fonts.cdnfonts.com/css/8bit-wonder');
 
+    * {
+        font-family: '8BIT WONDER', sans-serif;
+        color: white;
+        text-align: center;
+    }
+
     body {
         margin: 5px;
         background-color: #222222;
     }
 
     button {
-        height: 40px;
+        height: 30px;
         border-radius: 5px;
         outline: 2px solid #ff3d84;
         background-color: #222222;
-        font-family: '8BIT WONDER', sans-serif;
-        font-size: 13px;
-        color: white;
         transition: all 0.1s ease;
+        font-size: 12px;
     }
 
     button:hover {
@@ -27,11 +31,36 @@
         width: 100%;
     }
 
+    input[type='range'] {
+        appearance: none;
+        height: 30px;
+        background-color: #555555;
+        border-radius: 30px;
+    }
+
+    input[type='range']::-webkit-slider-thumb {
+        appearance: none;
+        width: 30px;
+        height: 30px;
+        background: #ff3d84;
+        cursor: pointer;
+        border-radius: 50%;
+        box-shadow: inset 0px 0px 0px 2px white;
+        transition: all 0.1s ease;
+    }
+    input[type='range']:hover::-webkit-slider-thumb {
+        transform: scale(0.85);
+    }
+
     #logo {
         width: 300px;
     }
 
-    .buttons-container {
+    #macro-recorder-delay-display {
+        margin: 0;
+    }
+
+    .grid {
         display: grid;
         grid-template-columns: 145px 145px;
         grid-template-rows: auto;
@@ -39,14 +68,16 @@
         margin-top: 10px;
     }
 
-    .wide-button {
+    .wide {
         grid-column: span 2;
     }
 </style>
 <body>
     <img id="logo" src="images/chrome-pwr.png">
 
-    <div class="buttons-container">
+    <h3>Misc Blades</h3>
+    <hr />
+    <div class="grid">
         <button id="max-scroll-trigger">maxscroll trigger</button>
         <button id="max-scroll-cancel">maxscroll cancel</button>
         <button id="forced-css-add">add page css</button>
@@ -55,14 +86,16 @@
         <button id="content-edit-off">content edit off</button>
     </div>
 
+    <h3>Mouse Macros</h3>
     <hr />
-
-    <div class="buttons-container">
+    <div class="grid">
         <button id="macro-recorder-start">record macro</button>
         <button id="macro-recorder-stop">stop recording</button>
-        <button id="macro-recorder-play-once" class="wide-button">play recorded macro once</button>
+        <button id="macro-recorder-play-once" class="wide">play recorded macro once</button>
         <button id="macro-recorder-play-loop-start">start loop</button>
         <button id="macro-recorder-play-loop-stop">stop loop</button>
+        <input id="macro-recorder-delay-slider" type="range" min="100" max="10000" value="500" step="100"></input>
+        <p id="macro-recorder-delay-display">initial / loop delay: 0.5 sec</p>
     </div>
 
     <script src="chrome-pwr.js"></script>

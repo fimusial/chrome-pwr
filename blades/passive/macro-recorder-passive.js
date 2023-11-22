@@ -13,7 +13,7 @@ document.captureClick = (event) => {
     localStorage.setItem("chrome-pwr-macro", JSON.stringify(recordedClicks));
 };
 
-document.macroNext = (index, clicks, loop) => {
+document.macroNext = (clicks, index, loop, initialDelay) => {
     if (index >= clicks.length) {
         if (loop) {
             index = 0;
@@ -25,13 +25,12 @@ document.macroNext = (index, clicks, loop) => {
         }
     }
 
-    // todo: adjustable default delay? delay between full loops or a delay before the first click in play-once mode
-    let delay = 1000;
+    let delay = initialDelay ? initialDelay : console.error('chrome-pwr: macro initial delay not set or 0');
     if (index > 0) {
         delay = clicks[index].timestamp - clicks[index - 1].timestamp;
     }
-
-    localStorage.setItem("chrome-pwr-macro-playback-in-progress", JSON.stringify({ index, loop }));
+    
+    localStorage.setItem("chrome-pwr-macro-playback-in-progress", JSON.stringify({ index, loop, initialDelay }));
 
     document.lastTimeoutId = setTimeout(() => {
         const capturedClick = clicks[index];
@@ -43,11 +42,11 @@ document.macroNext = (index, clicks, loop) => {
         element.dispatchEvent(new MouseEvent('mouseup', parameters));
         element.dispatchEvent(new MouseEvent('click', parameters));
 
-        document.macroNext(index + 1, clicks, loop);
+        document.macroNext(clicks, index + 1, loop, initialDelay);
     }, delay);
 };
 
-document.playMacro = (startIndex, loop) => {
+document.playMacro = (startIndex, loop, initialDelay) => {
     if (document.lastTimeoutId > 0) {
         return;
     }
@@ -61,7 +60,7 @@ document.playMacro = (startIndex, loop) => {
         return;
     }
 
-    document.macroNext(startIndex, recordedClicks, loop);
+    document.macroNext(recordedClicks, startIndex, loop, initialDelay);
 };
 
 if (localStorage.getItem("chrome-pwr-macro-recording-in-progress")) {
@@ -71,5 +70,5 @@ if (localStorage.getItem("chrome-pwr-macro-recording-in-progress")) {
 const playbackProgressJson = localStorage.getItem("chrome-pwr-macro-playback-in-progress");
 if (playbackProgressJson) {
     const playbackProgress = JSON.parse(playbackProgressJson);
-    document.playMacro(playbackProgress.index, playbackProgress.loop);
+    document.playMacro(playbackProgress.index, playbackProgress.loop, playbackProgress.initialDelay);
 }
