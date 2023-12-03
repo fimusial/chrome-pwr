@@ -13,6 +13,8 @@
 
 Start recording, capture a sequence of clicks, and hit 'stop recording'. The recorded clicks are saved as X and Y coordinates, with timing and scroll positions taken into account. Choose between single or looped playback. The delay before a single play or the next loop iteration is also adjustable. Recording and playback persist during page loads that occur inside a single domain (origin).
 
+You can also control the playback using customizable shortcuts: [chrome://extensions/shortcuts](chrome://extensions/shortcuts). Please bear in mind that the extension must be activated to receive keyboard commands. Another shortcut can be defined to activate/hide Chrome PWR.
+
 ### Other features
 - **Maxscroll** allows you to quickly traverse a page with lazily loaded content by forcing it to constantly scroll to the bottom as fast as possible.
 - **Page CSS** injects any user-provided CSS code into a webpage during its load, applying the styles across the entire domain. It is useful for hiding unwanted elements or customizing the appearance of a website.
