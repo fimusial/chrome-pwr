@@ -24,5 +24,25 @@
       "matches": ["*://*/*"],
       "js": ["blades/passive/macro-recorder-passive.js"]
     }
-  ]
+  ],
+  "commands": {
+    "macroRecorderPlayOnce": {
+      "suggested_key": {
+        "default": "Alt+1"
+      },
+      "description": "Play the recorded macro once."
+    },
+    "macroRecorderPlayLoopStart": {
+      "suggested_key": {
+        "default": "Alt+2"
+      },
+      "description": "Start playing the recorded macro in a loop."
+    },
+    "macroRecorderPlayLoopStop": {
+      "suggested_key": {
+        "default": "Alt+3"
+      },
+      "description": "Stop a looping macro playback."
+    }
+  }
 }

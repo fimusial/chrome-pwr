@@ -73,3 +73,12 @@ document.getElementById('macro-recorder-play-loop-stop').onclick = async () => {
 document.getElementById('macro-recorder-delay-slider').oninput = async (event) => {
     document.getElementById('macro-recorder-delay-display').innerText = `initial / loop delay: ${event.target.value / 1000} sec`;
 }
+
+chrome.commands.onCommand.addListener(async (command) => {
+    await chrome.runtime.sendMessage({
+        triggerBlade: command,
+        params: {
+            initialDelay: document.getElementById('macro-recorder-delay-slider').value
+        }
+    });
+});
