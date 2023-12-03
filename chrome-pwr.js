@@ -70,8 +70,17 @@ document.getElementById('macro-recorder-play-loop-stop').onclick = async () => {
     });
 };
 
-document.getElementById('macro-recorder-delay-slider').oninput = async (event) => {
+document.getElementById('macro-recorder-delay-slider').oninput = (event) => {
     document.getElementById('macro-recorder-delay-display').innerText = `initial / loop delay: ${event.target.value / 1000} sec`;
+    localStorage.setItem('macro-recorder-delay-slider', event.target.value);
+}
+
+window.onload = () => {
+    const value = localStorage.getItem('macro-recorder-delay-slider');
+    if (value) {
+        document.getElementById('macro-recorder-delay-slider').value = value;
+        document.getElementById('macro-recorder-delay-display').innerText = `initial / loop delay: ${value / 1000} sec`;
+    }
 }
 
 chrome.commands.onCommand.addListener(async (command) => {
