@@ -38,11 +38,11 @@
       },
       "description": "Start playing the recorded macro in a loop."
     },
-    "macroRecorderPlayLoopStop": {
+    "macroRecorderStopPlayback": {
       "suggested_key": {
-        "default": "Alt+3"
+        "default": "Alt+X"
       },
-      "description": "Stop a looping macro playback."
+      "description": "Stop macro playback."
     }
   }
 }
