@@ -7,10 +7,10 @@ document.captureClick = (event) => {
         scrollY: window.scrollY
     };
 
-    let recordedClicks = localStorage.getItem("chrome-pwr-macro");
+    let recordedClicks = localStorage.getItem('chrome-pwr-macro');
     recordedClicks = recordedClicks ? JSON.parse(recordedClicks) : [];
     recordedClicks.push(capturedClick);
-    localStorage.setItem("chrome-pwr-macro", JSON.stringify(recordedClicks));
+    localStorage.setItem('chrome-pwr-macro', JSON.stringify(recordedClicks));
 };
 
 document.macroNext = (clicks, index, loop, initialDelay) => {
@@ -20,7 +20,7 @@ document.macroNext = (clicks, index, loop, initialDelay) => {
         }
         else {
             document.lastTimeoutId = 0;
-            localStorage.removeItem("chrome-pwr-macro-playback-in-progress");
+            localStorage.removeItem('chrome-pwr-macro-playback-in-progress');
             return;
         }
     }
@@ -30,7 +30,7 @@ document.macroNext = (clicks, index, loop, initialDelay) => {
         delay = clicks[index].timestamp - clicks[index - 1].timestamp;
     }
     
-    localStorage.setItem("chrome-pwr-macro-playback-in-progress", JSON.stringify({ index, loop, initialDelay }));
+    localStorage.setItem('chrome-pwr-macro-playback-in-progress', JSON.stringify({ index, loop, initialDelay }));
 
     document.lastTimeoutId = setTimeout(() => {
         const capturedClick = clicks[index];
@@ -53,7 +53,7 @@ document.playMacro = (startIndex, loop, initialDelay) => {
 
     document.lastTimeoutId = 0;
 
-    let recordedClicks = localStorage.getItem("chrome-pwr-macro");
+    let recordedClicks = localStorage.getItem('chrome-pwr-macro');
     recordedClicks = recordedClicks ? JSON.parse(recordedClicks) : null;
 
     if (!recordedClicks) {
@@ -63,11 +63,11 @@ document.playMacro = (startIndex, loop, initialDelay) => {
     document.macroNext(recordedClicks, startIndex, loop, initialDelay);
 };
 
-if (localStorage.getItem("chrome-pwr-macro-recording-in-progress")) {
+if (localStorage.getItem('chrome-pwr-macro-recording-in-progress')) {
     document.addEventListener('mouseup', document.captureClick);
 }
 
-const playbackProgressJson = localStorage.getItem("chrome-pwr-macro-playback-in-progress");
+const playbackProgressJson = localStorage.getItem('chrome-pwr-macro-playback-in-progress');
 if (playbackProgressJson) {
     const playbackProgress = JSON.parse(playbackProgressJson);
     document.playMacro(playbackProgress.index, playbackProgress.loop, playbackProgress.initialDelay);
