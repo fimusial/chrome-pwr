@@ -64,9 +64,9 @@ document.getElementById('macro-recorder-play-loop-start').onclick = async () => 
     });
 };
 
-document.getElementById('macro-recorder-play-loop-stop').onclick = async () => {
+document.getElementById('macro-recorder-stop-playback').onclick = async () => {
     await chrome.runtime.sendMessage({
-        triggerBlade: 'macroRecorderPlayLoopStop'
+        triggerBlade: 'macroRecorderStopPlayback'
     });
 };
 

@@ -52,7 +52,7 @@ export function blade_macroRecorderPlayLoopStart() {
     document.playMacro(0, true, document.blade_macroRecorderPlayLoopStart_params.initialDelay);
 }
 
-export function blade_macroRecorderPlayLoopStop() {
+export function blade_macroRecorderStopPlayback() {
     clearTimeout(document.lastTimeoutId);
     document.lastTimeoutId = 0;
     localStorage.removeItem("chrome-pwr-macro-playback-in-progress");
