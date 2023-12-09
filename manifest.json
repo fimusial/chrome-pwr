@@ -30,19 +30,19 @@
       "suggested_key": {
         "default": "Alt+1"
       },
-      "description": "Play the recorded macro once."
+      "description": "Play the recorded macro once"
     },
     "macroRecorderPlayLoopStart": {
       "suggested_key": {
         "default": "Alt+2"
       },
-      "description": "Start playing the recorded macro in a loop."
+      "description": "Start playing the recorded macro in a loop"
     },
     "macroRecorderStopPlayback": {
       "suggested_key": {
         "default": "Alt+X"
       },
-      "description": "Stop macro playback."
+      "description": "Stop macro playback"
     }
   }
 }
