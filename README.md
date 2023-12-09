@@ -7,13 +7,13 @@
 **Chrome PWR** is a Chrome extension comprising a collection of JS scripts that contribute custom features to the browser.
 
 ## :zap: Features
-<img alt="Chrome PWR UI" align="right" src="https://github.com/fimusial/chrome-pwr/blob/12cdb7ee58ce94a130a3f13891355d8404577822/images/chrome-pwr-ui.png?raw=true" width="200">
+<img alt="Chrome PWR UI" align="right" src="https://github.com/fimusial/chrome-pwr/blob/a37c0760d0c4f4ef1b4d96fe4973ab83ee59cd04/images/chrome-pwr-ui.png?raw=true" width="200">
 
 ### Mouse Macros - easily automate mouse input on webpages
 
 Start recording, capture a sequence of clicks, and hit 'stop recording'. The recorded clicks are saved as X and Y coordinates, with timing and scroll positions taken into account. Choose between single or looped playback. The delay before a single play or the next loop iteration is also adjustable. Recording and playback persist during page loads that occur inside a single domain (origin).
 
-You can also control the playback using customizable shortcuts: [chrome://extensions/shortcuts](chrome://extensions/shortcuts). Please bear in mind that the extension must be activated to receive keyboard commands. Another shortcut can be defined to activate/hide Chrome PWR.
+You can also control the playback using shortcuts. Please bear in mind that the extension must be activated to receive keyboard commands. Another shortcut can be defined to activate/hide Chrome PWR.
 
 ### Other features
 - **Maxscroll** allows you to quickly traverse a page with lazily loaded content by forcing it to constantly scroll to the bottom as fast as possible.
@@ -29,3 +29,4 @@ You can also control the playback using customizable shortcuts: [chrome://extens
 4. Click 'Load unpacked' and select the directory that directly contains `manifest.json`
 5. Disable developer mode.
 6. Pin the extension and access it by clicking its icon.
+7. (optional) Go to [chrome://extensions/shortcuts](chrome://extensions/shortcuts) and customize shortcuts.
