@@ -4,13 +4,13 @@ export function blade_macroRecorderStart() {
         return;
     }
 
-    if (localStorage.getItem("chrome-pwr-macro-playback-in-progress")) {
+    if (localStorage.getItem('chrome-pwr-macro-playback-in-progress')) {
         console.warn('chrome-pwr: cannot record macro; playback in progress');
         return;
     }
 
-    localStorage.removeItem("chrome-pwr-macro");
-    localStorage.setItem("chrome-pwr-macro-recording-in-progress", true);
+    localStorage.removeItem('chrome-pwr-macro');
+    localStorage.setItem('chrome-pwr-macro-recording-in-progress', true);
     document.addEventListener('mouseup', document.captureClick);
 }
 
@@ -21,7 +21,7 @@ export function blade_macroRecorderStop() {
     }
 
     document.removeEventListener('mouseup', document.captureClick);
-    localStorage.removeItem("chrome-pwr-macro-recording-in-progress");
+    localStorage.removeItem('chrome-pwr-macro-recording-in-progress');
 }
 
 export function blade_macroRecorderPlayOnce() {
@@ -30,7 +30,7 @@ export function blade_macroRecorderPlayOnce() {
         return;
     }
 
-    if (localStorage.getItem("chrome-pwr-macro-recording-in-progress")) {
+    if (localStorage.getItem('chrome-pwr-macro-recording-in-progress')) {
         console.warn('chrome-pwr: cannot play macro; recording in progress');
         return;
     }
@@ -44,7 +44,7 @@ export function blade_macroRecorderPlayLoopStart() {
         return;
     }
 
-    if (localStorage.getItem("chrome-pwr-macro-recording-in-progress")) {
+    if (localStorage.getItem('chrome-pwr-macro-recording-in-progress')) {
         console.warn('chrome-pwr: cannot play macro; recording in progress');
         return;
     }
@@ -55,5 +55,5 @@ export function blade_macroRecorderPlayLoopStart() {
 export function blade_macroRecorderStopPlayback() {
     clearTimeout(document.lastTimeoutId);
     document.lastTimeoutId = 0;
-    localStorage.removeItem("chrome-pwr-macro-playback-in-progress");
+    localStorage.removeItem('chrome-pwr-macro-playback-in-progress');
 }
