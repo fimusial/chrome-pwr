@@ -1,0 +1,126 @@
+<head></head>
+
+<div id="outside-container">
+  <div id="main">
+    ChromePWR
+  </div>
+  <div id="back"></div>
+  <div id="b1"></div>
+  <div id="b2"></div>
+  <div id="bshadow1"></div>
+  <div id="o"></div>
+  <div id="bshadow2"></div>
+</div>
+
+<style>
+  @import url('https://fonts.cdnfonts.com/css/8bit-wonder');
+
+  #bshadow2 {
+    width: 65px;
+    height: 12px;
+    background: white;
+    border-bottom-right-radius: 4px;
+    border-top-right-radius: 100%;
+    position: fixed;
+    top: 140;
+    left: 30;
+    transform: rotate(25deg);
+    z-index: -1;
+  }
+
+  #o {
+    width: 55px;
+    height: 25px;
+    border-radius: 50%;
+    background: white;
+    background-color: #222222;
+    position: fixed;
+    top: 146px;
+    left: 95px;
+    transform: rotate(12deg);
+    z-index: 1;
+  }
+
+  #bshadow1 {
+    width: 65px;
+    height: 12px;
+    background: white;
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 100%;
+    position: fixed;
+    top: 46;
+    left: 150;
+    transform: rotate(25deg);
+    z-index: -1;
+  }
+
+  #b2 {
+    width: 140px;
+    height: 50px;
+    background: #aaaaaa;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 100%;
+    border-top-right-radius: 25px;
+    position: relative;
+    top: -175px;
+    left: 105px; /* <- 5 */
+    transform: rotate(25deg);
+    z-index: -1;
+  }
+  
+  #b1 {
+    width: 140px;
+    height: 50px;
+    background: #aaaaaa;
+    border-bottom-right-radius: 4px;
+    border-top-right-radius: 100%;
+    border-bottom-left-radius: 25px;
+    position: relative;
+    top: -45px;
+    left: 5px;  /* -> 5 */
+    transform: rotate(25deg);
+    z-index: -1;
+  }
+
+  #back {
+    box-sizing: border-box;
+    position: relative;
+    z-index: -3;
+    width: 250px;
+    height: 80px;
+    top: -15px;
+    left: 5px;
+    border-radius: 50px;
+    background: #8d0034;
+  }
+  
+  #main {
+    box-sizing: border-box;
+    position: relative;
+    width: 250px;
+    height: 80px;
+    top: 60px;
+    background: #ff3d84;
+    border-radius: 50px;
+    padding-top: 22px;
+    font-family: '8BIT WONDER', sans-serif;
+    text-align: center;
+    color: white;
+    font-weight: 100;
+    letter-spacing: -3px;
+    text-shadow: 3px 3px #aaaaaa;
+    font-size: 25px;
+    /* box-shadow: inset 0 0 15px #610024; */
+  }
+
+  body {
+    padding: 0;
+    margin: 0;
+    background-color: #222222;
+  }
+
+  #outside-container {
+    height: 255px;
+    aspect-ratio: 1.0;
+  }
+</style>
