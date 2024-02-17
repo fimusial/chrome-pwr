@@ -12,6 +12,7 @@ export function blade_macroRecorderStart() {
     localStorage.removeItem('chrome-pwr-macro');
     localStorage.setItem('chrome-pwr-macro-recording-in-progress', true);
     document.addEventListener('mouseup', document.captureClick);
+    document.setIndicator('recording');
 }
 
 export function blade_macroRecorderStop() {
@@ -22,6 +23,7 @@ export function blade_macroRecorderStop() {
 
     document.removeEventListener('mouseup', document.captureClick);
     localStorage.removeItem('chrome-pwr-macro-recording-in-progress');
+    document.clearIndicator('recording');
 }
 
 export function blade_macroRecorderPlayOnce() {
@@ -56,4 +58,5 @@ export function blade_macroRecorderStopPlayback() {
     clearTimeout(document.lastTimeoutId);
     document.lastTimeoutId = 0;
     localStorage.removeItem('chrome-pwr-macro-playback-in-progress');
+    document.clearIndicator('playback');
 }
