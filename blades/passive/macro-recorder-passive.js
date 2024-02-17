@@ -93,20 +93,8 @@ document.clearIndicator = (type) => {
     }
 };
 
-const indicatorFontLink = document.createElement('link');
-indicatorFontLink.rel = 'preload';
-indicatorFontLink.href = 'https://fonts.cdnfonts.com/s/19901/8-BIT%20WONDER.woff';
-indicatorFontLink.as = 'font';
-indicatorFontLink.type = 'font/woff';
-indicatorFontLink.crossOrigin = true;
-document.head.append(indicatorFontLink);
-
 const indicatorStyle = document.createElement('style');
 indicatorStyle.innerHTML = `
-    @font-face {
-        font-family: '8BIT WONDER';
-        src: url('https://fonts.cdnfonts.com/s/19901/8-BIT%20WONDER.woff') format('woff');
-    }
     #chrome-pwr-macro-indicator {
         position: fixed;
         z-index: 2147483647;
