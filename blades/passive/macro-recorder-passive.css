@@ -2,3 +2,7 @@
     font-family: '8BIT WONDER';
     src: url('chrome-extension://__MSG_@@extension_id__/8BITWONDER.woff') format('woff');
 }
+
+.chrome-pwr-blink {
+    background-color: #ff3d84 !important;
+}

@@ -38,12 +38,22 @@ document.macroNext = (clicks, index, loop, initialDelay) => {
         window.scroll(capturedClick.scrollX, capturedClick.scrollY);
 
         const element = document.elementFromPoint(capturedClick.clientX, capturedClick.clientY);
-        const parameters = { view: window, bubbles: true, cancelable: true, clientX: capturedClick.clientX, clientY: capturedClick.clientY, button: 0 };
-        element.dispatchEvent(new MouseEvent('mousedown', parameters));
-        element.dispatchEvent(new MouseEvent('mouseup', parameters));
-        element.dispatchEvent(new MouseEvent('click', parameters));
 
-        document.macroNext(clicks, index + 1, loop, initialDelay);
+        element.classList.add('chrome-pwr-blink');
+        const blinkDuration = 100;
+
+        setTimeout(() => {
+            element.classList.remove('chrome-pwr-blink');
+
+            setTimeout(() => {
+                const parameters = { view: window, bubbles: true, cancelable: true, clientX: capturedClick.clientX, clientY: capturedClick.clientY, button: 0 };
+                element.dispatchEvent(new MouseEvent('mousedown', parameters));
+                element.dispatchEvent(new MouseEvent('mouseup', parameters));
+                element.dispatchEvent(new MouseEvent('click', parameters));
+
+                document.macroNext(clicks, index + 1, loop, initialDelay);
+            }, blinkDuration / 2);
+        }, blinkDuration / 2);
     }, delay);
 };
 
@@ -71,7 +81,7 @@ document.setIndicator = (type) => {
         return;
     }
 
-    indicatorElement = document.createElement("div");
+    indicatorElement = document.createElement('div');
     indicatorElement.id = 'chrome-pwr-macro-indicator';
 
     if (type === 'playback') {
