@@ -132,3 +132,18 @@ if (playbackProgressJson) {
     const playbackProgress = JSON.parse(playbackProgressJson);
     document.playMacro(playbackProgress.index, playbackProgress.loop, playbackProgress.initialDelay);
 }
+
+window.navigation.onnavigate = (event) => {
+    if (location.hostname !== new URL(event.destination.url).hostname) {
+        clearTimeout(document.lastTimeoutId);
+        document.lastTimeoutId = 0;
+
+        localStorage.removeItem('chrome-pwr-macro-playback-in-progress');
+        localStorage.removeItem('chrome-pwr-macro-recording-in-progress');
+
+        document.removeEventListener('mouseup', document.captureClick);
+
+        document.clearIndicator('playback');
+        document.clearIndicator('recording');
+    }
+};
