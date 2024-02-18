@@ -3,6 +3,28 @@
     src: url('chrome-extension://__MSG_@@extension_id__/8BITWONDER.woff') format('woff');
 }
 
+#chrome-pwr-macro-indicator {
+    position: fixed;
+    z-index: 2147483647;
+    pointer-events: none;
+    top: 10px;
+    left: 10px;
+    padding: 5px 15px;
+    border-radius: 20px;
+    opacity: 0.71;
+    font-family: '8BIT WONDER', sans-serif;
+    color: white;
+    text-align: center;
+}
+
 .chrome-pwr-blink {
-    background-color: #ff3d84 !important;
+    position: fixed;
+    z-index: 2147483647;
+    pointer-events: none;
+    background-color: #ff3d84;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    box-shadow: inset 0px 0px 0px 10px #ffd9e7;
+    opacity: 0.71;
 }

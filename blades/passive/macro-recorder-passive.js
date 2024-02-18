@@ -26,34 +26,40 @@ document.macroNext = (clicks, index, loop, initialDelay) => {
         }
     }
 
+    localStorage.setItem('chrome-pwr-macro-playback-in-progress', JSON.stringify({ index, loop, initialDelay }));
+
     let delay = initialDelay ? initialDelay : console.error('chrome-pwr: macro initial delay not set or 0');
     if (index > 0) {
         delay = clicks[index].timestamp - clicks[index - 1].timestamp;
     }
 
-    localStorage.setItem('chrome-pwr-macro-playback-in-progress', JSON.stringify({ index, loop, initialDelay }));
+    const blinkDuration = 200;
+    if (delay > blinkDuration) {
+        delay = delay - blinkDuration;
+    }
 
     document.lastTimeoutId = setTimeout(() => {
         const capturedClick = clicks[index];
         window.scroll(capturedClick.scrollX, capturedClick.scrollY);
 
-        const element = document.elementFromPoint(capturedClick.clientX, capturedClick.clientY);
-
-        element.classList.add('chrome-pwr-blink');
-        const blinkDuration = 100;
-
+        const blink = document.createElement('div');
+        blink.classList.add('chrome-pwr-blink');
+        blink.style.left = `${capturedClick.clientX - 15}px`;
+        blink.style.top = `${capturedClick.clientY - 15}px`;
+        document.body.appendChild(blink);
         setTimeout(() => {
-            element.classList.remove('chrome-pwr-blink');
-
-            setTimeout(() => {
-                const parameters = { view: window, bubbles: true, cancelable: true, clientX: capturedClick.clientX, clientY: capturedClick.clientY, button: 0 };
-                element.dispatchEvent(new MouseEvent('mousedown', parameters));
-                element.dispatchEvent(new MouseEvent('mouseup', parameters));
-                element.dispatchEvent(new MouseEvent('click', parameters));
-
-                document.macroNext(clicks, index + 1, loop, initialDelay);
-            }, blinkDuration / 2);
+            blink.remove();
         }, blinkDuration / 2);
+
+        document.lastTimeoutId = setTimeout(() => {
+            const element = document.elementFromPoint(capturedClick.clientX, capturedClick.clientY);
+            const parameters = { view: window, bubbles: true, cancelable: true, clientX: capturedClick.clientX, clientY: capturedClick.clientY, button: 0 };
+            element.dispatchEvent(new MouseEvent('mousedown', parameters));
+            element.dispatchEvent(new MouseEvent('mouseup', parameters));
+            element.dispatchEvent(new MouseEvent('click', parameters));
+
+            document.macroNext(clicks, index + 1, loop, initialDelay);
+        }, blinkDuration);
     }, delay);
 };
 
@@ -102,25 +108,6 @@ document.clearIndicator = (type) => {
         indicatorElement.remove();
     }
 };
-
-const indicatorStyle = document.createElement('style');
-indicatorStyle.innerHTML = `
-    #chrome-pwr-macro-indicator {
-        position: fixed;
-        z-index: 2147483647;
-        pointer-events: none;
-        top: 10px;
-        left: 10px;
-        padding: 5px 15px;
-        border-radius: 20px;
-        opacity: 0.71;
-        font-family: '8BIT WONDER', sans-serif;
-        color: white;
-        text-align: center;
-    }
-`;
-
-document.head.append(indicatorStyle);
 
 if (localStorage.getItem('chrome-pwr-macro-recording-in-progress')) {
     document.addEventListener('mouseup', document.captureClick);
