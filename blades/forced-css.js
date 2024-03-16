@@ -1,6 +1,8 @@
 export function blade_forcedCssAdd() {
-    let result = prompt('CSS', '');
-    localStorage.setItem('chrome-pwr-forced-css', result);
+    const result = prompt('CSS', '');
+    if (result) {
+        localStorage.setItem('chrome-pwr-forced-css', result);
+    }
 }
 
 export function blade_forcedCssClear() {
