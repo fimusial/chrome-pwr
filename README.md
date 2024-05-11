@@ -7,7 +7,7 @@
 **Chrome PWR** is a Chrome extension comprising a collection of JS scripts that contribute custom features to the browser.
 
 ## :zap: Features
-<img alt="Chrome PWR UI" align="right" src="https://github.com/fimusial/chrome-pwr/blob/a37c0760d0c4f4ef1b4d96fe4973ab83ee59cd04/images/chrome-pwr-ui.png?raw=true" width="200">
+<img alt="Chrome PWR UI" align="right" src="https://github.com/fimusial/chrome-pwr/blob/36b5a7c82f158337a540e2a2d70cdf11b1dcba27/images/chrome-pwr-ui.png?raw=true" width="200">
 
 ### Mouse Macros - easily automate mouse input on webpages
 
