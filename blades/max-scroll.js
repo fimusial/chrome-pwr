@@ -1,25 +1,60 @@
-export function blade_maxScrollStart() {
-    if (window.lastTimeoutId > 0) {
+export function blade_maxScrollStartElement() {
+    if (document.lastTimeoutId > 0) {
         return;
     }
 
-    window.prevY = 0;
-    window.lastTimeoutId = 0;
+    document.lastTimeoutId = 0;
+
+    const next = (targetElement) => {
+        targetElement.scrollTo(0, Number.MAX_SAFE_INTEGER);
+        document.lastTimeoutId = setTimeout(next, 100, targetElement);
+    }
+
+    document.initNodePicker((targetElement) => {
+        let lastScrollHeight = 0;
+
+        targetElement.onscroll = (event) => {
+            const currentScrollHeight = event.target.scrollTop;
+            if (currentScrollHeight < lastScrollHeight) {
+                clearTimeout(document.lastTimeoutId);
+                document.lastTimeoutId = 0;
+            }
+
+            lastScrollHeight = currentScrollHeight;
+        };
+
+        next(targetElement);
+    });
+}
+
+export function blade_maxScrollStartWindow() {
+    if (document.lastTimeoutId > 0) {
+        return;
+    }
+
+    document.lastTimeoutId = 0;
 
     const next = () => {
-        if (window.prevY <= window.scrollY) {
-            window.prevY = window.scrollY;
-            window.scrollTo(0, Number.MAX_SAFE_INTEGER);
-            window.lastTimeoutId = setTimeout(next, 100);
-        } else {
-            window.lastTimeoutId = 0;
-        };
+        window.scrollTo(0, Number.MAX_SAFE_INTEGER);
+        document.lastTimeoutId = setTimeout(next, 100);
     }
+
+    let lastScrollHeight = 0;
+
+    window.onscroll = () => {
+        const currentScrollHeight = window.scrollY;
+        if (currentScrollHeight < lastScrollHeight) {
+            clearTimeout(document.lastTimeoutId);
+            document.lastTimeoutId = 0;
+        }
+
+        lastScrollHeight = currentScrollHeight;
+    };
 
     next();
 }
 
 export function blade_maxScrollCancel() {
-    clearTimeout(window.lastTimeoutId);
-    window.lastTimeoutId = 0;
+    clearTimeout(document.lastTimeoutId);
+    document.lastTimeoutId = 0;
 }

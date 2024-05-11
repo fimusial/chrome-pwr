@@ -1,6 +1,12 @@
-document.getElementById('max-scroll-trigger').onclick = async () => {
+document.getElementById('max-scroll-start-element').onclick = async () => {
     await chrome.runtime.sendMessage({
-        triggerBlade: 'maxScrollStart'
+        triggerBlade: 'maxScrollStartElement'
+    });
+};
+
+document.getElementById('max-scroll-start-window').onclick = async () => {
+    await chrome.runtime.sendMessage({
+        triggerBlade: 'maxScrollStartWindow'
     });
 };
 
