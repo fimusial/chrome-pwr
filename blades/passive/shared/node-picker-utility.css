@@ -1,0 +1,10 @@
+[chrome-pwr-node-picker-highlight] {
+    box-shadow: inset 0px 0px 0px 1px #8d0034 !important;
+    background-color: #ff3d84 !important;
+    opacity: 0.71 !important;
+}
+
+img[chrome-pwr-node-picker-highlight],
+video[chrome-pwr-node-picker-highlight] {
+    filter: contrast(3) invert(100%) !important;
+}

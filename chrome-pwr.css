@@ -54,8 +54,11 @@ input[type='range']:hover::-webkit-slider-thumb {
     transform: scale(0.85);
 }
 
-#logo {
+#bar {
     width: 300px;
+    object-fit: cover;
+    height: 32px;
+    image-rendering: pixelated;
 }
 
 #macro-recorder-delay-display {
