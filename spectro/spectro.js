@@ -1,10 +1,10 @@
 class SpectrogramGrid {
     constructor(wRes, hRes, maxValue) {
-        if(!Number.isInteger(wRes) || wRes < 1) {
+        if (!Number.isInteger(wRes) || wRes < 1) {
             throw new TypeError(`'wRes' must be a positive integer`);
         }
 
-        if(!Number.isInteger(hRes) || hRes < 1) {
+        if (!Number.isInteger(hRes) || hRes < 1) {
             throw new TypeError(`'hRes' must be a positive integer`);
         }
 
@@ -32,7 +32,7 @@ class SpectrogramGrid {
     }
 
     draw(canvas) {
-        if(!(canvas instanceof HTMLCanvasElement)) {
+        if (!(canvas instanceof HTMLCanvasElement)) {
             throw new TypeError(`'canvas' must be an HTMLCanvasElement`);
         }
 
@@ -88,3 +88,28 @@ const spectrogramNoiseInterval = setInterval(() => {
     spectrogram.push(randomVector(wRes, 0, maxValue));
     spectrogram.draw(canvas);
 }, 25);
+
+document.getElementById('spectro-tab-button').onclick = async (command) => {
+    const existingContexts = await chrome.runtime.getContexts({});
+    const offscreenDocument = existingContexts.find((context) => context.contextType === 'OFFSCREEN_DOCUMENT');
+    let capturing = false;
+
+    if (!offscreenDocument) {
+        await chrome.offscreen.createDocument({
+            url: 'spectro/offscreen-audio.html',
+            reasons: ['USER_MEDIA'],
+            justification: 'Chrome PWR tab audio capture'
+        });
+    } else {
+        capturing = offscreenDocument.documentUrl.endsWith('#capturing');
+    }
+
+    if (capturing) {
+        chrome.runtime.sendMessage({ spectro: 'stopCapture' });
+        return;
+    }
+
+    const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+    const streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tab.id });
+    chrome.runtime.sendMessage({ spectro: 'startCapture', params: { streamId } });
+};
