@@ -1,55 +1,67 @@
+let audioAnalyzer = null;
+let lowpassFilter = null;
+
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     if (!request.audioHub || typeof request.audioHub !== 'string') {
         return;
     }
 
+    let response = null;
     switch (request.audioHub) {
-        case 'startCapture':
-            await startCapture(request.params.streamId);
-            break;
-        case 'stopCapture':
-            await stopCapture();
-            break;
-        default:
-            throw new Error('unknown message', request);
+        case 'startCapture': response = await startCapture(request.params); break;
+        case 'getTimeDomainData': response = await getTimeDomainData(request.params); break;
+        case 'getFrequencyData': response = await getFrequencyData(request.params); break;
+        default: throw new Error('unknown message', request);
     }
 
-    sendResponse(`audioHub action executed: ${request.audioHub}`);
+    sendResponse(response);
     return true;
 });
 
-const startCapture = async (streamId) => {
+const startCapture = async (params) => {
     const audioMedia = await navigator.mediaDevices.getUserMedia({
         audio: {
             mandatory: {
                 chromeMediaSource: 'tab',
-                chromeMediaSourceId: streamId
+                chromeMediaSourceId: params.streamId
             }
         }
     });
 
-    const output = new AudioContext();
-    const source = output.createMediaStreamSource(audioMedia);
+    const audioContext = new AudioContext();
+    const source = audioContext.createMediaStreamSource(audioMedia);
 
-    // lowpass filter example
-    //const lowpassFilter = output.createBiquadFilter();
-    //lowpassFilter.type = 'lowpass';
-    //lowpassFilter.frequency.setValueAtTime(500, output.currentTime);
-    // source -> lowpass -> output
+    lowpassFilter = audioContext.createBiquadFilter();
+    lowpassFilter.type = 'lowpass';
+    //lowpassFilter.frequency.setValueAtTime(500, audioContext.currentTime);
+
+    audioAnalyzer = audioContext.createAnalyser();
+    audioAnalyzer.fftSize = 256; // todo: move to a parameter?
+
     //source.connect(lowpassFilter);
-    //lowpassFilter.connect(output.destination);
+    //lowpassFilter.connect(audioAnalyzer);
+    source.connect(audioAnalyzer);
+    audioAnalyzer.connect(audioContext.destination);
 
-    // tap example
-    await output.audioWorklet.addModule('stereo-bypass-buffered-tap-processor.js');
-    const tapNode = new AudioWorkletNode(output, 'stereo-bypass-buffered-tap-processor');
-    tapNode.port.onmessage = (event) => { console.log('received', event.data.channelBuffers); };
-    source.connect(tapNode);
-    tapNode.connect(output.destination);
-
-    // source.connect(output.destination);
-    window.location.hash = 'capturing';
+    return 'capture started';
 }
 
-const stopCapture = async () => {
-    window.location.hash = '';
+const getTimeDomainData = async (params) => {
+    if (!audioAnalyzer) {
+        throw new Error('capture not started');
+    }
+
+    const dataArray = new Uint8Array(audioAnalyzer.frequencyBinCount);
+    audioAnalyzer.getByteTimeDomainData(dataArray);
+    return dataArray;
+}
+
+const getFrequencyData = async (params) => {
+    if (!audioAnalyzer) {
+        throw new Error('capture not started');
+    }
+
+    const dataArray = new Uint8Array(audioAnalyzer.frequencyBinCount);
+    audioAnalyzer.getByteFrequencyData(dataArray);
+    return dataArray;
 }
