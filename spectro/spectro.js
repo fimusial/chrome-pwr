@@ -92,6 +92,7 @@ const spectrogramNoiseInterval = setInterval(() => {
 document.getElementById('spectro-tab-button').onclick = async (command) => {
     const existingContexts = await chrome.runtime.getContexts({});
     const offscreenDocument = existingContexts.find((context) => context.contextType === 'OFFSCREEN_DOCUMENT');
+
     let capturing = false;
 
     if (!offscreenDocument) {
@@ -104,12 +105,16 @@ document.getElementById('spectro-tab-button').onclick = async (command) => {
         capturing = offscreenDocument.documentUrl.endsWith('#capturing');
     }
 
+    const tabNameSpan = document.getElementById('spectro-tab-name-span');
+
     if (capturing) {
         chrome.runtime.sendMessage({ spectro: 'stopCapture' });
+        tabNameSpan.innerText = '';
         return;
     }
 
     const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
     const streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tab.id });
     chrome.runtime.sendMessage({ spectro: 'startCapture', params: { streamId } });
+    tabNameSpan.innerText = tab.title;
 };
