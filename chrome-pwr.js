@@ -90,6 +90,8 @@ window.onload = () => {
 }
 
 chrome.commands.onCommand.addListener(async (command) => {
+    // todo: only send the message for the commands (keyboard shortcuts) that this listener is meant to handle
+
     await chrome.runtime.sendMessage({
         triggerBlade: command,
         params: {

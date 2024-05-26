@@ -9,7 +9,9 @@
   "permissions": [
     "tabs",
     "activeTab",
-    "scripting"
+    "tabCapture",
+    "scripting",
+    "offscreen"
   ],
   "background": {
     "service_worker": "service-worker.js",

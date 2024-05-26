@@ -77,21 +77,3 @@ input[type='range']:hover::-webkit-slider-thumb {
 .mt {
     margin-top: 10px;
 }
-
-#spectro-tab-button {
-    height: 20px;
-    outline-color: red;
-    animation: spectro-tab-button-outline-gradient 1s linear 0s infinite alternate;
-}
-
-#spectro-tab-name:empty::before {
-    content: 'click to capture tab';
-}
-
-@keyframes spectro-tab-button-outline-gradient {
-    0% { outline-color: red; }
-    25% { outline-color: yellow; }
-    50% { outline-color: green; }
-    75% { outline-color: lightseagreen; }
-    100% { outline-color: blue; }
-}
