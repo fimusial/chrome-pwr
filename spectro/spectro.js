@@ -1,5 +1,14 @@
-class SpectrogramGrid {
-    constructor(wRes, hRes, maxValue) {
+class MovingSpectroGrid {
+    constructor(canvas, wRes = 100, hRes = 50, maxValue = 255) {
+        if (!(canvas instanceof HTMLCanvasElement)) {
+            throw new TypeError(`'canvas' must be an HTMLCanvasElement`);
+        }
+
+        const context = canvas.getContext('2d');
+        if (!context || !(context instanceof CanvasRenderingContext2D)) {
+            throw new TypeError(`could not get 2d context from 'canvas'`);
+        }
+
         if (!Number.isInteger(wRes) || wRes < 1) {
             throw new TypeError(`'wRes' must be a positive integer`);
         }
@@ -8,95 +17,75 @@ class SpectrogramGrid {
             throw new TypeError(`'hRes' must be a positive integer`);
         }
 
-        if (typeof maxValue !== 'number' || maxValue <= 0) {
-            throw new TypeError(`'maxValue' must be a positive number`);
+        if (typeof maxValue !== 'number' || (maxValue <= 0 && maxValue !== -1)) {
+            throw new TypeError(`'maxValue' must be a positive number or -1 (for adaptive)`);
         }
 
+        this.canvas = canvas;
+        this.context = context;
         this.wRes = wRes;
         this.hRes = hRes;
         this.maxValue = maxValue;
         this.grid = Array.from(Array(this.hRes), () => new Array(this.wRes));
     }
 
-    push(values) {
+    pushRow(values) {
         if (!Array.isArray(values) || values.some((element => typeof element !== 'number'))) {
             throw new TypeError(`'values' must be an Array of Numbers`);
         }
 
-        if (values.length !== this.wRes) {
-            throw new RangeError(`'values.length' must be equal to w resolution`);
+        const diff = this.wRes - values.length;
+        if (diff < 0) {
+            values = values.slice(0, this.wRes);
+        }
+        else if (diff > 0) {
+            values = values.concat(new Array(diff).fill(0));
         }
 
-        this.grid.push(values); // add as last
-        this.grid.shift(); // remove first
+        this.grid.push(values);
+        this.grid.shift();
     }
 
-    draw(canvas) {
-        if (!(canvas instanceof HTMLCanvasElement)) {
-            throw new TypeError(`'canvas' must be an HTMLCanvasElement`);
-        }
+    draw() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        const context = canvas.getContext('2d');
-
-        if (!context || !(context instanceof CanvasRenderingContext2D)) {
-            throw new TypeError(`could not get 2d context from 'canvas'`);
-        }
-
-        let value = 0;
-        let y = 0;
-        let x = 0;
-        let yDelta = canvas.height / this.hRes;
-        let xDelta = canvas.width / this.wRes;
-
-        context.clearRect(0, 0, canvas.width, canvas.height);
-
+        const yDelta = this.canvas.height / this.hRes;
+        const xDelta = this.canvas.width / this.wRes;
         for (let h = 0; h < this.hRes; h++) {
+            const rowMaxValue = this.maxValue === -1
+                ? this.grid[h].reduce((max, current) => (Math.abs(current) > max ? Math.abs(current) : max), this.grid[h][0])
+                : this.maxValue;
+
             for (let w = 0; w < this.wRes; w++) {
-                value = this.grid[h][w];
-
-                if (!value) {
-                    continue;
-                }
-
-                y = h * yDelta;
-                x = w * xDelta;
-
-                // #ff3d84
-                context.fillStyle = `hsl(338, 76%, ${(Math.abs(value) / this.maxValue) * 100}%)`;
-                context.fillRect(x, y, xDelta, yDelta);
+                const value = this.grid[h][w];
+                this.context.fillStyle = `hsl(338, 76%, ${(Math.abs(value) / rowMaxValue) * 100}%)`; // #ff3d84
+                this.context.fillRect(w * xDelta, h * yDelta, xDelta, yDelta);
             }
         }
     }
 };
 
-const randomVector = (count, minValue, maxValue) => {
-    const vector = [];
-    for (let i = 0; i < count; i++) {
-        vector.push(minValue + Math.floor(Math.random() * maxValue));
-    }
+// todo: move MovingSpectroGrid to a separate file?
+const spectroGrid = new MovingSpectroGrid(document.getElementById('spectro-canvas')); // 100, 50, 255
 
-    return vector;
-}
+// todo: placeholder with sine wave graphs
+setInterval(() => {
+    chrome.runtime.sendMessage({ audioHub: 'getFrequencyData', params: {} }).then((response) => {
+        if (!response) {
+            return;
+        }
 
-const canvas = document.getElementById('spectro-canvas');
-const wRes = 60;
-const hRes = 30;
-const maxValue = 100;
-const spectrogram = new SpectrogramGrid(wRes, hRes, maxValue);
+        const frequencyDataArray = Object.values(response); // because javascript
+        spectroGrid.pushRow(frequencyDataArray);
+        spectroGrid.draw();
+    })
+}, 10);
 
-// todo: placeholder with sine waves
-const spectrogramNoiseInterval = setInterval(() => {
-    spectrogram.push(randomVector(wRes, 0, maxValue));
-    spectrogram.draw(canvas);
-}, 25);
-
-document.getElementById('spectro-tab-button').onclick = async (command) => {
+document.getElementById('spectro-tab-button').onclick = async () => {
     // https://github.com/GoogleChrome/chrome-extensions-samples/tree/main/functional-samples/sample.tabcapture-recorder
-
     const existingContexts = await chrome.runtime.getContexts({});
     const offscreenDocument = existingContexts.find((context) => context.contextType === 'OFFSCREEN_DOCUMENT');
-
-    let capturing = false;
+    const tabNameSpan = document.getElementById('spectro-tab-name-span');
 
     if (!offscreenDocument) {
         await chrome.offscreen.createDocument({
@@ -105,19 +94,13 @@ document.getElementById('spectro-tab-button').onclick = async (command) => {
             justification: 'Chrome PWR tab audio capture'
         });
     } else {
-        capturing = offscreenDocument.documentUrl.endsWith('#capturing');
-    }
-
-    const tabNameSpan = document.getElementById('spectro-tab-name-span');
-
-    if (capturing) {
-        chrome.runtime.sendMessage({ audioHub: 'stopCapture' });
+        chrome.offscreen.closeDocument();
         tabNameSpan.innerText = '';
         return;
     }
 
     const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
     const streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tab.id });
-    chrome.runtime.sendMessage({ audioHub: 'startCapture', params: { streamId } });
+    chrome.runtime.sendMessage({ audioHub: 'startCapture', params: { streamId: streamId } });
     tabNameSpan.innerText = tab.title;
 };
