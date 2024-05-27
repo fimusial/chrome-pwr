@@ -65,42 +65,40 @@ class MovingSpectroGrid {
     }
 };
 
-// todo: move MovingSpectroGrid to a separate file?
 const spectroGrid = new MovingSpectroGrid(document.getElementById('spectro-canvas')); // 100, 50, 255
+const tabNameSpan = document.getElementById('spectro-tab-name-span');
 
 // todo: placeholder with sine wave graphs
 setInterval(() => {
     chrome.runtime.sendMessage({ audioHub: 'getFrequencyData', params: {} }).then((response) => {
         if (!response) {
+            tabNameSpan.innerText = '';
             return;
         }
 
-        const frequencyDataArray = Object.values(response); // because javascript
+        const frequencyDataArray = Object.values(response.data); // because javascript
         spectroGrid.pushRow(frequencyDataArray);
         spectroGrid.draw();
+
+        tabNameSpan.innerText = response.tabTitle;
     })
 }, 10);
 
 document.getElementById('spectro-tab-button').onclick = async () => {
-    // https://github.com/GoogleChrome/chrome-extensions-samples/tree/main/functional-samples/sample.tabcapture-recorder
     const existingContexts = await chrome.runtime.getContexts({});
-    const offscreenDocument = existingContexts.find((context) => context.contextType === 'OFFSCREEN_DOCUMENT');
-    const tabNameSpan = document.getElementById('spectro-tab-name-span');
-
-    if (!offscreenDocument) {
-        await chrome.offscreen.createDocument({
-            url: 'spectro/offscreen-audio-hub.html',
-            reasons: ['USER_MEDIA'],
-            justification: 'Chrome PWR tab audio capture'
-        });
-    } else {
+    const offscreenDocumentExists = !!existingContexts.find((context) => context.contextType === 'OFFSCREEN_DOCUMENT');
+    if (offscreenDocumentExists) {
         chrome.offscreen.closeDocument();
-        tabNameSpan.innerText = '';
         return;
     }
 
+    await chrome.offscreen.createDocument({
+        url: 'spectro/offscreen-audio-hub.html',
+        reasons: ['USER_MEDIA'],
+        justification: 'Chrome PWR tab audio capture'
+    });
+
     const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
     const streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tab.id });
-    chrome.runtime.sendMessage({ audioHub: 'startCapture', params: { streamId: streamId } });
-    tabNameSpan.innerText = tab.title;
+    chrome.runtime.sendMessage({ audioHub: 'startTabCapture', params: { streamId: streamId, tabTitle: tab.title } });
 };
