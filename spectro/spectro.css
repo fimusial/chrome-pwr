@@ -8,7 +8,7 @@
 }
 
 #spectro-tab-name-span:empty::before {
-    content: 'click to capture';
+    content: 'capture current tab';
 }
 
 @keyframes spectro-tab-button-outline-gradient {
