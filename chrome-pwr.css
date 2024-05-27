@@ -6,7 +6,6 @@
 * {
     font-family: '8BIT WONDER', sans-serif;
     color: white;
-    text-align: center;
 }
 
 body {
@@ -25,11 +24,6 @@ button {
 
 button:hover {
     transform: scale(0.95);
-}
-
-hr {
-    margin-top: 10px;
-    width: 100%;
 }
 
 input[type='range'] {
@@ -70,9 +64,16 @@ input[type='range']:hover::-webkit-slider-thumb {
     grid-template-columns: 145px 145px;
     grid-template-rows: auto;
     gap: 10px 10px;
-    margin-top: 10px;
+}
+
+.grid p {
+    margin: 0;
 }
 
 .wide {
     grid-column: span 2;
+}
+
+.mt {
+    margin-top: 10px;
 }
