@@ -34,12 +34,12 @@ const startTabCapture = async (params) => {
     const audioContext = new AudioContext();
     const source = audioContext.createMediaStreamSource(audioMedia);
 
-    lowpassFilter = audioContext.createBiquadFilter();
-    lowpassFilter.type = 'lowpass';
+    //lowpassFilter = audioContext.createBiquadFilter();
+    //lowpassFilter.type = 'lowpass';
     //lowpassFilter.frequency.setValueAtTime(500, audioContext.currentTime);
 
     audioAnalyzer = audioContext.createAnalyser();
-    audioAnalyzer.fftSize = 256; // todo: move to a parameter?
+    audioAnalyzer.fftSize = 256; // todo: parameter?
 
     //source.connect(lowpassFilter);
     //lowpassFilter.connect(audioAnalyzer);
@@ -47,7 +47,7 @@ const startTabCapture = async (params) => {
     audioAnalyzer.connect(audioContext.destination);
 
     return 'capture started';
-}
+};
 
 const getTimeDomainData = async (params) => {
     if (!audioAnalyzer) {
@@ -56,8 +56,8 @@ const getTimeDomainData = async (params) => {
 
     const data = new Uint8Array(audioAnalyzer.frequencyBinCount);
     audioAnalyzer.getByteTimeDomainData(data);
-    return { tabTitle: currentTabTitle, data: data };
-}
+    return { tabTitle: currentTabTitle, timeDomainData: Array.from(data) };
+};
 
 const getFrequencyData = async (params) => {
     if (!audioAnalyzer) {
@@ -66,5 +66,5 @@ const getFrequencyData = async (params) => {
 
     const data = new Uint8Array(audioAnalyzer.frequencyBinCount);
     audioAnalyzer.getByteFrequencyData(data);
-    return { tabTitle: currentTabTitle, data: data };
-}
+    return { tabTitle: currentTabTitle, frequencyData: Array.from(data) };
+};
