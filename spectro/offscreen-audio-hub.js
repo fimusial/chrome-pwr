@@ -1,3 +1,4 @@
+let currentTabTitle = '';
 let audioAnalyzer = null;
 let lowpassFilter = null;
 
@@ -8,7 +9,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 
     let response = null;
     switch (request.audioHub) {
-        case 'startCapture': response = await startCapture(request.params); break;
+        case 'startTabCapture': response = await startTabCapture(request.params); break;
         case 'getTimeDomainData': response = await getTimeDomainData(request.params); break;
         case 'getFrequencyData': response = await getFrequencyData(request.params); break;
         default: throw new Error('unknown message', request);
@@ -18,7 +19,9 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     return true;
 });
 
-const startCapture = async (params) => {
+const startTabCapture = async (params) => {
+    currentTabTitle = params.tabTitle;
+
     const audioMedia = await navigator.mediaDevices.getUserMedia({
         audio: {
             mandatory: {
@@ -51,9 +54,9 @@ const getTimeDomainData = async (params) => {
         throw new Error('capture not started');
     }
 
-    const dataArray = new Uint8Array(audioAnalyzer.frequencyBinCount);
-    audioAnalyzer.getByteTimeDomainData(dataArray);
-    return dataArray;
+    const data = new Uint8Array(audioAnalyzer.frequencyBinCount);
+    audioAnalyzer.getByteTimeDomainData(data);
+    return { tabTitle: currentTabTitle, data: data };
 }
 
 const getFrequencyData = async (params) => {
@@ -61,7 +64,7 @@ const getFrequencyData = async (params) => {
         throw new Error('capture not started');
     }
 
-    const dataArray = new Uint8Array(audioAnalyzer.frequencyBinCount);
-    audioAnalyzer.getByteFrequencyData(dataArray);
-    return dataArray;
+    const data = new Uint8Array(audioAnalyzer.frequencyBinCount);
+    audioAnalyzer.getByteFrequencyData(data);
+    return { tabTitle: currentTabTitle, data: data };
 }
