@@ -1,27 +1,64 @@
 import { MovingSpectroGrid } from './moving-spectro-grid.js';
 
 const spectroGrid = new MovingSpectroGrid(document.getElementById('spectro-canvas'));
-const tabNameSpan = document.getElementById('spectro-tab-name-span');
-
 setInterval(() => {
     chrome.runtime.sendMessage({ audioHub: 'getFrequencyData', params: {} }).then((response) => {
-        if (response) {
+        if (response && response.frequencyData) {
             spectroGrid.pushFrequencyData(response.frequencyData);
-            tabNameSpan.innerText = response.tabTitle;
         } else {
             spectroGrid.pushPlaceholder();
-            tabNameSpan.innerText = '';
         }
 
         spectroGrid.draw();
-    })
+    });
 }, 10);
+
+const tabNameSpan = document.getElementById('spectro-tab-name-span');
+let capturedTabId = 0;
+const onTabUpdated = (tabId, changeInfo, tab) => {
+    if (tabId === capturedTabId && changeInfo.title) {
+        tabNameSpan.innerText = tab.title;
+    }
+};
+
+chrome.tabs.onUpdated.addListener(onTabUpdated);
+
+const toggleCapturedTabId = () => {
+    if (capturedTabId !== 0) {
+        tabNameSpan.innerText = '';
+        capturedTabId = 0;
+        return;
+    }
+
+    chrome.runtime.sendMessage({ audioHub: 'getCapturedTabId', params: {} }).then((response) => {
+        if (!response || !response.capturedTabId) {
+            // no tab id and no capture - all good
+            return;
+        }
+
+        chrome.tabs.get(response.capturedTabId, (tab) => {
+            if (tab) {
+                // capture already started
+                tabNameSpan.innerText = tab.title;
+                capturedTabId = tab.id;
+            } else {
+                // tab was closed while capturing
+                chrome.offscreen.closeDocument();
+                tabNameSpan.innerText = '';
+                capturedTabId = 0;
+            }
+        });
+    });
+};
+
+toggleCapturedTabId();
 
 document.getElementById('spectro-tab-button').onclick = async () => {
     const existingContexts = await chrome.runtime.getContexts({});
     const offscreenDocumentExists = !!existingContexts.find((context) => context.contextType === 'OFFSCREEN_DOCUMENT');
     if (offscreenDocumentExists) {
         chrome.offscreen.closeDocument();
+        toggleCapturedTabId();
         return;
     }
 
@@ -33,5 +70,6 @@ document.getElementById('spectro-tab-button').onclick = async () => {
 
     const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
     const streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tab.id });
-    chrome.runtime.sendMessage({ audioHub: 'startTabCapture', params: { streamId: streamId, tabTitle: tab.title } });
+    chrome.runtime.sendMessage({ audioHub: 'startTabCapture', params: { streamId: streamId, tabId: tab.id } });
+    toggleCapturedTabId();
 };
