@@ -54,20 +54,23 @@ export class MovingSpectroGrid {
     pushPlaceholder() {
         const v = Array.from({ length: this.wRes }, () => Math.random() * this.maxValue * 0.125);
         const time = new Date().getTime();
-        const sines = [Math.sin(time / 128), Math.cos(time / 256), Math.sin(time / 384), Math.cos(time / 512)];
+        const sines = [Math.sin(time / 256), Math.cos(time / 384), Math.sin(time / 512), Math.cos(time / 640)];
         const wResD2 = this.wRes / 2;
 
         for (let i = 0; i < sines.length; i++) {
             const a = Math.floor(sines[i] * wResD2 + wResD2);
             const b = Math.floor(-sines[i] * wResD2 + wResD2);
-
-            v[a] = v[a + 1] = v[a + 25] = v[a + 26] =
-                v[b - 26] = v[b - 25] = v[b - 1] = v[b] =
-                    this.maxValue * 0.2 * i + 0.2;
+            v[a] = v[a + 1] = v[b - 1] = v[b] = this.maxValue * 0.2 * i + 0.2;
         }
 
         this.grid.push(v);
         this.grid.shift();
+
+        for (let h = 0; h < this.hRes - 1; h++) {
+            for (let w = 0; w < this.wRes; w++) {
+                this.grid[h][w] *= 0.90;
+            }
+        }
     }
 
     draw() {
