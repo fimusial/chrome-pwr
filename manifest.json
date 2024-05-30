@@ -29,8 +29,8 @@
     },
     {
       "matches": ["*://*/*"],
-      "js": ["blades/passive/shared/node-picker-utility.js"],
-      "css": ["blades/passive/shared/node-picker-utility.css"]
+      "js": ["blades/passive/node-picker-passive.js"],
+      "css": ["blades/passive/node-picker-passive.css"]
     }
   ],
   "web_accessible_resources": [

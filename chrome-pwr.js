@@ -90,7 +90,15 @@ window.onload = () => {
 }
 
 chrome.commands.onCommand.addListener(async (command) => {
-    // todo: only send the message for the commands (keyboard shortcuts) that this listener is meant to handle
+    const supportedCommands = [
+        'macroRecorderPlayOnce',
+        'macroRecorderPlayLoopStart',
+        'macroRecorderStopPlayback'
+    ];
+
+    if (!supportedCommands.includes(command)) {
+        return;
+    }
 
     await chrome.runtime.sendMessage({
         triggerBlade: command,
