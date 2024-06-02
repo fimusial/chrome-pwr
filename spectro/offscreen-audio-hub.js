@@ -40,7 +40,7 @@ const startTabCapture = async (params) => {
     //lowpassFilter.frequency.setValueAtTime(500, audioContext.currentTime);
 
     audioAnalyzer = audioContext.createAnalyser();
-    audioAnalyzer.fftSize = 256; // todo: parameter?
+    audioAnalyzer.fftSize = 512; // todo: parameter?
 
     //source.connect(lowpassFilter);
     //lowpassFilter.connect(audioAnalyzer);
@@ -61,7 +61,7 @@ const getTimeDomainData = async () => {
 
     const data = new Uint8Array(audioAnalyzer.frequencyBinCount);
     audioAnalyzer.getByteTimeDomainData(data);
-    return { timeDomainData: Array.from(data) };
+    return { data: Array.from(data) };
 };
 
 const getFrequencyData = async () => {
@@ -71,5 +71,5 @@ const getFrequencyData = async () => {
 
     const data = new Uint8Array(audioAnalyzer.frequencyBinCount);
     audioAnalyzer.getByteFrequencyData(data);
-    return { frequencyData: Array.from(data) };
+    return { data: Array.from(data) };
 };
