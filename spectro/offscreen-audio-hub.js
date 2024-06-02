@@ -11,8 +11,8 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     switch (request.audioHub) {
         case 'startTabCapture': response = await startTabCapture(request.params); break;
         case 'getCapturedTabId': response = await getCapturedTabId(); break;
-        case 'getTimeDomainData': response = await getTimeDomainData(); break;
-        case 'getFrequencyData': response = await getFrequencyData(); break;
+        case 'getFloatTimeDomainData': response = await getFloatTimeDomainData(); break;
+        case 'getByteFrequencyData': response = await getByteFrequencyData(); break;
         default: throw new Error('unknown message', request);
     }
 
@@ -54,17 +54,17 @@ const getCapturedTabId = async () => {
     return { capturedTabId: capturedTabId };
 };
 
-const getTimeDomainData = async () => {
+const getFloatTimeDomainData = async () => {
     if (!audioAnalyzer) {
         throw new Error('capture not started');
     }
 
-    const data = new Uint8Array(audioAnalyzer.frequencyBinCount);
-    audioAnalyzer.getByteTimeDomainData(data);
+    const data = new Float32Array(audioAnalyzer.frequencyBinCount);
+    audioAnalyzer.getFloatTimeDomainData(data);
     return { data: Array.from(data) };
 };
 
-const getFrequencyData = async () => {
+const getByteFrequencyData = async () => {
     if (!audioAnalyzer) {
         throw new Error('capture not started');
     }

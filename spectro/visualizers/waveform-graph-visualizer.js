@@ -23,11 +23,15 @@ export class WaveformGraphVisualizer {
         this.context.strokeStyle = `hsl(${this.colorHue}, 100%, 62%)`; // #ff3d84
     }
 
-    audioHubMethod = 'getTimeDomainData';
+    audioHubMethod = 'getFloatTimeDomainData';
 
     pushData(values) {
         if (!Array.isArray(values) || values.some((value => typeof value !== 'number'))) {
             throw new TypeError(`'values' must be an Array of Numbers`);
+        }
+
+        if (values.some((value => value < -1 || 1 < value))) {
+            throw new RangeError(`'values' must only contain numbers within [-1, 1] range`);
         }
 
         this.frame = values;
@@ -45,30 +49,13 @@ export class WaveformGraphVisualizer {
             return;
         }
 
-        let { frameMin, frameMax } = this.frame.reduce((acc, value) => ({
-            frameMin: Math.min(acc.frameMin, value),
-            frameMax: Math.max(acc.frameMax, value)
-        }), {
-            frameMin: Infinity,
-            frameMax: -Infinity
-        });
-
-        const amplify = frameMin < 1 ? 1 : Math.min(4, frameMax / (frameMax - frameMin));
-        frameMin *= amplify;
-        frameMax *= amplify;
-
         const xDelta = this.canvas.width / this.frame.length;
 
         this.context.beginPath();
+        this.context.moveTo(0, this.canvas.height / 2);
         for (let i = 0, x = 0; i < this.frame.length; i += 1, x += xDelta) {
-            const center = (this.canvas.height - frameMax - frameMin) / 2;
-            const y = this.frame[i] * amplify + center;
-
-            if (i === 0) {
-                this.context.moveTo(x, y);
-            } else {
-                this.context.lineTo(x, y);
-            }
+            const y = (this.frame[i] + 0.5) * this.canvas.height;
+            this.context.lineTo(x, y);
         }
 
         this.context.lineTo(this.canvas.width, this.canvas.height / 2);
