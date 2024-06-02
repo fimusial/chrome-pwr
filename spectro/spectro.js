@@ -1,17 +1,25 @@
-import { MovingSpectroGrid } from './moving-spectro-grid.js';
+import { MovingSpectrogramVisualizer } from './visualizers/moving-spectrogram-visualizer.js';
+import { WaveformGraphVisualizer } from './visualizers/waveform-graph-visualizer.js';
 
-const spectroGrid = new MovingSpectroGrid(document.getElementById('spectro-canvas'));
+const spectroCanvas = document.getElementById('spectro-canvas');
+const visualizers = {
+    movingSpectro: new MovingSpectrogramVisualizer(spectroCanvas),
+    waveformGraph: new WaveformGraphVisualizer(spectroCanvas)
+}
+
+let currentVisualizer = 'waveformGraph';
 setInterval(() => {
-    chrome.runtime.sendMessage({ audioHub: 'getFrequencyData', params: {} }).then((response) => {
-        if (response && response.frequencyData) {
-            spectroGrid.pushFrequencyData(response.frequencyData);
+    const visualizer = visualizers[currentVisualizer];
+    chrome.runtime.sendMessage({ audioHub: visualizer.audioHubMethod, params: {} }).then((response) => {
+        if (response && response.data) {
+            visualizer.pushData(response.data);
         } else {
-            spectroGrid.pushPlaceholder();
+            visualizer.pushPlaceholder();
         }
 
-        spectroGrid.draw();
+        visualizer.draw();
     });
-}, 10);
+}, 20);
 
 const tabNameSpan = document.getElementById('spectro-tab-name-span');
 let capturedTabId = 0;

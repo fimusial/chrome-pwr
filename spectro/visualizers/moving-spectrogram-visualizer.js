@@ -1,4 +1,4 @@
-export class MovingSpectroGrid {
+export class MovingSpectrogramVisualizer {
     constructor(canvas, colorHue = 338, wRes = 100, hRes = 50, maxValue = 255) {
         if (!(canvas instanceof HTMLCanvasElement)) {
             throw new TypeError(`'canvas' must be an HTMLCanvasElement`);
@@ -34,9 +34,15 @@ export class MovingSpectroGrid {
         this.grid = Array.from(Array(this.hRes), () => new Array(this.wRes).fill(0));
     }
 
-    pushFrequencyData(values) {
-        if (!Array.isArray(values) || values.some((element => typeof element !== 'number'))) {
+    audioHubMethod = 'getFrequencyData';
+
+    pushData(values) {
+        if (!Array.isArray(values) || values.some((value => typeof value !== 'number'))) {
             throw new TypeError(`'values' must be an Array of Numbers`);
+        }
+
+        if (this.maxValue !== -1 && values.some((value => value > this.maxValue))) {
+            throw new RangeError(`'values' contains numbers larger than maxValue (${this.maxValue})`);
         }
 
         const diff = this.wRes - values.length;
