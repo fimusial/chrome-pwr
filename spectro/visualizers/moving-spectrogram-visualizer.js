@@ -1,5 +1,5 @@
 export class MovingSpectrogramVisualizer {
-    constructor(canvas, colorHue = 338, wRes = 100, hRes = 50, maxValue = 255) {
+    constructor(canvas, colorHue = 338, wRes = 100, hRes = 50) {
         if (!(canvas instanceof HTMLCanvasElement)) {
             throw new TypeError(`'canvas' must be an HTMLCanvasElement`);
         }
@@ -21,16 +21,11 @@ export class MovingSpectrogramVisualizer {
             throw new TypeError(`'hRes' must be a positive integer`);
         }
 
-        if (typeof maxValue !== 'number' || (maxValue <= 0 && maxValue !== -1)) {
-            throw new TypeError(`'maxValue' must be a positive number or -1 (for adaptive)`);
-        }
-
         this.canvas = canvas;
         this.colorHue = colorHue;
         this.context = context;
         this.wRes = wRes;
         this.hRes = hRes;
-        this.maxValue = maxValue;
         this.grid = Array.from(Array(this.hRes), () => new Array(this.wRes).fill(0));
     }
 
@@ -41,8 +36,8 @@ export class MovingSpectrogramVisualizer {
             throw new TypeError(`'values' must be an Array of Numbers`);
         }
 
-        if (this.maxValue !== -1 && values.some((value => value > this.maxValue))) {
-            throw new RangeError(`'values' contains numbers larger than maxValue (${this.maxValue})`);
+        if (values.some((value => value < 0 || 255 < value))) {
+            throw new RangeError(`'values' must only contain numbers within [0, 255] range`);
         }
 
         const diff = this.wRes - values.length;
@@ -58,7 +53,7 @@ export class MovingSpectrogramVisualizer {
     }
 
     pushPlaceholder() {
-        const v = Array.from({ length: this.wRes }, () => Math.random() * this.maxValue * 0.125);
+        const v = Array.from({ length: this.wRes }, () => Math.random() * 255 * 0.125);
         const time = new Date().getTime();
         const sines = [Math.sin(time / 256), Math.cos(time / 384), Math.sin(time / 512), Math.cos(time / 640)];
         const wResD2 = this.wRes / 2;
@@ -66,7 +61,7 @@ export class MovingSpectrogramVisualizer {
         for (let i = 0; i < sines.length; i++) {
             const a = Math.floor(sines[i] * wResD2 + wResD2);
             const b = Math.floor(-sines[i] * wResD2 + wResD2);
-            v[a] = v[a + 1] = v[b - 1] = v[b] = this.maxValue * 0.2 * i + 0.2;
+            v[a] = v[a + 1] = v[b - 1] = v[b] = 255 * 0.2 * i + 0.2;
         }
 
         this.grid.push(v);
@@ -85,13 +80,9 @@ export class MovingSpectrogramVisualizer {
         const yDelta = this.canvas.height / this.hRes;
         const xDelta = this.canvas.width / this.wRes;
         for (let h = 0; h < this.hRes; h++) {
-            const rowMaxValue = this.maxValue === -1
-                ? this.grid[h].reduce((max, current) => (Math.abs(current) > max ? Math.abs(current) : max), this.grid[h][0])
-                : this.maxValue;
-
             for (let w = 0; w < this.wRes; w++) {
                 const value = this.grid[h][w];
-                this.context.fillStyle = `hsl(${this.colorHue}, 100%, ${(Math.abs(value) / rowMaxValue) * 100}%)`;
+                this.context.fillStyle = `hsl(${this.colorHue}, 100%, ${(Math.abs(value) / 255) * 100}%)`;
                 this.context.fillRect(w * xDelta, h * yDelta, xDelta, yDelta);
             }
         }
