@@ -34,7 +34,7 @@ export class MovingSpectrogramVisualizer {
         this.grid = Array.from(Array(this.hRes), () => new Array(this.wRes).fill(0));
     }
 
-    audioHubMethod = 'getFrequencyData';
+    audioHubMethod = 'getByteFrequencyData';
 
     pushData(values) {
         if (!Array.isArray(values) || values.some((value => typeof value !== 'number'))) {
