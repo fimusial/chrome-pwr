@@ -7,12 +7,9 @@ const visualizers = [
     new WaveformGraphVisualizer(spectroCanvas)
 ];
 
-let currentVisualizer = localStorage.getItem('spectro-current-visualizer');
-if (!currentVisualizer) {
-    currentVisualizer = 0;
-}
+let currentVisualizer = Number(localStorage.getItem('spectro-current-visualizer'));
 
-spectroCanvas.onclick = async () => {
+spectroCanvas.onclick = () => {
     currentVisualizer = (currentVisualizer + 1) % visualizers.length;
     visualizers[currentVisualizer].reset();
     localStorage.setItem('spectro-current-visualizer', currentVisualizer);
@@ -88,6 +85,6 @@ document.getElementById('spectro-tab-button').onclick = async () => {
 
     const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
     const streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tab.id });
-    chrome.runtime.sendMessage({ audioHub: 'startTabCapture', params: { streamId: streamId, tabId: tab.id } });
+    await chrome.runtime.sendMessage({ audioHub: 'startTabCapture', params: { streamId: streamId, tabId: tab.id } });
     toggleCapturedTabId();
 };
