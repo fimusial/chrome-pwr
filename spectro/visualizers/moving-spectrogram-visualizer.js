@@ -31,6 +31,10 @@ export class MovingSpectrogramVisualizer {
 
     audioHubMethod = 'getByteFrequencyData';
 
+    reset() {
+        this.grid = Array.from(Array(this.hRes), () => new Array(this.wRes).fill(0));
+    }
+
     pushData(values) {
         if (!Array.isArray(values) || values.some((value => typeof value !== 'number'))) {
             throw new TypeError(`'values' must be an Array of Numbers`);
@@ -87,4 +91,4 @@ export class MovingSpectrogramVisualizer {
             }
         }
     }
-};
+}

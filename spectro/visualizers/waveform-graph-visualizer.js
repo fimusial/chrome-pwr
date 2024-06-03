@@ -17,13 +17,13 @@ export class WaveformGraphVisualizer {
         this.colorHue = colorHue;
         this.context = context;
         this.frame = [];
-
-        this.context.lineWidth = 3;
-        this.context.fillStyle = 'hsl(0, 0%, 0%)';
-        this.context.strokeStyle = `hsl(${this.colorHue}, 100%, 62%)`; // #ff3d84
     }
 
     audioHubMethod = 'getFloatTimeDomainData';
+
+    reset() {
+        this.frame = [0];
+    }
 
     pushData(values) {
         if (!Array.isArray(values) || values.some((value => typeof value !== 'number'))) {
@@ -37,12 +37,21 @@ export class WaveformGraphVisualizer {
         this.frame = values;
     }
 
-    // todo: create a placeholder
     pushPlaceholder() {
-        this.frame = [0];
+        const time = new Date().getTime();
+        this.frame = Array.from({ length: 1024 }, (_, i) => {
+            return 0.125 * Math.cos((time + i) / 512)
+            + 0.125 * Math.sin((time - i) / 128)
+            + 0.125 * Math.cos((time + i) / 64)
+            + 0.125 * Math.sin((time - i) / 4)
+            ;
+        });
     }
 
     draw() {
+        this.context.lineWidth = 3;
+        this.context.fillStyle = 'hsl(0, 0%, 0%)';
+        this.context.strokeStyle = `hsl(${this.colorHue}, 100%, 62%)`; // #ff3d84
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
         if (this.frame.length === 0) {

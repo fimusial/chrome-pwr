@@ -2,12 +2,22 @@ import { MovingSpectrogramVisualizer } from './visualizers/moving-spectrogram-vi
 import { WaveformGraphVisualizer } from './visualizers/waveform-graph-visualizer.js';
 
 const spectroCanvas = document.getElementById('spectro-canvas');
-const visualizers = {
-    movingSpectro: new MovingSpectrogramVisualizer(spectroCanvas),
-    waveformGraph: new WaveformGraphVisualizer(spectroCanvas)
+const visualizers = [
+    new MovingSpectrogramVisualizer(spectroCanvas),
+    new WaveformGraphVisualizer(spectroCanvas)
+];
+
+let currentVisualizer = localStorage.getItem('spectro-current-visualizer');
+if (!currentVisualizer) {
+    currentVisualizer = 0;
 }
 
-let currentVisualizer = 'waveformGraph';
+spectroCanvas.onclick = async () => {
+    currentVisualizer = (currentVisualizer + 1) % visualizers.length;
+    visualizers[currentVisualizer].reset();
+    localStorage.setItem('spectro-current-visualizer', currentVisualizer);
+};
+
 setInterval(() => {
     const visualizer = visualizers[currentVisualizer];
     chrome.runtime.sendMessage({ audioHub: visualizer.audioHubMethod, params: {} }).then((response) => {
