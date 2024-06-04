@@ -1,10 +1,12 @@
 import { MovingSpectrogramVisualizer } from './visualizers/moving-spectrogram-visualizer.js';
 import { WaveformGraphVisualizer } from './visualizers/waveform-graph-visualizer.js';
+import { VolumeBarsVisualizer } from './visualizers/volume-bars-visualizer.js';
 
 const spectroCanvas = document.getElementById('spectro-canvas');
 const visualizers = [
     new MovingSpectrogramVisualizer(spectroCanvas),
-    new WaveformGraphVisualizer(spectroCanvas)
+    new WaveformGraphVisualizer(spectroCanvas),
+    new VolumeBarsVisualizer(spectroCanvas)
 ];
 
 let currentVisualizer = Number(localStorage.getItem('spectro-current-visualizer'));
