@@ -17,8 +17,7 @@ document.macroNext = (clicks, index, loop, initialDelay) => {
     if (index >= clicks.length) {
         if (loop) {
             index = 0;
-        }
-        else {
+        } else {
             document.lastTimeoutId = 0;
             localStorage.removeItem('chrome-pwr-macro-playback-in-progress');
             document.clearIndicator('playback');

@@ -56,8 +56,7 @@ export class MovingSpectrogramVisualizer {
                 const segment = values.slice(i * fillFactor, i * fillFactor + fillFactor);
                 result[i] = segment.reduce((acc, value) => acc + value, 0) / fillFactor;
             }
-        }
-        else if (diff > 0) {
+        } else if (diff > 0) {
             result = values.concat(new Array(diff).fill(0));
         }
 
