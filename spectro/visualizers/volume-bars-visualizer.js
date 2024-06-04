@@ -51,8 +51,7 @@ export class VolumeBarsVisualizer {
                 const segment = values.slice(i * fillFactor, i * fillFactor + fillFactor);
                 result[i] = segment.reduce((acc, value) => acc + value, 0) / fillFactor;
             }
-        }
-        else if (diff > 0) {
+        } else if (diff > 0) {
             result = values.concat(new Array(diff).fill(0));
         }
 
@@ -60,7 +59,10 @@ export class VolumeBarsVisualizer {
     }
 
     pushPlaceholder() {
-        this.reset(); // todo: make a placeholder
+        const time = new Date().getTime();
+        this.volumes = Array.from({ length: this.wRes }, (_, i) => {
+            return 255 * Math.sin(((i % 2 === 0 ? 1 : -1) * time / 256 + i / 8));
+        });
     }
 
     draw() {
