@@ -16,7 +16,7 @@ export class WaveformGraphVisualizer {
         this.canvas = canvas;
         this.colorHue = colorHue;
         this.context = context;
-        this.frame = [];
+        this.reset();
     }
 
     audioHubMethod = 'getFloatTimeDomainData';
