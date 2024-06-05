@@ -17,8 +17,10 @@ spectroCanvas.onclick = () => {
     localStorage.setItem('spectro-current-visualizer', currentVisualizer);
 };
 
-setInterval(() => {
+const nextVisualizerDraw = () => {
     const visualizer = visualizers[currentVisualizer];
+    setTimeout(nextVisualizerDraw, visualizer.nextDrawDelayMs);
+
     chrome.runtime.sendMessage({ audioHub: visualizer.audioHubMethod, params: {} }).then((response) => {
         if (response && response.data) {
             visualizer.pushData(response.data);
@@ -28,7 +30,9 @@ setInterval(() => {
 
         visualizer.draw();
     });
-}, 20);
+};
+
+nextVisualizerDraw();
 
 const tabNameSpan = document.getElementById('spectro-tab-name-span');
 let capturedTabId = 0;

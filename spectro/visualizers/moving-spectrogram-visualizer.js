@@ -29,6 +29,7 @@ export class MovingSpectrogramVisualizer {
         this.reset();
     }
 
+    nextDrawDelayMs = 10;
     audioHubMethod = 'getByteFrequencyData';
 
     reset() {

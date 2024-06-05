@@ -19,6 +19,7 @@ export class WaveformGraphVisualizer {
         this.reset();
     }
 
+    nextDrawDelayMs = 25;
     audioHubMethod = 'getFloatTimeDomainData';
 
     reset() {
