@@ -70,7 +70,11 @@ export class VolumeBarsVisualizer {
         this.context.fillStyle = 'hsl(0, 0%, 0%)';
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        this.context.fillStyle = `hsl(${this.colorHue}, 100%, 62%)`; // #ff3d84
+        const gradient = this.context.createLinearGradient(0, 0, 0, this.canvas.height);
+        gradient.addColorStop(0, 'hsl(0, 100%, 100%)');
+        gradient.addColorStop(0.75, `hsl(${this.colorHue}, 100%, 62%)`); // #ff3d84
+        this.context.fillStyle = gradient;
+
         const xDelta = this.canvas.width / this.wRes;
         for (let i = 0; i < this.wRes; i++) {
             const barHeight = this.volumes[i] / 255 * this.canvas.height;
