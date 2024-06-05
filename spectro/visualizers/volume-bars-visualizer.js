@@ -24,6 +24,7 @@ export class VolumeBarsVisualizer {
         this.reset();
     }
 
+    nextDrawDelayMs = 20;
     audioHubMethod = 'getByteFrequencyData';
 
     reset() {
