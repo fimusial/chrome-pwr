@@ -9,31 +9,39 @@
     </a>
 
     <div class="mt grid">
-        <button id="max-scroll-start-element">maxscroll element</button>
-        <button id="max-scroll-start-window">maxscroll window</button>
-        <button id="max-scroll-cancel" class="wide">maxscroll cancel</button>
         <button id="forced-css-add">add page css</button>
         <button id="forced-css-clear">clear page css</button>
         <button id="content-edit-on">content edit on</button>
         <button id="content-edit-off">content edit off</button>
     </div>
 
-    <hr class="mt" />
+    <div class="mt grid3">
+        <div class="radio-and-label-container">
+            <label for="max-scroll-direction-up"><img src="images/up-arrow-24px.png" /></label>
+            <input type="radio" id="max-scroll-direction-up" name="max-scroll-direction" value="up" />
+        </div>
+
+        <button id="max-scroll-start-element">scroll element</button>
+        <button id="max-scroll-start-window">scroll window</button>
+
+        <div class="radio-and-label-container">
+            <label for="max-scroll-direction-down"><img src="images/down-arrow-24px.png" /></label>
+            <input type="radio" id="max-scroll-direction-down" name="max-scroll-direction" value="down" />
+        </div>
+
+        <button id="max-scroll-cancel" class="wide">cancel scrolling</button>
+    </div>
 
     <div class="mt grid">
         <button id="macro-recorder-start">record macro</button>
         <button id="macro-recorder-stop">stop macro recording</button>
-        <button id="macro-recorder-play-once" >play macro</button>
+        <button id="macro-recorder-play-once">play macro</button>
         <button id="macro-recorder-play-loop-start">loop macro</button>
         <button id="macro-recorder-stop-playback" class="wide">stop macro playback</button>
         <input id="macro-recorder-delay-slider" type="range" min="100" max="10000" value="500" step="100"></input>
         <p>initial / loop delay: <span id="macro-recorder-delay-value">0.5</span> sec</p>
-    </div>
 
-    <hr class="mt" />
-
-    <div class="mt grid">
-        <button id="spectro-tab-button" class="wide">audio: <span id="spectro-tab-name-span"></span></button>
+        <button id="spectro-tab-button" class="thin wide">audio: <span id="spectro-tab-name-span"></span></button>
         <canvas id="spectro-canvas"></canvas>
     </div>
 
