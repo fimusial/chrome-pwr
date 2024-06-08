@@ -1,5 +1,4 @@
 #spectro-tab-button {
-    height: 20px;
     outline-color: red;
     animation: spectro-tab-button-outline-gradient 1s linear 0s infinite alternate;
     text-overflow: ellipsis;
@@ -17,4 +16,8 @@
     50% { outline-color: green; }
     75% { outline-color: lightskyblue; }
     100% { outline-color: blue; }
+}
+
+#spectro-canvas {
+    cursor: pointer;
 }
