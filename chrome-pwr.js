@@ -1,12 +1,18 @@
 document.getElementById('max-scroll-start-element').onclick = async () => {
     await chrome.runtime.sendMessage({
-        triggerBlade: 'maxScrollStartElement'
+        triggerBlade: 'maxScrollStartElement',
+        params: {
+            direction: document.getElementById('max-scroll-direction-up').checked ? 'up' : 'down'
+        }
     });
 };
 
 document.getElementById('max-scroll-start-window').onclick = async () => {
     await chrome.runtime.sendMessage({
-        triggerBlade: 'maxScrollStartWindow'
+        triggerBlade: 'maxScrollStartWindow',
+        params: {
+            direction: document.getElementById('max-scroll-direction-up').checked ? 'up' : 'down'
+        }
     });
 };
 
@@ -76,16 +82,29 @@ document.getElementById('macro-recorder-stop-playback').onclick = async () => {
     });
 };
 
+document.querySelectorAll('[name=max-scroll-direction]').forEach((element) => {
+    element.onchange = (event) => {
+        localStorage.setItem('max-scroll-direction', event.target.value);
+    }
+});
+
 document.getElementById('macro-recorder-delay-slider').oninput = (event) => {
     document.getElementById('macro-recorder-delay-value').innerText = `${event.target.value / 1000}`;
     localStorage.setItem('macro-recorder-delay-slider', event.target.value);
 }
 
 window.onload = () => {
-    const value = localStorage.getItem('macro-recorder-delay-slider');
-    if (value) {
-        document.getElementById('macro-recorder-delay-slider').value = value;
-        document.getElementById('macro-recorder-delay-value').innerText = `${value / 1000}`;
+    const maxScrollDirection = localStorage.getItem('max-scroll-direction');
+    if (maxScrollDirection) {
+        document.getElementById(`max-scroll-direction-${maxScrollDirection}`).checked = true;
+    } else {
+        document.getElementById('max-scroll-direction-down').checked = true;
+    }
+
+    const delaySliderValue = localStorage.getItem('macro-recorder-delay-slider');
+    if (delaySliderValue) {
+        document.getElementById('macro-recorder-delay-slider').value = delaySliderValue;
+        document.getElementById('macro-recorder-delay-value').innerText = `${delaySliderValue / 1000}`;
     }
 }
 
