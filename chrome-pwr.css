@@ -33,7 +33,7 @@ input[type='radio'] {
     margin: 0;
     border: 10px solid #545454;
     box-shadow: 0px 0px 0px 3px white;
-    border-radius: 50%;
+    border-radius: 15%;
     transition: all 0.1s ease;
 }
 
@@ -49,22 +49,22 @@ input[type='range'] {
     appearance: none;
     height: 30px;
     background-color: #545454;
-    border-radius: 30px;
+    border-radius: 5px;
 }
 
 input[type='range']::-webkit-slider-thumb {
     appearance: none;
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
     background: #ff3d84;
     cursor: pointer;
-    border-radius: 50%;
-    box-shadow: inset 0px 0px 0px 2px white;
+    border-radius: 15%;
+    box-shadow: inset 0px 0px 0px 3px white;
     transition: all 0.1s ease;
 }
 
 input[type='range']:hover::-webkit-slider-thumb {
-    transform: scale(0.85);
+    transform: scale(1.10);
 }
 
 #bar {
