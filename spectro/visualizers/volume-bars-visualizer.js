@@ -62,7 +62,8 @@ export class VolumeBarsVisualizer {
     pushPlaceholder() {
         const time = new Date().getTime();
         this.volumes = Array.from({ length: this.wRes }, (_, i) => {
-            return 255 * Math.sin(((i % 2 === 0 ? 1 : -1) * time / 256 + i / 8));
+            const sign = i % 2 === 0 ? 1 : -1;
+            return 255 * Math.sin(sign * time / (256 + sign * 32) + i / 8);
         });
     }
 
