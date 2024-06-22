@@ -1,6 +1,23 @@
+let audioContext = null;
 let capturedTabId = null;
 let audioAnalyzer = null;
+let highpassFilter = null;
 let lowpassFilter = null;
+
+const setAudioFiltersValues = (hp, lp) => {
+    if (audioContext && lowpassFilter && highpassFilter) {
+        if (typeof hp !== 'number' || hp < 0 || hp > 24000) {
+            throw new RangeError(`'hp' must be a number within filter allowed frequency values`);
+        }
+
+        if (typeof lp !== 'number' || lp < lowpassFilter.frequency.minValue || lp > lowpassFilter.frequency.maxValue) {
+            throw new RangeError(`'lp' must be a number within filter allowed frequency values`);
+        }
+
+        highpassFilter.frequency.setValueAtTime(hp, audioContext.currentTime);
+        lowpassFilter.frequency.setValueAtTime(lp, audioContext.currentTime);
+    }
+};
 
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     if (!request.audioHub || typeof request.audioHub !== 'string') {
@@ -13,6 +30,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
         case 'getCapturedTabId': response = await getCapturedTabId(); break;
         case 'getFloatTimeDomainData': response = await getFloatTimeDomainData(); break;
         case 'getByteFrequencyData': response = await getByteFrequencyData(); break;
+        case 'updateAudioFilters': response = await updateAudioFilters(request.params); break;
         default: throw new Error('unknown message', request);
     }
 
@@ -32,21 +50,23 @@ const startTabCapture = async (params) => {
         }
     });
 
-    const audioContext = new AudioContext();
+    audioContext = new AudioContext();
     const source = audioContext.createMediaStreamSource(audioMedia);
 
-    //lowpassFilter = audioContext.createBiquadFilter();
-    //lowpassFilter.type = 'lowpass';
-    //lowpassFilter.frequency.setValueAtTime(500, audioContext.currentTime);
+    lowpassFilter = audioContext.createBiquadFilter();
+    lowpassFilter.type = 'lowpass';
+    highpassFilter = audioContext.createBiquadFilter();
+    highpassFilter.type = 'highpass';
 
     audioAnalyzer = audioContext.createAnalyser();
-    audioAnalyzer.fftSize = 512; // todo: parameter?
+    audioAnalyzer.fftSize = 512;
 
-    //source.connect(lowpassFilter);
-    //lowpassFilter.connect(audioAnalyzer);
-    source.connect(audioAnalyzer);
+    source.connect(lowpassFilter);
+    lowpassFilter.connect(highpassFilter);
+    highpassFilter.connect(audioAnalyzer);
     audioAnalyzer.connect(audioContext.destination);
 
+    setAudioFiltersValues(params.hp, params.lp);
     return 'capture started';
 };
 
@@ -56,7 +76,7 @@ const getCapturedTabId = async () => {
 
 const getFloatTimeDomainData = async () => {
     if (!audioAnalyzer) {
-        throw new Error('capture not started');
+        return { data: null };
     }
 
     const data = new Float32Array(audioAnalyzer.frequencyBinCount);
@@ -66,10 +86,15 @@ const getFloatTimeDomainData = async () => {
 
 const getByteFrequencyData = async () => {
     if (!audioAnalyzer) {
-        throw new Error('capture not started');
+        return { data: null };
     }
 
     const data = new Uint8Array(audioAnalyzer.frequencyBinCount);
     audioAnalyzer.getByteFrequencyData(data);
     return { data: Array.from(data) };
+};
+
+const updateAudioFilters = (params) => {
+    setAudioFiltersValues(params.hp, params.lp);
+    return 'audio filters updated';
 };

@@ -1,6 +1,4 @@
 #spectro-tab-button {
-    outline-color: red;
-    animation: spectro-tab-button-outline-gradient 1s linear 0s infinite alternate;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
@@ -10,14 +8,64 @@
     content: 'capture current tab';
 }
 
+#spectro-tab-button[audioPlayback] {
+    outline-color: red;
+    animation: spectro-tab-button-outline-gradient 1s linear 0s infinite alternate;
+}
+
 @keyframes spectro-tab-button-outline-gradient {
-    0% { outline-color: red; }
-    25% { outline-color: yellow; }
-    50% { outline-color: green; }
-    75% { outline-color: lightskyblue; }
-    100% { outline-color: blue; }
+    0% {
+        outline-color: red;
+    }
+
+    25% {
+        outline-color: yellow;
+    }
+
+    50% {
+        outline-color: green;
+    }
+
+    75% {
+        outline-color: lightskyblue;
+    }
+
+    100% {
+        outline-color: blue;
+    }
 }
 
 #spectro-canvas {
     cursor: pointer;
+}
+
+#spectro-filter-control {
+    padding-top: 6px;
+    padding-bottom: 2px;
+    height: 28px;
+}
+
+#spectro-filter-control input[type="range"] {
+    position: absolute;
+    pointer-events: none;
+    appearance: none;
+    height: 0px;
+    width: 296px;
+}
+
+#spectro-filter-control input[type='range']::-webkit-slider-thumb {
+    pointer-events: all;
+    cursor: pointer;
+    height: 15px;
+    width: 15px;
+}
+
+#spectro-sliders-bar {
+    position: relative;
+    z-index: -1;
+    width: 260px;
+    top: 1px;
+    left: 20px;
+    height: 2px;
+    background-color: #ff3d84;
 }
