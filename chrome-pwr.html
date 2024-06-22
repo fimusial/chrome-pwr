@@ -1,8 +1,10 @@
 <html>
+
 <head>
     <link rel="stylesheet" type="text/css" href="chrome-pwr.css" />
     <link rel="stylesheet" type="text/css" href="spectro/spectro.css" />
 </head>
+
 <body>
     <a href="https://github.com/fimusial/chrome-pwr" target="_blank">
         <img id="bar" src="images/bar.png" />
@@ -39,13 +41,25 @@
         <button id="macro-recorder-play-loop-start">loop macro</button>
         <button id="macro-recorder-stop-playback" class="wide">stop macro playback</button>
         <input id="macro-recorder-delay-slider" type="range" min="100" max="10000" value="500" step="100"></input>
-        <p>initial / loop delay: <span id="macro-recorder-delay-value">0.5</span> sec</p>
+        <p>macro delay: <span id="macro-recorder-delay-value">0.5</span> seconds</p>
 
         <button id="spectro-tab-button" class="thin wide">audio: <span id="spectro-tab-name-span"></span></button>
-        <canvas id="spectro-canvas"></canvas>
+        <button id="spectro-toggle-recording" class="thin wide">toggle audio recording</button>
     </div>
+
+    <div id="spectro-filter-control" class="mt">
+        <input id="spectro-hp-slider" type="range" value="0" min="0" max="100" />
+        <input id="spectro-lp-slider" type="range" value="100" min="0" max="100" />
+        <div id="spectro-sliders-bar"></div>
+        <div style="display: flex; flex-direction: row; justify-content: space-between;">
+            <p>hp <span id="spectro-hp-value-display">100</span> hz</p><p>lp <span id="spectro-lp-value-display">100</span> hz</p>
+        </div>
+    </div>
+
+    <canvas id="spectro-canvas" height="100"></canvas>
 
     <script src="chrome-pwr.js"></script>
     <script src="spectro/spectro.js" type="module"></script>
 </body>
+
 </html>
