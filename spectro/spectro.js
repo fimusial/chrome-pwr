@@ -3,13 +3,14 @@ import { WaveformGraphVisualizer } from './visualizers/waveform-graph-visualizer
 import { VolumeBarsVisualizer } from './visualizers/volume-bars-visualizer.js';
 
 const spectroCanvas = document.getElementById('spectro-canvas');
+const savedCurrentVisualizer = localStorage.getItem('spectro-current-visualizer');
 const visualizers = [
     new MovingSpectrogramVisualizer(spectroCanvas),
     new WaveformGraphVisualizer(spectroCanvas),
     new VolumeBarsVisualizer(spectroCanvas)
 ];
 
-let currentVisualizer = Number(localStorage.getItem('spectro-current-visualizer'));
+let currentVisualizer = savedCurrentVisualizer === null ? 0 : Number(savedCurrentVisualizer);
 
 spectroCanvas.onclick = () => {
     currentVisualizer = (currentVisualizer + 1) % visualizers.length;
@@ -34,20 +35,31 @@ const nextVisualizerDraw = () => {
 
 nextVisualizerDraw();
 
+const tabButton = document.getElementById('spectro-tab-button');
 const tabNameSpan = document.getElementById('spectro-tab-name-span');
 let capturedTabId = 0;
-const onTabUpdated = (tabId, changeInfo, tab) => {
-    if (tabId === capturedTabId && changeInfo.title) {
-        tabNameSpan.innerText = tab.title;
-    }
+
+const sePlaybackInfo = (tab) => {
+    tabNameSpan.innerText = tab.title;
+    capturedTabId = tab.id;
+    tabButton.setAttribute('audioPlayback', 'true');
 };
 
-chrome.tabs.onUpdated.addListener(onTabUpdated);
+const removePlaybackInfo = () => {
+    tabNameSpan.innerText = '';
+    capturedTabId = 0;
+    tabButton.removeAttribute('audioPlayback');
+};
+
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (tabId === capturedTabId && changeInfo.title) {
+        sePlaybackInfo(tab);
+    }
+});
 
 const toggleCapturedTabId = () => {
     if (capturedTabId !== 0) {
-        tabNameSpan.innerText = '';
-        capturedTabId = 0;
+        removePlaybackInfo();
         return;
     }
 
@@ -60,13 +72,11 @@ const toggleCapturedTabId = () => {
         chrome.tabs.get(response.capturedTabId, (tab) => {
             if (tab) {
                 // capture already started
-                tabNameSpan.innerText = tab.title;
-                capturedTabId = tab.id;
+                sePlaybackInfo(tab);
             } else {
                 // tab was closed while capturing
                 chrome.offscreen.closeDocument();
-                tabNameSpan.innerText = '';
-                capturedTabId = 0;
+                removePlaybackInfo();
             }
         });
     });
@@ -74,7 +84,74 @@ const toggleCapturedTabId = () => {
 
 toggleCapturedTabId();
 
-document.getElementById('spectro-tab-button').onclick = async () => {
+const hpSlider = document.getElementById('spectro-hp-slider');
+const lpSlider = document.getElementById('spectro-lp-slider');
+const hpSliderValueDisplay = document.getElementById('spectro-hp-value-display');
+const lpSliderValueDisplay = document.getElementById('spectro-lp-value-display');
+const savedHpValue = localStorage.getItem('spectro-hp-value');
+const savedLpValue = localStorage.getItem('spectro-lp-value');
+
+hpSlider.value = savedHpValue === null ? 0 : Number(savedHpValue);
+lpSlider.value = savedLpValue === null ? 100 : Number(savedLpValue);
+
+const sliderValueToCurvedFrequency = (value) => {
+    const normalized = Number(value) / 100;
+    let curvedValue = Math.pow(normalized, 2.5);
+    return Math.round(curvedValue * 24000);
+};
+
+const updateSliderDisplayValues = () => {
+    hpSliderValueDisplay.innerText = sliderValueToCurvedFrequency(hpSlider.value);
+    lpSliderValueDisplay.innerText = sliderValueToCurvedFrequency(lpSlider.value);
+};
+
+updateSliderDisplayValues();
+
+const onSliderInput = async (event) => {
+    const isHpSlider = hpSlider == event.target;
+    const isLpSlider = lpSlider == event.target;
+    const rangeMin = 0;
+    const rangeMax = 100;
+    const space = 7;
+
+    let x = Number(hpSlider.value);
+    let y = Number(lpSlider.value);
+
+    // repel sliders
+    if (isHpSlider && x > y - space) {
+        if (x > rangeMax - space) {
+            x = rangeMax - space;
+        } else {
+            y = x + space;
+        }
+    } else if (isLpSlider && y < x + space) {
+        if (y < rangeMin + space) {
+            y = rangeMin + space;
+        } else {
+            x = y - space;
+        }
+    }
+
+    hpSlider.value = x;
+    lpSlider.value = y;
+    localStorage.setItem('spectro-hp-value', x);
+    localStorage.setItem('spectro-lp-value', y);
+
+    updateSliderDisplayValues();
+
+    await chrome.runtime.sendMessage({
+        audioHub: 'updateAudioFilters',
+        params: {
+            hp: sliderValueToCurvedFrequency(hpSlider.value),
+            lp: sliderValueToCurvedFrequency(lpSlider.value)
+        }
+    });
+};
+
+hpSlider.oninput = onSliderInput;
+lpSlider.oninput = onSliderInput;
+
+tabButton.onclick = async () => {
     const existingContexts = await chrome.runtime.getContexts({});
     const offscreenDocumentExists = !!existingContexts.find((context) => context.contextType === 'OFFSCREEN_DOCUMENT');
     if (offscreenDocumentExists) {
@@ -91,6 +168,16 @@ document.getElementById('spectro-tab-button').onclick = async () => {
 
     const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
     const streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tab.id });
-    await chrome.runtime.sendMessage({ audioHub: 'startTabCapture', params: { streamId: streamId, tabId: tab.id } });
+
+    await chrome.runtime.sendMessage({
+        audioHub: 'startTabCapture',
+        params: {
+            streamId: streamId,
+            tabId: tab.id,
+            hp: sliderValueToCurvedFrequency(hpSlider.value),
+            lp: sliderValueToCurvedFrequency(lpSlider.value)
+        }
+    });
+
     toggleCapturedTabId();
 };
