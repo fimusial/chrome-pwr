@@ -6,7 +6,7 @@ let lowpassFilter = null;
 
 const setAudioFiltersValues = (hp, lp) => {
     if (audioContext && lowpassFilter && highpassFilter) {
-        if (typeof hp !== 'number' || hp < 0 || hp > 24000) {
+        if (typeof hp !== 'number' || hp < highpassFilter.frequency.minValue || hp > highpassFilter.frequency.maxValue) {
             throw new RangeError(`'hp' must be a number within filter allowed frequency values`);
         }
 
