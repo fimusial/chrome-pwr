@@ -35,31 +35,34 @@ const nextVisualizerDraw = () => {
 
 nextVisualizerDraw();
 
-const tabButton = document.getElementById('spectro-tab-button');
+const tabButton = document.getElementById('spectro-capture-button');
 const tabNameSpan = document.getElementById('spectro-tab-name-span');
+const recordingButton = document.getElementById('spectro-recording-button');
 let capturedTabId = 0;
 
-const sePlaybackInfo = (tab) => {
+const setCaptureInfo = (tab) => {
     tabNameSpan.innerText = tab.title;
     capturedTabId = tab.id;
-    tabButton.setAttribute('audioPlayback', 'true');
+    tabButton.setAttribute('audioCaptureLive', 'true');
+    recordingButton.setAttribute('audioCaptureLive', 'true');
 };
 
-const removePlaybackInfo = () => {
+const clearCaptureInfo = () => {
     tabNameSpan.innerText = '';
     capturedTabId = 0;
-    tabButton.removeAttribute('audioPlayback');
+    tabButton.removeAttribute('audioCaptureLive');
+    recordingButton.removeAttribute('audioCaptureLive');
 };
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (tabId === capturedTabId && changeInfo.title) {
-        sePlaybackInfo(tab);
+        setCaptureInfo(tab);
     }
 });
 
-const toggleCapturedTabId = () => {
+const toggleCaptureInfo = () => {
     if (capturedTabId !== 0) {
-        removePlaybackInfo();
+        clearCaptureInfo();
         return;
     }
 
@@ -72,17 +75,17 @@ const toggleCapturedTabId = () => {
         chrome.tabs.get(response.capturedTabId, (tab) => {
             if (tab) {
                 // capture already started
-                sePlaybackInfo(tab);
+                setCaptureInfo(tab);
             } else {
                 // tab was closed while capturing
                 chrome.offscreen.closeDocument();
-                removePlaybackInfo();
+                clearCaptureInfo();
             }
         });
     });
 };
 
-toggleCapturedTabId();
+toggleCaptureInfo();
 
 const hpSlider = document.getElementById('spectro-hp-slider');
 const lpSlider = document.getElementById('spectro-lp-slider');
@@ -94,20 +97,20 @@ const savedLpValue = localStorage.getItem('spectro-lp-value');
 hpSlider.value = savedHpValue === null ? 0 : Number(savedHpValue);
 lpSlider.value = savedLpValue === null ? 100 : Number(savedLpValue);
 
-const sliderValueToCurvedFrequency = (value) => {
+const filterSliderValueToFrequency = (value) => {
     const normalized = Number(value) / 100;
     let curvedValue = Math.pow(normalized, 2.5);
     return Math.round(curvedValue * 24000);
 };
 
-const updateSliderDisplayValues = () => {
-    hpSliderValueDisplay.innerText = sliderValueToCurvedFrequency(hpSlider.value);
-    lpSliderValueDisplay.innerText = sliderValueToCurvedFrequency(lpSlider.value);
+const updateFilterSliderDisplayValues = () => {
+    hpSliderValueDisplay.innerText = filterSliderValueToFrequency(hpSlider.value);
+    lpSliderValueDisplay.innerText = filterSliderValueToFrequency(lpSlider.value);
 };
 
-updateSliderDisplayValues();
+updateFilterSliderDisplayValues();
 
-const onSliderInput = async (event) => {
+const onFilterSliderInput = async (event) => {
     const isHpSlider = hpSlider == event.target;
     const isLpSlider = lpSlider == event.target;
     const rangeMin = 0;
@@ -137,26 +140,26 @@ const onSliderInput = async (event) => {
     localStorage.setItem('spectro-hp-value', x);
     localStorage.setItem('spectro-lp-value', y);
 
-    updateSliderDisplayValues();
+    updateFilterSliderDisplayValues();
 
     await chrome.runtime.sendMessage({
         audioHub: 'updateAudioFilters',
         params: {
-            hp: sliderValueToCurvedFrequency(hpSlider.value),
-            lp: sliderValueToCurvedFrequency(lpSlider.value)
+            hp: filterSliderValueToFrequency(hpSlider.value),
+            lp: filterSliderValueToFrequency(lpSlider.value)
         }
     });
 };
 
-hpSlider.oninput = onSliderInput;
-lpSlider.oninput = onSliderInput;
+hpSlider.oninput = onFilterSliderInput;
+lpSlider.oninput = onFilterSliderInput;
 
 tabButton.onclick = async () => {
     const existingContexts = await chrome.runtime.getContexts({});
     const offscreenDocumentExists = !!existingContexts.find((context) => context.contextType === 'OFFSCREEN_DOCUMENT');
     if (offscreenDocumentExists) {
         chrome.offscreen.closeDocument();
-        toggleCapturedTabId();
+        toggleCaptureInfo();
         return;
     }
 
@@ -174,10 +177,10 @@ tabButton.onclick = async () => {
         params: {
             streamId: streamId,
             tabId: tab.id,
-            hp: sliderValueToCurvedFrequency(hpSlider.value),
-            lp: sliderValueToCurvedFrequency(lpSlider.value)
+            hp: filterSliderValueToFrequency(hpSlider.value),
+            lp: filterSliderValueToFrequency(lpSlider.value)
         }
     });
 
-    toggleCapturedTabId();
+    toggleCaptureInfo();
 };
