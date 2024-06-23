@@ -1,19 +1,4 @@
-#spectro-tab-button {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-}
-
-#spectro-tab-name-span:empty::before {
-    content: 'capture current tab';
-}
-
-#spectro-tab-button[audioPlayback] {
-    outline-color: red;
-    animation: spectro-tab-button-outline-gradient 1s linear 0s infinite alternate;
-}
-
-@keyframes spectro-tab-button-outline-gradient {
+@keyframes outline-color-pulse {
     0% {
         outline-color: red;
     }
@@ -33,6 +18,27 @@
     100% {
         outline-color: blue;
     }
+}
+
+#spectro-capture-button {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+#spectro-tab-name-span:empty::before {
+    content: 'capture current tab';
+}
+
+#spectro-capture-button[audioCaptureLive='true'],
+#spectro-recording-button[audioRecordingLive='true'] {
+    outline-color: red;
+    animation: outline-color-pulse 1s linear 0s infinite alternate;
+}
+
+#spectro-recording-button:not([audioCaptureLive='true']) {
+    pointer-events: none;
+    filter: grayscale(1);
 }
 
 #spectro-canvas {
