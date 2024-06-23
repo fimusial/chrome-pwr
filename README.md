@@ -1,4 +1,5 @@
-# Chrome PWR - a tiny browser pocketknife
+# Chrome PWR :heart:
+###### a tiny browser pocketknife
 
 <p align="center">
 <img alt="Chrome PWR logo" src="https://github.com/fimusial/chrome-pwr/blob/131dc08dc207467d95659c52256fab827babc7a8/images/chrome-pwr-no-bg.png?raw=true" width="400">
