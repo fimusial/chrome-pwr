@@ -184,3 +184,18 @@ tabButton.onclick = async () => {
 
     toggleCaptureInfo();
 };
+
+const setRecordingButtonText = (audioRecordingState) => {
+    recordingButton.innerText = audioRecordingState === 'recording' ? 'stop audio recording' : 'start audio recording';
+};
+
+chrome.runtime.sendMessage({ audioHub: 'getAudioRecordingState', params: {} }).then(setRecordingButtonText);
+
+recordingButton.onclick = async () => {
+    const response = await chrome.runtime.sendMessage({
+        audioHub: 'toggleAudioRecording',
+        params: {}
+    });
+
+    setRecordingButtonText(response);
+};
