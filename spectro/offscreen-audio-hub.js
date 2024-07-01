@@ -3,6 +3,7 @@ let capturedTabId = null;
 let audioAnalyzer = null;
 let highpassFilter = null;
 let lowpassFilter = null;
+let recorder = null;
 
 const setAudioFiltersValues = (hp, lp) => {
     if (audioContext && lowpassFilter && highpassFilter) {
@@ -31,6 +32,8 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
         case 'getFloatTimeDomainData': response = await getFloatTimeDomainData(); break;
         case 'getByteFrequencyData': response = await getByteFrequencyData(); break;
         case 'updateAudioFilters': response = await updateAudioFilters(request.params); break;
+        case 'toggleAudioRecording': response = await toggleAudioRecording(); break;
+        case 'getAudioRecordingState': response = await getAudioRecordingState(); break;
         default: throw new Error('unknown message', request);
     }
 
@@ -67,6 +70,9 @@ const startTabCapture = async (params) => {
     audioAnalyzer.connect(audioContext.destination);
 
     setAudioFiltersValues(params.hp, params.lp);
+
+    recorder = new MediaRecorder(audioMedia, { mimeType: 'audio/webm' });
+
     return 'capture started';
 };
 
@@ -97,4 +103,38 @@ const getByteFrequencyData = async () => {
 const updateAudioFilters = (params) => {
     setAudioFiltersValues(params.hp, params.lp);
     return 'audio filters updated';
+};
+
+const toggleAudioRecording = () => {
+    if (!recorder) {
+        return 'capture must be started first';
+    }
+
+    if (recorder.state === 'inactive') {
+        const data = [];
+
+        recorder.ondataavailable = (event) => {
+            data.push(event.data);
+        };
+
+        recorder.onstop = () => {
+            window.open(URL.createObjectURL(new Blob(data, { type: 'audio/webm' })), '_blank');
+        };
+
+        recorder.start();
+    } else if (recorder.state === 'recording') {
+        recorder.stop();
+    } else {
+        throw new Error('unexpected recorder state');
+    }
+
+    return recorder.state;
+};
+
+const getAudioRecordingState = () => {
+    if (!recorder) {
+        return 'no-capture';
+    }
+
+    return recorder.state;
 };
