@@ -1,4 +1,6 @@
 let audioContext = null;
+let audioContextSource = null;
+let audioMedia = null;
 let capturedTabId = null;
 let audioAnalyzer = null;
 let highpassFilter = null;
@@ -6,18 +8,20 @@ let lowpassFilter = null;
 let recorder = null;
 
 const setAudioFiltersValues = (hp, lp) => {
-    if (audioContext && lowpassFilter && highpassFilter) {
-        if (typeof hp !== 'number' || hp < highpassFilter.frequency.minValue || hp > highpassFilter.frequency.maxValue) {
-            throw new RangeError(`'hp' must be a number within filter allowed frequency values`);
-        }
-
-        if (typeof lp !== 'number' || lp < lowpassFilter.frequency.minValue || lp > lowpassFilter.frequency.maxValue) {
-            throw new RangeError(`'lp' must be a number within filter allowed frequency values`);
-        }
-
-        highpassFilter.frequency.setValueAtTime(hp, audioContext.currentTime);
-        lowpassFilter.frequency.setValueAtTime(lp, audioContext.currentTime);
+    if (!capturedTabId || !audioContext || !lowpassFilter || !highpassFilter) {
+        return;
     }
+
+    if (typeof hp !== 'number' || hp < highpassFilter.frequency.minValue || hp > highpassFilter.frequency.maxValue) {
+        throw new RangeError(`'hp' must be a number within filter allowed frequency values`);
+    }
+
+    if (typeof lp !== 'number' || lp < lowpassFilter.frequency.minValue || lp > lowpassFilter.frequency.maxValue) {
+        throw new RangeError(`'lp' must be a number within filter allowed frequency values`);
+    }
+
+    highpassFilter.frequency.setValueAtTime(hp, audioContext.currentTime);
+    lowpassFilter.frequency.setValueAtTime(lp, audioContext.currentTime);
 };
 
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
@@ -28,6 +32,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     let response = null;
     switch (request.audioHub) {
         case 'startTabCapture': response = await startTabCapture(request.params); break;
+        case 'stopTabCapture': response = await stopTabCapture(); break;
         case 'getCapturedTabId': response = await getCapturedTabId(); break;
         case 'getFloatTimeDomainData': response = await getFloatTimeDomainData(); break;
         case 'getByteFrequencyData': response = await getByteFrequencyData(); break;
@@ -42,9 +47,10 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 });
 
 const startTabCapture = async (params) => {
+    // todo: validate params
     capturedTabId = params.tabId;
 
-    const audioMedia = await navigator.mediaDevices.getUserMedia({
+    audioMedia = await navigator.mediaDevices.getUserMedia({
         audio: {
             mandatory: {
                 chromeMediaSource: 'tab',
@@ -54,17 +60,17 @@ const startTabCapture = async (params) => {
     });
 
     audioContext = new AudioContext();
-    const source = audioContext.createMediaStreamSource(audioMedia);
-
+    audioContextSource = audioContext.createMediaStreamSource(audioMedia);
+    
     lowpassFilter = audioContext.createBiquadFilter();
     lowpassFilter.type = 'lowpass';
     highpassFilter = audioContext.createBiquadFilter();
-    highpassFilter.type = 'highpass';
+    highpassFilter.type = 'highpass';    
 
     audioAnalyzer = audioContext.createAnalyser();
     audioAnalyzer.fftSize = 512;
 
-    source.connect(lowpassFilter);
+    audioContextSource.connect(lowpassFilter);
     lowpassFilter.connect(highpassFilter);
     highpassFilter.connect(audioAnalyzer);
     audioAnalyzer.connect(audioContext.destination);
@@ -76,12 +82,27 @@ const startTabCapture = async (params) => {
     return 'capture started';
 };
 
+const stopTabCapture = async () => {
+    if (!capturedTabId || !audioMedia || !audioContext || !audioContextSource) {
+        return 'capture must be started first';
+    }
+
+    audioMedia.getAudioTracks().forEach(track => {
+        track.stop(); // also stops audio recording
+        audioMedia.removeTrack(track);
+    });
+
+    audioContextSource.connect(audioContext.destination);
+    capturedTabId = null;
+    recorder = null;
+};
+
 const getCapturedTabId = async () => {
     return { capturedTabId: capturedTabId };
 };
 
 const getFloatTimeDomainData = async () => {
-    if (!audioAnalyzer) {
+    if (!capturedTabId || !audioAnalyzer) {
         return { data: null };
     }
 
@@ -91,7 +112,7 @@ const getFloatTimeDomainData = async () => {
 };
 
 const getByteFrequencyData = async () => {
-    if (!audioAnalyzer) {
+    if (!capturedTabId || !audioAnalyzer) {
         return { data: null };
     }
 
@@ -101,6 +122,7 @@ const getByteFrequencyData = async () => {
 };
 
 const updateAudioFilters = (params) => {
+    // todo: validate params
     setAudioFiltersValues(params.hp, params.lp);
     return 'audio filters updated';
 };
