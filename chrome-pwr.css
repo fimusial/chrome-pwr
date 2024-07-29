@@ -1,6 +1,6 @@
 @font-face {
     font-family: '8BIT WONDER';
-    src: url('./8BITWONDER.woff') format('woff');
+    src: url('./font/8bitwonder.ttf') format('truetype');
 }
 
 * {
