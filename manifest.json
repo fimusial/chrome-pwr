@@ -36,7 +36,7 @@
   "web_accessible_resources": [
     {
       "matches": ["*://*/*"],
-      "resources": ["8BITWONDER.woff"]
+      "resources": ["font/8bitwonder.ttf"]
     }
   ],
   "commands": {
