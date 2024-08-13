@@ -1,5 +1,5 @@
 export class VolumeBarsVisualizer {
-    constructor(canvas, colorHue = 338, wRes = 64) {
+    constructor(canvas, colorHue = 338, freqRes = 64) {
         if (!(canvas instanceof HTMLCanvasElement)) {
             throw new TypeError(`'canvas' must be an HTMLCanvasElement`);
         }
@@ -13,14 +13,16 @@ export class VolumeBarsVisualizer {
             throw new TypeError(`'colorHue' must be a positive integer`);
         }
 
-        if (!Number.isInteger(wRes) || wRes < 1) {
-            throw new TypeError(`'wRes' must be a positive integer`);
+        if (!Number.isInteger(freqRes) || freqRes < 1) {
+            throw new TypeError(`'freqRes' must be a positive integer`);
         }
 
         this.canvas = canvas;
         this.colorHue = colorHue;
         this.context = context;
-        this.wRes = wRes;
+        this.freqRes = freqRes;
+
+        this.orientation = 'horizontal';
         this.reset();
     }
 
@@ -28,7 +30,7 @@ export class VolumeBarsVisualizer {
     audioHubMethod = 'getByteFrequencyData';
 
     reset() {
-        this.volumes = new Array(this.wRes).fill(0);
+        this.volumes = new Array(this.freqRes).fill(0);
     }
 
     pushData(values) {
@@ -44,11 +46,11 @@ export class VolumeBarsVisualizer {
         values = values.slice(0, values.length - 20);
         let result = values;
 
-        const diff = this.wRes - values.length;
+        const diff = this.freqRes - values.length;
         if (diff < 0) {
-            result = new Array(this.wRes);
-            const fillFactor = Math.floor(values.length / this.wRes);
-            for (let i = 0; i < this.wRes; i++) {
+            result = new Array(this.freqRes);
+            const fillFactor = Math.floor(values.length / this.freqRes);
+            for (let i = 0; i < this.freqRes; i++) {
                 const segment = values.slice(i * fillFactor, i * fillFactor + fillFactor);
                 result[i] = segment.reduce((acc, value) => acc + value, 0) / fillFactor;
             }
@@ -61,29 +63,70 @@ export class VolumeBarsVisualizer {
 
     pushPlaceholder() {
         const time = new Date().getTime();
-        this.volumes = Array.from({ length: this.wRes }, (_, i) => {
+        this.volumes = Array.from({ length: this.freqRes }, (_, i) => {
             const sign = i % 2 === 0 ? 1 : -1;
             return 255 * Math.sin(sign * time / (256 + sign * 32) + i / 8);
         });
     }
 
+    setOrientation(orientation) {
+        if (orientation !== 'horizontal' && orientation !== 'vertical') {
+            throw new TypeError(`'orientation' must be 'horizontal' or 'vertical'`);
+        }
+
+        this.orientation = orientation;
+    }
+
     draw() {
+        if (this.orientation === 'horizontal') {
+            this.drawHorizontal();
+        } else if (this.orientation === 'vertical') {
+            this.drawVertical();
+        } else {
+            throw new TypeError(`'orientation' must be 'horizontal' or 'vertical'`);
+        }
+    }
+
+    // private
+    drawHorizontal() {
         this.context.fillStyle = 'hsl(0, 0%, 0%)';
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        const gradient = this.context.createLinearGradient(0, 0, 0, this.canvas.height);
-        gradient.addColorStop(0, 'hsl(0, 100%, 100%)');
-        gradient.addColorStop(0.75, `hsl(${this.colorHue}, 100%, 62%)`); // #ff3d84
-        this.context.fillStyle = gradient;
+        const gradientHorizontal = this.context.createLinearGradient(0, 0, 0, this.canvas.height);
+        gradientHorizontal.addColorStop(0, 'hsl(0, 100%, 100%)');
+        gradientHorizontal.addColorStop(0.75, `hsl(${this.colorHue}, 100%, 62%)`); // #ff3d84
+        this.context.fillStyle = gradientHorizontal;
 
-        const xDelta = this.canvas.width / this.wRes;
-        for (let i = 0; i < this.wRes; i++) {
-            const barHeight = this.volumes[i] / 255 * this.canvas.height;
+        const freqDelta = this.canvas.width / this.freqRes;
+        for (let i = 0; i < this.freqRes; i++) {
+            const barSize = this.volumes[i] / 255 * this.canvas.height;
             this.context.fillRect(
-                /* x */i * xDelta,
-                /* y */this.canvas.height - barHeight,
-                /* w */xDelta,
-                /* h */barHeight
+                /* x */i * freqDelta,
+                /* y */this.canvas.height - barSize,
+                /* w */freqDelta,
+                /* h */barSize
+            );
+        }
+    }
+
+    // private
+    drawVertical() {
+        this.context.fillStyle = 'hsl(0, 0%, 0%)';
+        this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+        const gradientVertical = this.context.createLinearGradient(0, 0, this.canvas.width, 0);
+        gradientVertical.addColorStop(0, 'hsl(0, 100%, 100%)');
+        gradientVertical.addColorStop(0.75, `hsl(${this.colorHue}, 100%, 62%)`); // #ff3d84
+        this.context.fillStyle = gradientVertical;
+
+        const freqDelta = this.canvas.height / this.freqRes;
+        for (let i = 0; i < this.freqRes; i++) {
+            const barSize = this.volumes[i] / 255 * this.canvas.width;
+            this.context.fillRect(
+                /* x */this.canvas.width - barSize,
+                /* y */i * freqDelta,
+                /* w */barSize,
+                /* h */freqDelta
             );
         }
     }

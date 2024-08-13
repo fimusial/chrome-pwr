@@ -1,39 +1,16 @@
-import { MovingSpectrogramVisualizer } from './visualizers/moving-spectrogram-visualizer.js';
-import { WaveformGraphVisualizer } from './visualizers/waveform-graph-visualizer.js';
-import { VolumeBarsVisualizer } from './visualizers/volume-bars-visualizer.js';
+import { VisualizerHandler } from './visualizers/visualizer-handler.js';
 
 const spectroCanvas = document.getElementById('spectro-canvas');
-const savedCurrentVisualizer = localStorage.getItem('spectro-current-visualizer');
-const visualizers = [
-    new MovingSpectrogramVisualizer(spectroCanvas),
-    new WaveformGraphVisualizer(spectroCanvas),
-    new VolumeBarsVisualizer(spectroCanvas)
-];
+const visualizerHandler = new VisualizerHandler(spectroCanvas);
+visualizerHandler.start();
 
-let currentVisualizer = savedCurrentVisualizer === null ? 0 : Number(savedCurrentVisualizer);
-
-spectroCanvas.onclick = () => {
-    currentVisualizer = (currentVisualizer + 1) % visualizers.length;
-    visualizers[currentVisualizer].reset();
-    localStorage.setItem('spectro-current-visualizer', currentVisualizer);
+const spectroCanvasPopOutButton = document.getElementById('spectro-canvas-pop-out-button');
+spectroCanvasPopOutButton.onclick = async () => {
+    const openTabs = await chrome.tabs.query({ title: 'chrome-extension://*/spectro/spectro-pop-out.html#chrome-pwr' });
+    if (!openTabs || !openTabs.length) {
+        chrome.windows.create({ url: 'spectro/spectro-pop-out.html#chrome-pwr', type: 'popup' });
+    }
 };
-
-const nextVisualizerDraw = () => {
-    const visualizer = visualizers[currentVisualizer];
-    setTimeout(nextVisualizerDraw, visualizer.nextDrawDelayMs);
-
-    chrome.runtime.sendMessage({ audioHub: visualizer.audioHubMethod, params: {} }).then((response) => {
-        if (response && response.data) {
-            visualizer.pushData(response.data);
-        } else {
-            visualizer.pushPlaceholder();
-        }
-
-        visualizer.draw();
-    });
-};
-
-nextVisualizerDraw();
 
 const hpSlider = document.getElementById('spectro-hp-slider');
 const lpSlider = document.getElementById('spectro-lp-slider');

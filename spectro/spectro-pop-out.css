@@ -1,0 +1,53 @@
+body {
+    margin: 0;
+    background-color: black;
+}
+
+#spectro-canvas-container {
+    position: relative;
+}
+
+#spectro-canvas {
+    height: 100vh;
+    width: 100vw;
+    object-fit: contain;
+    position: absolute;
+    cursor: pointer;
+}
+
+#spectro-canvas.stretchable {
+    object-fit: initial;
+}
+
+#spectro-canvas-controls {
+    position: absolute;
+    padding: 5px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    width: 80px;
+}
+
+body:not(:hover) #spectro-canvas-controls {
+    display: none;
+}
+
+.spectro-canvas-control-button {
+    position: relative;
+    height: 40px;
+    top: 5px;
+    padding: 5px;
+    margin-left: 10px;
+    outline: 2px solid white;
+    border-radius: 5px;
+    color: white;
+    font-size: 30;
+    background-color: #ff3d84;
+    cursor: pointer;
+    transition: all 0.1s ease;
+}
+
+.spectro-canvas-control-button:hover {
+    transform: scale(0.95);
+}

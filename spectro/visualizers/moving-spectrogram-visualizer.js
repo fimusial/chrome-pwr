@@ -1,5 +1,5 @@
 export class MovingSpectrogramVisualizer {
-    constructor(canvas, colorHue = 338, wRes = 100, hRes = 50) {
+    constructor(canvas, colorHue = 338, freqRes = 100, timeRes = 50) {
         if (!(canvas instanceof HTMLCanvasElement)) {
             throw new TypeError(`'canvas' must be an HTMLCanvasElement`);
         }
@@ -13,19 +13,21 @@ export class MovingSpectrogramVisualizer {
             throw new TypeError(`'colorHue' must be a positive integer`);
         }
 
-        if (!Number.isInteger(wRes) || wRes < 1) {
-            throw new TypeError(`'wRes' must be a positive integer`);
+        if (!Number.isInteger(freqRes) || freqRes < 1) {
+            throw new TypeError(`'freqRes' must be a positive integer`);
         }
 
-        if (!Number.isInteger(hRes) || hRes < 1) {
-            throw new TypeError(`'hRes' must be a positive integer`);
+        if (!Number.isInteger(timeRes) || timeRes < 1) {
+            throw new TypeError(`'timeRes' must be a positive integer`);
         }
 
         this.canvas = canvas;
         this.colorHue = colorHue;
         this.context = context;
-        this.wRes = wRes;
-        this.hRes = hRes;
+        this.freqRes = freqRes;
+        this.timeRes = timeRes;
+
+        this.orientation = 'horizontal';
         this.reset();
     }
 
@@ -33,7 +35,7 @@ export class MovingSpectrogramVisualizer {
     audioHubMethod = 'getByteFrequencyData';
 
     reset() {
-        this.grid = Array.from(Array(this.hRes), () => new Array(this.wRes).fill(0));
+        this.grid = Array.from(Array(this.timeRes), () => new Array(this.freqRes).fill(0));
     }
 
     pushData(values) {
@@ -49,11 +51,11 @@ export class MovingSpectrogramVisualizer {
         values = values.slice(0, values.length - 20);
         let result = values;
 
-        const diff = this.wRes - values.length;
+        const diff = this.freqRes - values.length;
         if (diff < 0) {
-            result = new Array(this.wRes);
-            const fillFactor = Math.floor(values.length / this.wRes);
-            for (let i = 0; i < this.wRes; i++) {
+            result = new Array(this.freqRes);
+            const fillFactor = Math.floor(values.length / this.freqRes);
+            for (let i = 0; i < this.freqRes; i++) {
                 const segment = values.slice(i * fillFactor, i * fillFactor + fillFactor);
                 result[i] = segment.reduce((acc, value) => acc + value, 0) / fillFactor;
             }
@@ -66,40 +68,78 @@ export class MovingSpectrogramVisualizer {
     }
 
     pushPlaceholder() {
-        const v = Array.from({ length: this.wRes }, () => Math.random() * 255 * 0.125);
+        const v = Array.from({ length: this.freqRes }, () => Math.random() * 255 * 0.125);
         const time = new Date().getTime();
         const sines = [Math.sin(time / 256), Math.cos(time / 384), Math.sin(time / 512), Math.cos(time / 640)];
-        const wResD2 = this.wRes / 2;
+        const freqResD2 = this.freqRes / 2;
 
         for (let i = 0; i < sines.length; i++) {
-            const a = Math.floor(sines[i] * wResD2 + wResD2);
-            const b = Math.floor(-sines[i] * wResD2 + wResD2);
+            const a = Math.floor(sines[i] * freqResD2 + freqResD2);
+            const b = Math.floor(-sines[i] * freqResD2 + freqResD2);
             v[a] = v[a + 1] = v[b - 1] = v[b] = 255 * 0.2 * i + 0.2;
         }
 
         this.grid.push(v);
         this.grid.shift();
 
-        for (let y = 0; y < this.hRes - 1; y++) {
-            for (let x = 0; x < this.wRes; x++) {
+        for (let y = 0; y < this.timeRes - 1; y++) {
+            for (let x = 0; x < this.freqRes; x++) {
                 this.grid[y][x] *= 0.90;
             }
         }
     }
 
+    setOrientation(orientation) {
+        if (orientation !== 'horizontal' && orientation !== 'vertical') {
+            throw new TypeError(`'orientation' must be 'horizontal' or 'vertical'`);
+        }
+
+        this.orientation = orientation;
+    }
+
     draw() {
+        if (this.orientation === 'horizontal') {
+            this.drawHorizontal();
+        } else if (this.orientation === 'vertical') {
+            this.drawVertical();
+        } else {
+            throw new TypeError(`'orientation' must be 'horizontal' or 'vertical'`);
+        }
+    }
+
+    // private
+    drawHorizontal() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        const yDelta = this.canvas.height / this.hRes;
-        const xDelta = this.canvas.width / this.wRes;
-        for (let y = 0; y < this.hRes; y++) {
-            for (let x = 0; x < this.wRes; x++) {
+        const freqDelta = this.canvas.width / this.freqRes;
+        const timeDelta = this.canvas.height / this.timeRes;
+        for (let y = 0; y < this.timeRes; y++) {
+            for (let x = 0; x < this.freqRes; x++) {
                 const value = this.grid[y][x];
                 this.context.fillStyle = `hsl(${this.colorHue}, 100%, ${(Math.abs(value) / 255) * 100}%)`;
                 this.context.fillRect(
-                    /* x */x * xDelta,
-                    /* y */y * yDelta,
-                    /* w */xDelta,
-                    /* h */yDelta
+                    /* x */x * freqDelta,
+                    /* y */y * timeDelta,
+                    /* w */freqDelta,
+                    /* h */timeDelta
+                );
+            }
+        }
+    }
+
+    // private
+    drawVertical() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        const timeDelta = this.canvas.width / this.timeRes;
+        const freqDelta = this.canvas.height / this.freqRes;
+        for (let x = 0; x < this.timeRes; x++) {
+            for (let y = 0; y < this.freqRes; y++) {
+                const value = this.grid[x][y];
+                this.context.fillStyle = `hsl(${this.colorHue}, 100%, ${(Math.abs(value) / 255) * 100}%)`;
+                this.context.fillRect(
+                    /* x */x * timeDelta,
+                    /* y */y * freqDelta,
+                    /* w */timeDelta,
+                    /* h */freqDelta
                 );
             }
         }

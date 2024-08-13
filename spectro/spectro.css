@@ -41,8 +41,35 @@
     filter: grayscale(1);
 }
 
+#spectro-canvas-container {
+    position: relative;
+}
+
+#spectro-canvas-container:not(:hover) #spectro-canvas-pop-out-button {
+    display: none;
+}
+
 #spectro-canvas {
+    position: absolute;
     cursor: pointer;
+}
+
+#spectro-canvas-pop-out-button {
+    position: absolute;
+    z-index: 1;
+    margin: 4px;
+    padding: 2px;
+    outline: 2px solid white;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    font-size: 20;
+    background-color: #ff3d84;
+    transition: all 0.1s ease;
+}
+
+#spectro-canvas-pop-out-button:hover {
+    transform: scale(0.95);
 }
 
 #spectro-filter-control {

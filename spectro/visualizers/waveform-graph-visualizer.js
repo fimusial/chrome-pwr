@@ -16,6 +16,8 @@ export class WaveformGraphVisualizer {
         this.canvas = canvas;
         this.colorHue = colorHue;
         this.context = context;
+
+        this.orientation = 'horizontal';
         this.reset();
     }
 
@@ -42,14 +44,33 @@ export class WaveformGraphVisualizer {
         const time = new Date().getTime();
         this.frame = Array.from({ length: 1024 }, (_, i) => {
             return 0.125 * Math.cos((time + i) / 512)
-            + 0.125 * Math.sin((time - i) / 128)
-            + 0.125 * Math.cos((time + i) / 64)
-            + 0.125 * Math.sin((time - i) / 4)
-            ;
+                + 0.125 * Math.sin((time - i) / 128)
+                + 0.125 * Math.cos((time + i) / 64)
+                + 0.125 * Math.sin((time - i) / 4)
+                ;
         });
     }
 
+    setOrientation(orientation) {
+        if (orientation !== 'horizontal' && orientation !== 'vertical') {
+            throw new TypeError(`'orientation' must be 'horizontal' or 'vertical'`);
+        }
+
+        this.orientation = orientation;
+    }
+
     draw() {
+        if (this.orientation === 'horizontal') {
+            this.drawHorizontal();
+        } else if (this.orientation === 'vertical') {
+            this.drawVertical();
+        } else {
+            throw new TypeError(`'orientation' must be 'horizontal' or 'vertical'`);
+        }
+    }
+
+    // private
+    drawHorizontal() {
         this.context.lineWidth = 3;
         this.context.fillStyle = 'hsl(0, 0%, 0%)';
         this.context.strokeStyle = `hsl(${this.colorHue}, 100%, 62%)`; // #ff3d84
@@ -59,16 +80,40 @@ export class WaveformGraphVisualizer {
             return;
         }
 
-        const xDelta = this.canvas.width / this.frame.length;
+        const pathDelta = this.canvas.width / this.frame.length;
 
         this.context.beginPath();
         this.context.moveTo(0, this.canvas.height / 2);
-        for (let i = 0, x = 0; i < this.frame.length; i += 1, x += xDelta) {
+        for (let i = 0, x = 0; i < this.frame.length; i += 1, x += pathDelta) {
             const y = (this.frame[i] + 0.5) * this.canvas.height;
             this.context.lineTo(x, y);
         }
 
         this.context.lineTo(this.canvas.width, this.canvas.height / 2);
+        this.context.stroke();
+    }
+
+    // private
+    drawVertical() {
+        this.context.lineWidth = 3;
+        this.context.fillStyle = 'hsl(0, 0%, 0%)';
+        this.context.strokeStyle = `hsl(${this.colorHue}, 100%, 62%)`; // #ff3d84
+        this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+        if (this.frame.length === 0) {
+            return;
+        }
+
+        const pathDelta = this.canvas.height / this.frame.length;
+
+        this.context.beginPath();
+        this.context.moveTo(this.canvas.width / 2, 0);
+        for (let i = 0, y = 0; i < this.frame.length; i += 1, y += pathDelta) {
+            const x = (this.frame[i] + 0.5) * this.canvas.width;
+            this.context.lineTo(x, y);
+        }
+
+        this.context.lineTo(this.canvas.width / 2, this.canvas.height);
         this.context.stroke();
     }
 }
