@@ -119,8 +119,8 @@ export class MovingSpectrogramVisualizer {
                 this.context.fillRect(
                     /* x */x * freqDelta,
                     /* y */y * timeDelta,
-                    /* w */freqDelta,
-                    /* h */timeDelta
+                    /* w */freqDelta + 1,
+                    /* h */timeDelta + 1
                 );
             }
         }
@@ -138,8 +138,8 @@ export class MovingSpectrogramVisualizer {
                 this.context.fillRect(
                     /* x */x * timeDelta,
                     /* y */y * freqDelta,
-                    /* w */timeDelta,
-                    /* h */freqDelta
+                    /* w */timeDelta + 1,
+                    /* h */freqDelta + 1
                 );
             }
         }

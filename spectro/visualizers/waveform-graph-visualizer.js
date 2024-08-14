@@ -71,7 +71,7 @@ export class WaveformGraphVisualizer {
 
     // private
     drawHorizontal() {
-        this.context.lineWidth = 3;
+        this.context.lineWidth = 4;
         this.context.fillStyle = 'hsl(0, 0%, 0%)';
         this.context.strokeStyle = `hsl(${this.colorHue}, 100%, 62%)`; // #ff3d84
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
@@ -95,7 +95,7 @@ export class WaveformGraphVisualizer {
 
     // private
     drawVertical() {
-        this.context.lineWidth = 3;
+        this.context.lineWidth = 4;
         this.context.fillStyle = 'hsl(0, 0%, 0%)';
         this.context.strokeStyle = `hsl(${this.colorHue}, 100%, 62%)`; // #ff3d84
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);

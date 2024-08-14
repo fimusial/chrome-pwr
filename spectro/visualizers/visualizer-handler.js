@@ -51,16 +51,7 @@ export class VisualizerHandler {
     }
 
     toggleOrientation() {
-        if (this.orientation === 'horizontal') {
-            this.orientation = 'vertical';
-            this.canvas.width = 100;
-            this.canvas.height = 300;
-        } else {
-            this.orientation = 'horizontal';
-            this.canvas.width = 300;
-            this.canvas.height = 100;
-        }
-
+        this.orientation = this.orientation === 'horizontal' ? 'vertical' : 'horizontal';
         this.visualizers.forEach(visualizer => {
             visualizer.setOrientation(this.orientation);
         });

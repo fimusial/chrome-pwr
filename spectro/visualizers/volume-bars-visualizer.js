@@ -103,7 +103,7 @@ export class VolumeBarsVisualizer {
             this.context.fillRect(
                 /* x */i * freqDelta,
                 /* y */this.canvas.height - barSize,
-                /* w */freqDelta,
+                /* w */freqDelta + 1,
                 /* h */barSize
             );
         }
@@ -126,7 +126,7 @@ export class VolumeBarsVisualizer {
                 /* x */this.canvas.width - barSize,
                 /* y */i * freqDelta,
                 /* w */barSize,
-                /* h */freqDelta
+                /* h */freqDelta + 1
             );
         }
     }
