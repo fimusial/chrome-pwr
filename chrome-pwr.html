@@ -10,57 +10,76 @@
         <img id="bar" src="images/bar.png" />
     </a>
 
-    <div class="mt grid">
-        <button id="forced-css-add">add page css</button>
-        <button id="forced-css-clear">clear page css</button>
-        <button id="content-edit-on">content edit on</button>
-        <button id="content-edit-off">content edit off</button>
+    <div id="foldable-controls" class="pb">
+        <label for="foldable-misc-checkbox">misc</label>
+        <input type="checkbox" id="foldable-misc-checkbox" />
+        <label for="foldable-macros-checkbox">macros</label>
+        <input type="checkbox" id="foldable-macros-checkbox" />
+        <label for="foldable-audio-checkbox">audio</label>
+        <input type="checkbox" id="foldable-audio-checkbox" />
     </div>
 
-    <div class="mt grid3">
-        <div class="radio-and-label-container">
-            <label for="max-scroll-direction-up"><img src="images/up-arrow-24px.png" /></label>
-            <input type="radio" id="max-scroll-direction-up" name="max-scroll-direction" value="up" />
+    <div id="foldable-misc">
+        <div class="pb grid">
+            <button id="forced-css-add">add page css</button>
+            <button id="forced-css-clear">clear page css</button>
+            <button id="content-edit-on">content edit on</button>
+            <button id="content-edit-off">content edit off</button>
         </div>
 
-        <button id="max-scroll-start-element">scroll element</button>
-        <button id="max-scroll-start-window">scroll window</button>
+        <div class="pb grid3">
+            <div class="radio-and-label-container">
+                <label for="max-scroll-direction-up"><img src="images/up-arrow-24px.png" /></label>
+                <input type="radio" id="max-scroll-direction-up" name="max-scroll-direction" value="up" />
+            </div>
 
-        <div class="radio-and-label-container">
-            <label for="max-scroll-direction-down"><img src="images/down-arrow-24px.png" /></label>
-            <input type="radio" id="max-scroll-direction-down" name="max-scroll-direction" value="down" />
-        </div>
+            <button id="max-scroll-start-element">scroll element</button>
+            <button id="max-scroll-start-window">scroll window</button>
 
-        <button id="max-scroll-cancel" class="wide">cancel scrolling</button>
-    </div>
+            <div class="radio-and-label-container">
+                <label for="max-scroll-direction-down"><img src="images/down-arrow-24px.png" /></label>
+                <input type="radio" id="max-scroll-direction-down" name="max-scroll-direction" value="down" />
+            </div>
 
-    <div class="mt grid">
-        <button id="macro-recorder-start">record macro</button>
-        <button id="macro-recorder-stop">stop macro recording</button>
-        <button id="macro-recorder-play-once">play macro</button>
-        <button id="macro-recorder-play-loop-start">loop macro</button>
-        <button id="macro-recorder-stop-playback" class="wide">stop macro playback</button>
-        <input id="macro-recorder-delay-slider" type="range" min="100" max="10000" value="500" step="100"></input>
-        <p>macro delay: <span id="macro-recorder-delay-value">0.5</span> seconds</p>
-    </div>
-
-    <div class="mt grid">
-        <button id="spectro-capture-button" class="thin wide">audio: <span id="spectro-tab-name-span"></span></button>
-        <button id="spectro-recording-button" class="thin wide">start audio recording</button>
-    </div>
-
-    <div id="spectro-filter-control" class="mt">
-        <input id="spectro-hp-slider" type="range" value="0" min="0" max="100" />
-        <input id="spectro-lp-slider" type="range" value="100" min="0" max="100" />
-        <div id="spectro-sliders-bar"></div>
-        <div style="display: flex; flex-direction: row; justify-content: space-between;">
-            <p>hp <span id="spectro-hp-value-display">100</span> hz</p><p>lp <span id="spectro-lp-value-display">100</span> hz</p>
+            <button id="max-scroll-cancel" class="wide">cancel scrolling</button>
         </div>
     </div>
 
-    <div id="spectro-canvas-container" class="mt">
-        <canvas id="spectro-canvas" width="300" height="100"></canvas>
-        <div id="spectro-canvas-pop-out-button">&#9974;</div>
+    <div id="foldable-macros">
+        <div class="pb grid">
+            <button id="macro-recorder-start">record macro</button>
+            <button id="macro-recorder-stop">stop macro recording</button>
+            <button id="macro-recorder-play-once">play macro</button>
+            <button id="macro-recorder-play-loop-start">loop macro</button>
+            <button id="macro-recorder-stop-playback" class="wide">stop macro playback</button>
+            <input id="macro-recorder-delay-slider" type="range" min="100" max="10000" value="500" step="100"></input>
+            <p>macro delay: <span id="macro-recorder-delay-value">0.5</span> seconds</p>
+        </div>
+    </div>
+
+    <div id="foldable-audio">
+        <div class="pb grid">
+            <button id="spectro-capture-button" class="thin wide">audio: <span id="spectro-tab-name-span"></span></button>
+            <button id="spectro-recording-button" class="thin wide">start audio recording</button>
+        </div>
+
+        <a id="volume-duck-settings-link" href="volume-duck/volume-duck-settings.html" class="pb">
+            volume duck settings
+        </a>
+
+        <div id="spectro-filter-control" class="pb">
+            <input id="spectro-hp-slider" type="range" value="0" min="0" max="100" />
+            <input id="spectro-lp-slider" type="range" value="100" min="0" max="100" />
+            <div id="spectro-sliders-bar"></div>
+            <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                <p>hp <span id="spectro-hp-value-display">100</span> hz</p><p>lp <span id="spectro-lp-value-display">100</span> hz</p>
+            </div>
+        </div>
+
+        <div id="spectro-canvas-container">
+            <canvas id="spectro-canvas" width="300" height="100"></canvas>
+            <div id="spectro-canvas-pop-out-button">&#9974;</div>
+        </div>
     </div>
 
     <script src="chrome-pwr.js"></script>
