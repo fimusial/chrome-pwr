@@ -16,7 +16,10 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
         return;
     }
 
-    const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+    const [tab] = await chrome.tabs.query({ active: true });
+    if (!tab) {
+        return;
+    }
 
     await chrome.scripting.executeScript({
         target: { tabId: tab.id },

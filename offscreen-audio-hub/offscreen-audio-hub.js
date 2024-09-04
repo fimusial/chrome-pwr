@@ -39,6 +39,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
         case 'updateAudioFilters': response = await updateAudioFilters(request.params); break;
         case 'toggleAudioRecording': response = await toggleAudioRecording(); break;
         case 'getAudioRecordingState': response = await getAudioRecordingState(); break;
+        case 'getVolumeDuckSetting': response = await getVolumeDuckSetting(request.params); break;
         default: throw new Error('unknown message', request);
     }
 
@@ -47,7 +48,10 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 });
 
 const startTabCapture = async (params) => {
-    // todo: validate params
+    if (!params || !params.tabId || !params.streamId) {
+        return;
+    }
+
     capturedTabId = params.tabId;
 
     audioMedia = await navigator.mediaDevices.getUserMedia({
@@ -61,7 +65,7 @@ const startTabCapture = async (params) => {
 
     audioContext = new AudioContext();
     audioContextSource = audioContext.createMediaStreamSource(audioMedia);
-    
+
     lowpassFilter = audioContext.createBiquadFilter();
     lowpassFilter.type = 'lowpass';
     highpassFilter = audioContext.createBiquadFilter();
@@ -122,7 +126,6 @@ const getByteFrequencyData = async () => {
 };
 
 const updateAudioFilters = (params) => {
-    // todo: validate params
     setAudioFiltersValues(params.hp, params.lp);
     return 'audio filters updated';
 };
@@ -159,4 +162,13 @@ const getAudioRecordingState = () => {
     }
 
     return recorder.state;
+};
+
+const getVolumeDuckSetting = (params) => {
+    if (!params || !params.hostname) {
+        return;
+    }
+
+    const settings = localStorage.getItem('volume-duck-settings');
+    return (settings ? JSON.parse(settings) : []).find(x => x.hostname === params.hostname);
 };

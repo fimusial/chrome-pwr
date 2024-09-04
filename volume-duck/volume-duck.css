@@ -1,0 +1,35 @@
+.volume-duck-website-container {
+    padding: 8px 0 8px 0;
+    display: grid;
+    display: grid;
+    grid-template-columns: 30px 260px;
+    grid-template-rows: auto;
+    row-gap: 0;
+    column-gap: 10px;
+}
+
+.volume-duck-website-remove-button {
+    grid-row: span 2;
+    height: auto;
+}
+
+.volume-duck-website-inputs-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.volume-duck-website-volume-slider {
+    height: 2px !important;
+    width: 100px;
+}
+
+.volume-duck-website-volume-slider::-webkit-slider-thumb {
+    height: 15px !important;
+    width: 15px !important;
+}
+
+.volume-duck-website-volume-span {
+    width: 42px;
+}

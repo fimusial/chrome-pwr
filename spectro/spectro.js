@@ -135,7 +135,11 @@ tabButton.onclick = async () => {
 
         clearCaptureInfo();
     } else {
-        const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+        const [tab] = await chrome.tabs.query({ active: true });
+        if (!tab) {
+            return;
+        }
+
         const streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tab.id });
         await chrome.runtime.sendMessage({
             audioHub: 'startTabCapture',

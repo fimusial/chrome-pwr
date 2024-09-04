@@ -127,10 +127,14 @@ document.getElementById('macro-recorder-stop-playback').onclick = async () => {
     });
 };
 
+document.getElementById('volume-duck-button').onclick = () => {
+    location.href = '/volume-duck/volume-duck.html';
+};
+
 document.querySelectorAll('[name=max-scroll-direction]').forEach((element) => {
     element.onchange = (event) => {
         localStorage.setItem('max-scroll-direction', event.target.value);
-    }
+    };
 });
 
 document.getElementById('macro-recorder-delay-slider').oninput = (event) => {
