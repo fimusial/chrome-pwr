@@ -1,6 +1,6 @@
 import * as blades from './blades.js';
 
-chrome.runtime.onStartup.addListener(async details => {
+const startOffscreenAudioHub = async () => {
     const existingContexts = await chrome.runtime.getContexts({});
     if (!existingContexts.find((context) => context.contextType === 'OFFSCREEN_DOCUMENT')) {
         await chrome.offscreen.createDocument({
@@ -9,7 +9,10 @@ chrome.runtime.onStartup.addListener(async details => {
             justification: 'Chrome PWR tab audio capture'
         });
     }
-});
+};
+
+chrome.runtime.onInstalled.addListener(startOffscreenAudioHub);
+chrome.runtime.onStartup.addListener(startOffscreenAudioHub);
 
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     if (!request.triggerBlade || typeof request.triggerBlade !== 'string') {
