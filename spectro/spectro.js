@@ -29,8 +29,8 @@ const filterSliderValueToFrequency = (value) => {
 };
 
 const updateFilterSliderDisplayValues = () => {
-    hpSliderValueDisplay.innerText = filterSliderValueToFrequency(hpSlider.value);
-    lpSliderValueDisplay.innerText = filterSliderValueToFrequency(lpSlider.value);
+    hpSliderValueDisplay.textContent = filterSliderValueToFrequency(hpSlider.value);
+    lpSliderValueDisplay.textContent = filterSliderValueToFrequency(lpSlider.value);
 };
 
 updateFilterSliderDisplayValues();
@@ -85,14 +85,14 @@ const recordingButton = document.getElementById('spectro-recording-button');
 let capturedTabId = 0;
 
 const setCaptureInfo = (tab) => {
-    tabNameSpan.innerText = tab.title;
+    tabNameSpan.textContent = tab.title;
     capturedTabId = tab.id;
     tabButton.setAttribute('audioCaptureLive', 'true');
     recordingButton.setAttribute('audioCaptureLive', 'true');
 };
 
 const clearCaptureInfo = () => {
-    tabNameSpan.innerText = '';
+    tabNameSpan.textContent = '';
     capturedTabId = 0;
     tabButton.removeAttribute('audioCaptureLive');
     recordingButton.removeAttribute('audioCaptureLive');
@@ -156,7 +156,7 @@ tabButton.onclick = async () => {
 };
 
 const setRecordingButtonText = (audioRecordingState) => {
-    recordingButton.innerText = audioRecordingState === 'recording' ? 'stop audio recording' : 'start audio recording';
+    recordingButton.textContent = audioRecordingState === 'recording' ? 'stop audio recording' : 'start audio recording';
 };
 
 chrome.runtime.sendMessage({ audioHub: 'getAudioRecordingState', params: {} }).then(setRecordingButtonText);

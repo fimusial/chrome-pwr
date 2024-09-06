@@ -9,7 +9,7 @@ window.onload = () => {
     const delaySliderValue = localStorage.getItem('macro-recorder-delay-slider');
     if (delaySliderValue) {
         document.getElementById('macro-recorder-delay-slider').value = delaySliderValue;
-        document.getElementById('macro-recorder-delay-value').innerText = `${delaySliderValue / 1000}`;
+        document.getElementById('macro-recorder-delay-value').textContent = `${delaySliderValue / 1000}`;
     }
 
     const savedShowMisc = localStorage.getItem('show-misc');
@@ -138,7 +138,10 @@ document.querySelectorAll('[name=max-scroll-direction]').forEach((element) => {
 });
 
 document.getElementById('macro-recorder-delay-slider').oninput = (event) => {
-    document.getElementById('macro-recorder-delay-value').innerText = `${event.target.value / 1000}`;
+    document.getElementById('macro-recorder-delay-value').textContent = `${event.target.value / 1000}`;
+};
+
+document.getElementById('macro-recorder-delay-slider').onchange = (event) => {
     localStorage.setItem('macro-recorder-delay-slider', event.target.value);
 };
 

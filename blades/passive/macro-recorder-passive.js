@@ -90,10 +90,10 @@ document.setIndicator = (type) => {
     indicatorElement.id = 'chrome-pwr-macro-indicator';
 
     if (type === 'playback') {
-        indicatorElement.innerText = '\u25B6 Macro Playback';
+        indicatorElement.textContent = '\u25B6 Macro Playback';
         indicatorElement.style.backgroundColor = 'green';
     } else {
-        indicatorElement.innerText = '\u2B24 Macro Recording';
+        indicatorElement.textContent = '\u2B24 Macro Recording';
         indicatorElement.style.backgroundColor = 'red';
     }
 
