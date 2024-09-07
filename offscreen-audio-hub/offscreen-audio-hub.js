@@ -1,3 +1,5 @@
+import webm2wav from './webm2wav.js';
+
 let audioContext = null;
 let audioContextSource = null;
 let audioMedia = null;
@@ -69,7 +71,7 @@ const startTabCapture = async (params) => {
     lowpassFilter = audioContext.createBiquadFilter();
     lowpassFilter.type = 'lowpass';
     highpassFilter = audioContext.createBiquadFilter();
-    highpassFilter.type = 'highpass';    
+    highpassFilter.type = 'highpass';
 
     audioAnalyzer = audioContext.createAnalyser();
     audioAnalyzer.fftSize = 512;
@@ -82,6 +84,20 @@ const startTabCapture = async (params) => {
     setAudioFiltersValues(params.hp, params.lp);
 
     recorder = new MediaRecorder(audioMedia, { mimeType: 'audio/webm' });
+
+    recorder.ondataavailable = (event) => {
+        const webmBlob = new Blob([event.data], { type: 'audio/webm' });
+        webm2wav(webmBlob, 32).then(wavBlob => {
+            const wavBlobUrl = URL.createObjectURL(wavBlob);
+            const anchor = document.createElement('a');
+            anchor.href = wavBlobUrl;
+            anchor.download = 'chrome-pwr-recording.wav';
+            document.body.appendChild(anchor);
+            anchor.click();
+            document.body.removeChild(anchor);
+            URL.revokeObjectURL(wavBlobUrl);
+        });
+    };
 
     return 'capture started';
 };
@@ -136,16 +152,6 @@ const toggleAudioRecording = () => {
     }
 
     if (recorder.state === 'inactive') {
-        const data = [];
-
-        recorder.ondataavailable = (event) => {
-            data.push(event.data);
-        };
-
-        recorder.onstop = () => {
-            window.open(URL.createObjectURL(new Blob(data, { type: 'audio/webm' })), '_blank');
-        };
-
         recorder.start();
     } else if (recorder.state === 'recording') {
         recorder.stop();
