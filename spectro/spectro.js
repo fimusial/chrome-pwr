@@ -25,7 +25,7 @@ lpSlider.value = savedLpValue === null ? 100 : Number(savedLpValue);
 const filterSliderValueToFrequency = (value) => {
     const normalized = Number(value) / 100;
     let curvedValue = Math.pow(normalized, 2.5);
-    return Math.round(curvedValue * 24000);
+    return Math.min(Math.max(Math.round(curvedValue * 22000), 0), 22000);
 };
 
 const updateFilterSliderDisplayValues = () => {
