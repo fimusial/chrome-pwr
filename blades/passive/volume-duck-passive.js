@@ -1,6 +1,5 @@
 const duckVolume = (volume) => {
     [...document.getElementsByTagName('audio'), ...document.getElementsByTagName('video')].forEach(element => element.volume = volume);
-    console.log('ducking at ' + volume);
 };
 
 chrome.runtime.sendMessage({
@@ -25,4 +24,15 @@ chrome.runtime.sendMessage({
 
     duckVolume(volumeNormalized);
     observer.observe(document.documentElement, { childList: true, subtree: true });
+
+    const stopDuckingButton = document.createElement('button');
+    stopDuckingButton.id = 'volume-duck-stop-ducking-button';
+    stopDuckingButton.textContent = 'stop ducking';
+
+    stopDuckingButton.onclick = () => {
+        observer.disconnect();
+        stopDuckingButton.remove();
+    };
+
+    document.body.appendChild(stopDuckingButton);
 });

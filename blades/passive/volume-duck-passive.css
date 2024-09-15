@@ -3,11 +3,10 @@
     src: url('chrome-extension://__MSG_@@extension_id__/font/8bitwonder.ttf') format('truetype');
 }
 
-#chrome-pwr-macro-indicator {
+#volume-duck-stop-ducking-button {
     position: fixed;
     z-index: 2147483647;
-    pointer-events: none;
-    top: 10px;
+    bottom: 10px;
     left: 10px;
     padding: 5px 15px;
     border-radius: 20px;
@@ -15,16 +14,5 @@
     font-family: '8BIT WONDER', sans-serif !important;
     color: white;
     text-align: center;
-}
-
-.chrome-pwr-blink {
-    position: fixed;
-    z-index: 2147483647;
-    pointer-events: none;
     background-color: #ff3d84;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    box-shadow: inset 0px 0px 0px 10px #ffd9e7;
-    opacity: 0.71;
 }
