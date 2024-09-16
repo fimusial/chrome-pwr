@@ -10,9 +10,16 @@
     left: 10px;
     padding: 5px 15px;
     border-radius: 20px;
+    border-color: black;
     opacity: 0.71;
     font-family: '8BIT WONDER', sans-serif !important;
     color: white;
     text-align: center;
-    background-color: #ff3d84;
+    outline: 2px solid #ff3d84;
+    background-color: #222222;
+    transition: all 0.1s ease;
+}
+
+#volume-duck-stop-ducking-button:hover {
+    transform: scale(0.95);
 }
