@@ -3,7 +3,7 @@ import { WaveformGraphVisualizer } from './waveform-graph-visualizer.js';
 import { VolumeBarsVisualizer } from './volume-bars-visualizer.js';
 
 export class VisualizerHandler {
-    constructor(canvas, orientation = 'horizontal') {
+    constructor(canvas, shortAudioHubCircuit = false, orientation = 'horizontal') {
         if (!(canvas instanceof HTMLCanvasElement)) {
             throw new TypeError(`'canvas' must be an HTMLCanvasElement`);
         }
@@ -14,6 +14,7 @@ export class VisualizerHandler {
 
         this.canvas = canvas;
         this.orientation = orientation;
+        this.shortAudioHubCircuit = shortAudioHubCircuit;
     }
 
     start() {
@@ -35,6 +36,12 @@ export class VisualizerHandler {
         const nextVisualizerDraw = () => {
             const visualizer = this.visualizers[this.currentVisualizer];
             setTimeout(nextVisualizerDraw, visualizer.nextDrawDelayMs);
+
+            if (this.shortAudioHubCircuit) {
+                visualizer.pushPlaceholder();
+                visualizer.draw();
+                return;
+            }
 
             chrome.runtime.sendMessage({ audioHub: visualizer.audioHubMethod, params: {} }).then((response) => {
                 if (response && response.data) {

@@ -89,6 +89,7 @@ const setCaptureInfo = (tab) => {
     capturedTabId = tab.id;
     tabButton.setAttribute('audioCaptureLive', 'true');
     recordingButton.setAttribute('audioCaptureLive', 'true');
+    visualizerHandler.shortAudioHubCircuit = false;
 };
 
 const clearCaptureInfo = () => {
@@ -96,6 +97,7 @@ const clearCaptureInfo = () => {
     capturedTabId = 0;
     tabButton.removeAttribute('audioCaptureLive');
     recordingButton.removeAttribute('audioCaptureLive');
+    visualizerHandler.shortAudioHubCircuit = true;
 };
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
@@ -106,6 +108,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
 chrome.runtime.sendMessage({ audioHub: 'getCapturedTabId', params: {} }).then((response) => {
     if (!response || !response.capturedTabId) {
+        clearCaptureInfo();
         return;
     }
 
