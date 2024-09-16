@@ -1,4 +1,7 @@
+import { scriptRequiresApis } from '../script-requires-apis.js';
 import { VisualizerHandler } from './visualizers/visualizer-handler.js';
+
+scriptRequiresApis(['tabs', 'windows', 'runtime', 'tabCapture']);
 
 const spectroCanvas = document.getElementById('spectro-canvas');
 const visualizerHandler = new VisualizerHandler(spectroCanvas);

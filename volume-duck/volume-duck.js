@@ -1,3 +1,7 @@
+import { scriptRequiresApis } from '../script-requires-apis.js';
+
+scriptRequiresApis(['tabs']);
+
 let settings = localStorage.getItem('volume-duck-settings');
 settings = settings ? JSON.parse(settings) : [];
 

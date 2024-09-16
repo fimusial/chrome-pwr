@@ -1,3 +1,7 @@
+import { scriptRequiresApis } from './script-requires-apis.js';
+
+scriptRequiresApis(['runtime', 'commands']);
+
 window.onload = () => {
     const maxScrollDirection = localStorage.getItem('max-scroll-direction');
     if (maxScrollDirection) {
