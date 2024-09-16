@@ -121,7 +121,7 @@ export class VolumeBarsVisualizer {
 
         const freqDelta = this.canvas.height / this.freqRes;
         for (let i = 0; i < this.freqRes; i++) {
-            const barSize = this.volumes[i] / 255 * this.canvas.width;
+            const barSize = this.volumes[this.freqRes - i - 1] / 255 * this.canvas.width;
             this.context.fillRect(
                 /* x */this.canvas.width - barSize,
                 /* y */i * freqDelta,

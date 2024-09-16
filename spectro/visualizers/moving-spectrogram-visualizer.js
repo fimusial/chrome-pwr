@@ -133,7 +133,7 @@ export class MovingSpectrogramVisualizer {
         const freqDelta = this.canvas.height / this.freqRes;
         for (let x = 0; x < this.timeRes; x++) {
             for (let y = 0; y < this.freqRes; y++) {
-                const value = this.grid[x][y];
+                const value = this.grid[x][this.freqRes - y - 1];
                 this.context.fillStyle = `hsl(${this.colorHue}, 100%, ${(Math.abs(value) / 255) * 100}%)`;
                 this.context.fillRect(
                     /* x */x * timeDelta,
