@@ -2,6 +2,10 @@ import { scriptRequiresApis } from '../script-requires-apis.js';
 
 scriptRequiresApis(['tabs']);
 
+window.onblur = () => {
+    window.close();
+};
+
 let settings = localStorage.getItem('volume-duck-settings');
 settings = settings ? JSON.parse(settings) : [];
 
@@ -86,7 +90,7 @@ const createWebsiteHtmlElements = (website) => {
 document.getElementById('volume-duck-websites-list').replaceChildren(...settings.map(website => createWebsiteHtmlElements(website)));
 
 document.getElementById('volume-duck-add-website-button').onclick = async () => {
-    const [tab] = await chrome.tabs.query({ active: true });
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     if (!tab) {
         return;
     }

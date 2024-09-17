@@ -19,7 +19,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
         return;
     }
 
-    const [tab] = await chrome.tabs.query({ active: true });
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     if (!tab) {
         return;
     }

@@ -32,6 +32,10 @@ window.onload = () => {
     document.getElementById('foldable-audio-checkbox').checked = showAudio;
 };
 
+window.onblur = () => {
+    window.close();
+};
+
 document.getElementById('foldable-misc-checkbox').onclick = (event) => {
     document.getElementById('foldable-misc').classList.toggle('hidden', !event.target.checked);
     localStorage.setItem('show-misc', event.target.checked);
