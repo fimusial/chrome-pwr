@@ -1,6 +1,6 @@
 # PWRToy :heart:
 <p align="center">
-<img alt="logo" src="" width="400">
+<img alt="logo" src="https://github.com/fimusial/chrome-pwr/blob/4c9bfe7e901e3f22889c5a308b29585e38c5ac87/images/logo-no-bg.png?raw=true" width="400">
 </p>
 <p align="right">
 Browser's tiny Swiss Army knife
