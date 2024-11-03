@@ -6,6 +6,7 @@
 * {
     font-family: '8BIT WONDER', sans-serif;
     color: white;
+    user-select: none;
 }
 
 html {
@@ -16,6 +17,10 @@ body {
     width: 300px;
     margin: 5px;
     background-color: #222222;
+}
+
+a {
+    text-decoration: none;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -121,6 +126,10 @@ input[type='range']:hover::-webkit-slider-thumb {
     padding-bottom: 8px;
 }
 
+.mb {
+    margin-bottom: 8px;
+}
+
 .radio-and-label-container {
     padding: 3px 0;
     display: flex;
@@ -134,12 +143,17 @@ input[type='range']:hover::-webkit-slider-thumb {
     width: 34px;
 }
 
-#bar {
+.bar {
     width: 300px;
-    object-fit: cover;
     height: 32px;
-    image-rendering: pixelated;
-    padding-bottom: 3px;
+    padding-bottom: 2px;
+    text-align: center;
+    background: #ff3d84;
+    color: white;
+    letter-spacing: -3px;
+    text-shadow: 3px 3px #aaaaaa;
+    border-radius: 32px;
+    font-size: 26px;
 }
 
 #foldable-controls {

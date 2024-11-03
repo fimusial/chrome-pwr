@@ -1,0 +1,73 @@
+{
+  "manifest_version": 3,
+  "name": "PWRToy",
+  "description": "Browser's tiny Swiss Army knife",
+  "version": "1.1",
+  "icons": {
+    "16": "images/icon16.png",
+    "32": "images/icon32.png",
+    "48": "images/icon48.png",
+    "128": "images/icon128.png"
+  },
+  "action": {
+    "default_popup": "chrome-pwr.html"
+  },
+  "permissions": [
+    "tabs",
+    "activeTab",
+    "tabCapture",
+    "scripting",
+    "offscreen"
+  ],
+  "background": {
+    "service_worker": "service-worker.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*/*", "file:///*/*"],
+      "js": ["blades/passive/forced-css-passive.js"]
+    },
+    {
+      "matches": ["*://*/*"],
+      "js": ["blades/passive/macro-recorder-passive.js"],
+      "css": ["blades/passive/macro-recorder-passive.css"]
+    },
+    {
+      "matches": ["*://*/*"],
+      "js": ["blades/passive/node-picker-passive.js"],
+      "css": ["blades/passive/node-picker-passive.css"]
+    },
+    {
+      "matches": ["*://*/*"],
+      "js": ["blades/passive/volume-duck-passive.js"],
+      "css": ["blades/passive/volume-duck-passive.css"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "matches": ["*://*/*"],
+      "resources": ["font/8bitwonder.ttf"]
+    }
+  ],
+  "commands": {
+    "macroRecorderPlayOnce": {
+      "suggested_key": {
+        "default": "Alt+1"
+      },
+      "description": "Play the recorded macro once"
+    },
+    "macroRecorderPlayLoopStart": {
+      "suggested_key": {
+        "default": "Alt+2"
+      },
+      "description": "Start playing the recorded macro in a loop"
+    },
+    "macroRecorderStopPlayback": {
+      "suggested_key": {
+        "default": "Alt+X"
+      },
+      "description": "Stop macro playback"
+    }
+  }
+}
