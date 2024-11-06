@@ -23,4 +23,4 @@ This feature allows you to record a sequence of mouse clicks on a website and pl
 - **Content Edit** - This feature provides a quick way to edit any text on a page without using the developer tools. Simply click the "Content Edit On" button, place your cursor at the desired text location and start typing. Essentially, it activates the `contenteditable` HTML attribute for the entire document body.
 
 ## Get it from Chrome Web Store
-Available soon!
+[PWRToy](https://chromewebstore.google.com/detail/pwrtoy/bhnjkagdoajnhojbecjgjcimidlmogbo)
