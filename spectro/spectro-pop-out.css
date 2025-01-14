@@ -23,7 +23,9 @@ body:not(:hover) #spectro-canvas-controls {
 .spectro-canvas-control-button {
     outline: 2px solid white;
     border-radius: 5px;
-    cursor: pointer;
+    width: 40px;
+    text-align: center;
+    aspect-ratio: 1;
     color: white;
     font-size: 30;
     background-color: #ff3d84;

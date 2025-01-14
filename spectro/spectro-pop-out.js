@@ -16,7 +16,7 @@ window.onload = resizeCanvas;
 const visualizerHandler = new VisualizerHandler(spectroCanvas);
 visualizerHandler.start();
 
-document.getElementById('spectro-canvas-rotate').onclick = () => {
+document.getElementById('spectro-canvas-toggle-orientation-button').onclick = () => {
     resizeCanvas();
     visualizerHandler.toggleOrientation();
 };
