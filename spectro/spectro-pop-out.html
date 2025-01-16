@@ -1,6 +1,7 @@
 <html>
 
 <head>
+    <link rel="stylesheet" type="text/css" href="../chrome-pwr.css" />
     <link rel="stylesheet" type="text/css" href="spectro-pop-out.css" />
 </head>
 
@@ -8,8 +9,22 @@
     <div id="spectro-canvas-container">
         <canvas id="spectro-canvas" width="300" height="100"></canvas>
         <div id="spectro-canvas-controls">
-            <div id="spectro-canvas-toggle-orientation-button" class="spectro-canvas-control-button">
+            <div id="spectro-canvas-toggle-orientation-button">
                 &#9706;
+            </div>
+            <div id="spectro-canvas-color-picker">
+                <div>
+                    <input id="spectro-hue-slider" type="range" value="338" min="0" max="360" />
+                    <label id="spectro-hue-slider-label" for="spectro-hue-slider">h</label>
+                </div>
+                <div>
+                    <input id="spectro-sat-slider" type="range" value="100" min="0" max="100" />
+                    <label id="spectro-sat-slider-label" for="spectro-sat-slider">s</label>
+                </div>
+                <div>
+                    <input id="spectro-lit-slider" type="range" value="50" min="0" max="100" />
+                    <label id="spectro-lit-slider-label" for="spectro-lit-slider">l</label>
+                </div>
             </div>
         </div>
     </div>

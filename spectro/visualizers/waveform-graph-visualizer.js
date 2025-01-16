@@ -1,5 +1,5 @@
 export class WaveformGraphVisualizer {
-    constructor(canvas, colorHue = 338) {
+    constructor(canvas, hue = 338, sat = 100, lit = 50) {
         if (!(canvas instanceof HTMLCanvasElement)) {
             throw new TypeError(`'canvas' must be an HTMLCanvasElement`);
         }
@@ -9,12 +9,22 @@ export class WaveformGraphVisualizer {
             throw new TypeError(`could not get 2d context from 'canvas'`);
         }
 
-        if (!Number.isInteger(colorHue) || colorHue < 1) {
-            throw new TypeError(`'colorHue' must be a positive integer`);
+        if (!Number.isInteger(hue) || hue < 0) {
+            throw new TypeError(`'hue' must be a nonnegative integer`);
+        }
+
+        if (!Number.isInteger(sat) || sat < 0 || 100 < sat) {
+            throw new TypeError(`'sat' must be an integer between 0 and 100`);
+        }
+
+        if (!Number.isInteger(lit) || lit < 0 || 100 < lit) {
+            throw new TypeError(`'lit' must be an integer between 0 and 100`);
         }
 
         this.canvas = canvas;
-        this.colorHue = colorHue;
+        this.hue = hue;
+        this.sat = sat;
+        this.lit = lit;
         this.context = context;
 
         this.orientation = 'horizontal';
@@ -23,6 +33,30 @@ export class WaveformGraphVisualizer {
 
     nextDrawDelayMs = 25;
     audioHubMethod = 'getFloatTimeDomainData';
+
+    setHue(hue) {
+        if (!Number.isInteger(hue) || hue < 0) {
+            throw new TypeError(`'hue' must be a nonnegative integer`);
+        }
+
+        this.hue = hue;
+    }
+
+    setSat(sat) {
+        if (!Number.isInteger(sat) || sat < 0 || 100 < sat) {
+            throw new TypeError(`'sat' must be an integer between 0 and 100`);
+        }
+
+        this.sat = sat;
+    }
+
+    setLit(lit) {
+        if (!Number.isInteger(lit) || lit < 0 || 100 < lit) {
+            throw new TypeError(`'lit' must be an integer between 0 and 100`);
+        }
+
+        this.lit = lit;
+    }
 
     reset() {
         this.frame = [0];
@@ -73,7 +107,7 @@ export class WaveformGraphVisualizer {
     drawHorizontal() {
         this.context.lineWidth = 4;
         this.context.fillStyle = 'hsl(0, 0%, 0%)';
-        this.context.strokeStyle = `hsl(${this.colorHue}, 100%, 62%)`; // #ff3d84
+        this.context.strokeStyle = this.getHslString();
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
         if (this.frame.length === 0) {
@@ -97,7 +131,7 @@ export class WaveformGraphVisualizer {
     drawVertical() {
         this.context.lineWidth = 4;
         this.context.fillStyle = 'hsl(0, 0%, 0%)';
-        this.context.strokeStyle = `hsl(${this.colorHue}, 100%, 62%)`; // #ff3d84
+        this.context.strokeStyle = this.getHslString();
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
         if (this.frame.length === 0) {
@@ -115,5 +149,10 @@ export class WaveformGraphVisualizer {
 
         this.context.lineTo(this.canvas.width / 2, this.canvas.height);
         this.context.stroke();
+    }
+
+    // private
+    getHslString() {
+        return `hsl(${this.hue}, ${this.sat}%, ${this.lit}%)`;
     }
 }

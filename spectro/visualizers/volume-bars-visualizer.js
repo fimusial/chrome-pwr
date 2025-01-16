@@ -1,5 +1,5 @@
 export class VolumeBarsVisualizer {
-    constructor(canvas, colorHue = 338, freqRes = 64) {
+    constructor(canvas, hue = 338, sat = 100, lit = 50, freqRes = 64) {
         if (!(canvas instanceof HTMLCanvasElement)) {
             throw new TypeError(`'canvas' must be an HTMLCanvasElement`);
         }
@@ -9,8 +9,16 @@ export class VolumeBarsVisualizer {
             throw new TypeError(`could not get 2d context from 'canvas'`);
         }
 
-        if (!Number.isInteger(colorHue) || colorHue < 1) {
-            throw new TypeError(`'colorHue' must be a positive integer`);
+        if (!Number.isInteger(hue) || hue < 0) {
+            throw new TypeError(`'hue' must be a nonnegative integer`);
+        }
+
+        if (!Number.isInteger(sat) || sat < 0 || 100 < sat) {
+            throw new TypeError(`'sat' must be an integer between 0 and 100`);
+        }
+
+        if (!Number.isInteger(lit) || lit < 0 || 100 < lit) {
+            throw new TypeError(`'lit' must be an integer between 0 and 100`);
         }
 
         if (!Number.isInteger(freqRes) || freqRes < 1) {
@@ -18,7 +26,9 @@ export class VolumeBarsVisualizer {
         }
 
         this.canvas = canvas;
-        this.colorHue = colorHue;
+        this.hue = hue;
+        this.sat = sat;
+        this.lit = lit;
         this.context = context;
         this.freqRes = freqRes;
 
@@ -28,6 +38,30 @@ export class VolumeBarsVisualizer {
 
     nextDrawDelayMs = 20;
     audioHubMethod = 'getByteFrequencyData';
+
+    setHue(hue) {
+        if (!Number.isInteger(hue) || hue < 0) {
+            throw new TypeError(`'hue' must be a nonnegative integer`);
+        }
+
+        this.hue = hue;
+    }
+
+    setSat(sat) {
+        if (!Number.isInteger(sat) || sat < 0 || 100 < sat) {
+            throw new TypeError(`'sat' must be an integer between 0 and 100`);
+        }
+
+        this.sat = sat;
+    }
+
+    setLit(lit) {
+        if (!Number.isInteger(lit) || lit < 0 || 100 < lit) {
+            throw new TypeError(`'lit' must be an integer between 0 and 100`);
+        }
+
+        this.lit = lit;
+    }
 
     reset() {
         this.volumes = new Array(this.freqRes).fill(0);
@@ -91,11 +125,7 @@ export class VolumeBarsVisualizer {
     drawHorizontal() {
         this.context.fillStyle = 'hsl(0, 0%, 0%)';
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-        const gradientHorizontal = this.context.createLinearGradient(0, 0, 0, this.canvas.height);
-        gradientHorizontal.addColorStop(0, 'hsl(0, 100%, 100%)');
-        gradientHorizontal.addColorStop(0.75, `hsl(${this.colorHue}, 100%, 62%)`); // #ff3d84
-        this.context.fillStyle = gradientHorizontal;
+        this.context.fillStyle = this.getHslString();
 
         const freqDelta = this.canvas.width / this.freqRes;
         for (let i = 0; i < this.freqRes; i++) {
@@ -113,11 +143,7 @@ export class VolumeBarsVisualizer {
     drawVertical() {
         this.context.fillStyle = 'hsl(0, 0%, 0%)';
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-        const gradientVertical = this.context.createLinearGradient(0, 0, this.canvas.width, 0);
-        gradientVertical.addColorStop(0, 'hsl(0, 100%, 100%)');
-        gradientVertical.addColorStop(0.75, `hsl(${this.colorHue}, 100%, 62%)`); // #ff3d84
-        this.context.fillStyle = gradientVertical;
+        this.context.fillStyle = this.getHslString();
 
         const freqDelta = this.canvas.height / this.freqRes;
         for (let i = 0; i < this.freqRes; i++) {
@@ -129,5 +155,10 @@ export class VolumeBarsVisualizer {
                 /* h */freqDelta + 1
             );
         }
+    }
+
+    // private
+    getHslString() {
+        return `hsl(${this.hue}, ${this.sat}%, ${this.lit}%)`;
     }
 }

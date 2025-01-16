@@ -3,6 +3,10 @@ body {
     background-color: black;
 }
 
+body:not(:hover) #spectro-canvas-controls {
+    display: none;
+}
+
 #spectro-canvas {
     position: absolute;
     cursor: pointer;
@@ -16,11 +20,11 @@ body {
     align-items: center;
 }
 
-body:not(:hover) #spectro-canvas-controls {
-    display: none;
+#spectro-canvas-controls div {
+    margin-right: 10px;
 }
 
-.spectro-canvas-control-button {
+#spectro-canvas-toggle-orientation-button {
     outline: 2px solid white;
     border-radius: 5px;
     width: 45px;
@@ -28,11 +32,60 @@ body:not(:hover) #spectro-canvas-controls {
     aspect-ratio: 1;
     color: white;
     font-size: 30;
-    background-color: #ff3d84;
+    background-color: #222222;
     cursor: pointer;
     transition: all 0.1s ease;
 }
 
-.spectro-canvas-control-button:hover {
+#spectro-canvas-toggle-orientation-button:hover {
     transform: scale(0.95);
+}
+
+#spectro-canvas-color-picker {
+    padding: 5px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#spectro-canvas-color-picker div {
+    position: relative;
+}
+
+#spectro-canvas-color-picker label {
+    pointer-events: none;
+    position: absolute;
+    top: 10;
+}
+
+#spectro-hue-slider {
+    background: linear-gradient(90deg,
+            hsl(0, 100%, 50%) 0%,
+            hsl(36, 100%, 50%) 10%,
+            hsl(72, 100%, 50%) 20%,
+            hsl(108, 100%, 50%) 30%,
+            hsl(144, 100%, 50%) 40%,
+            hsl(180, 100%, 50%) 50%,
+            hsl(216, 100%, 50%) 60%,
+            hsl(252, 100%, 50%) 70%,
+            hsl(288, 100%, 50%) 80%,
+            hsl(324, 100%, 50%) 90%,
+            hsl(360, 100%, 50%) 100%);
+}
+
+#spectro-sat-slider::-webkit-slider-thumb,
+#spectro-lit-slider::-webkit-slider-thumb {
+    background: #222222;
+}
+
+:root {
+    --spectro-hue-slider-thumb-color: hsl(0, 0%, 0%);
+}
+
+#spectro-hue-slider::-webkit-slider-thumb {
+    background: var(--spectro-hue-slider-thumb-color);
+}
+
+#spectro-hue-slider-label {
+    color: #222222;
 }

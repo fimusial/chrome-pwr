@@ -1,5 +1,5 @@
 export class MovingSpectrogramVisualizer {
-    constructor(canvas, colorHue = 338, freqRes = 100, timeRes = 50) {
+    constructor(canvas, hue = 338, sat = 100, lit = 50, freqRes = 100, timeRes = 50) {
         if (!(canvas instanceof HTMLCanvasElement)) {
             throw new TypeError(`'canvas' must be an HTMLCanvasElement`);
         }
@@ -9,8 +9,16 @@ export class MovingSpectrogramVisualizer {
             throw new TypeError(`could not get 2d context from 'canvas'`);
         }
 
-        if (!Number.isInteger(colorHue) || colorHue < 1) {
-            throw new TypeError(`'colorHue' must be a positive integer`);
+        if (!Number.isInteger(hue) || hue < 0) {
+            throw new TypeError(`'hue' must be a nonnegative integer`);
+        }
+
+        if (!Number.isInteger(sat) || sat < 0 || 100 < sat) {
+            throw new TypeError(`'sat' must be an integer between 0 and 100`);
+        }
+
+        if (!Number.isInteger(lit) || lit < 0 || 100 < lit) {
+            throw new TypeError(`'lit' must be an integer between 0 and 100`);
         }
 
         if (!Number.isInteger(freqRes) || freqRes < 1) {
@@ -22,7 +30,9 @@ export class MovingSpectrogramVisualizer {
         }
 
         this.canvas = canvas;
-        this.colorHue = colorHue;
+        this.hue = hue;
+        this.sat = sat;
+        this.lit = lit;
         this.context = context;
         this.freqRes = freqRes;
         this.timeRes = timeRes;
@@ -33,6 +43,30 @@ export class MovingSpectrogramVisualizer {
 
     nextDrawDelayMs = 10;
     audioHubMethod = 'getByteFrequencyData';
+
+    setHue(hue) {
+        if (!Number.isInteger(hue) || hue < 0) {
+            throw new TypeError(`'hue' must be a nonnegative integer`);
+        }
+
+        this.hue = hue;
+    }
+
+    setSat(sat) {
+        if (!Number.isInteger(sat) || sat < 0 || 100 < sat) {
+            throw new TypeError(`'sat' must be an integer between 0 and 100`);
+        }
+
+        this.sat = sat;
+    }
+
+    setLit(lit) {
+        if (!Number.isInteger(lit) || lit < 0 || 100 < lit) {
+            throw new TypeError(`'lit' must be an integer between 0 and 100`);
+        }
+
+        this.lit = lit;
+    }
 
     reset() {
         this.grid = Array.from(Array(this.timeRes), () => new Array(this.freqRes).fill(0));
@@ -115,7 +149,7 @@ export class MovingSpectrogramVisualizer {
         for (let y = 0; y < this.timeRes; y++) {
             for (let x = 0; x < this.freqRes; x++) {
                 const value = this.grid[y][x];
-                this.context.fillStyle = `hsl(${this.colorHue}, 100%, ${(Math.abs(value) / 255) * 100}%)`;
+                this.context.fillStyle = this.getHslString(value);
                 this.context.fillRect(
                     /* x */x * freqDelta,
                     /* y */y * timeDelta,
@@ -134,7 +168,7 @@ export class MovingSpectrogramVisualizer {
         for (let x = 0; x < this.timeRes; x++) {
             for (let y = 0; y < this.freqRes; y++) {
                 const value = this.grid[x][this.freqRes - y - 1];
-                this.context.fillStyle = `hsl(${this.colorHue}, 100%, ${(Math.abs(value) / 255) * 100}%)`;
+                this.context.fillStyle = this.getHslString(value);
                 this.context.fillRect(
                     /* x */x * timeDelta,
                     /* y */y * freqDelta,
@@ -143,5 +177,10 @@ export class MovingSpectrogramVisualizer {
                 );
             }
         }
+    }
+
+    // private
+    getHslString(value) {
+        return `hsl(${this.hue}, ${this.sat}%, ${(Math.abs(value) / 255) * this.lit}%)`;
     }
 }

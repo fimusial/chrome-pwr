@@ -63,4 +63,22 @@ export class VisualizerHandler {
             visualizer.setOrientation(this.orientation);
         });
     }
+
+    setHue(hue) {
+        this.visualizers.forEach(visualizer => {
+            visualizer.setHue(hue);
+        });
+    }
+
+    setSat(sat) {
+        this.visualizers.forEach(visualizer => {
+            visualizer.setSat(sat);
+        });
+    }
+
+    setLit(lit) {
+        this.visualizers.forEach(visualizer => {
+            visualizer.setLit(lit);
+        });
+    }
 }
