@@ -100,7 +100,7 @@ export class VisualizerHandler {
         });
     }
 
-    //private
+    // private
     saveOrientation() {
         localStorage.setItem(`${this.localStorageKeyPrefix}-visualizer-orientation`, this.orientation);
     }

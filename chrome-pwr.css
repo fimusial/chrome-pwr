@@ -126,7 +126,11 @@ input[type='range']:hover::-webkit-slider-thumb {
     padding-bottom: 8px;
 }
 
-.mb {
+.mb-4 {
+    margin-bottom: 4px;
+}
+
+.mb-8 {
     margin-bottom: 8px;
 }
 
@@ -147,7 +151,6 @@ input[type='range']:hover::-webkit-slider-thumb {
     width: 300px;
     height: 32px;
     padding-bottom: 2px;
-    margin-bottom: 2px;
     text-align: center;
     background: #ff3d84;
     color: white;
