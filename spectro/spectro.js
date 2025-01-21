@@ -4,7 +4,7 @@ import { VisualizerHandler } from './visualizers/visualizer-handler.js';
 scriptRequiresApis(['tabs', 'windows', 'runtime', 'tabCapture']);
 
 const spectroCanvas = document.getElementById('spectro-canvas');
-const visualizerHandler = new VisualizerHandler(spectroCanvas);
+const visualizerHandler = new VisualizerHandler(spectroCanvas, 'spectro');
 visualizerHandler.start();
 
 const spectroCanvasPopOutButton = document.getElementById('spectro-canvas-pop-out-button');

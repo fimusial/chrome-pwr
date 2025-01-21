@@ -3,18 +3,21 @@ import { WaveformGraphVisualizer } from './waveform-graph-visualizer.js';
 import { VolumeBarsVisualizer } from './volume-bars-visualizer.js';
 
 export class VisualizerHandler {
-    constructor(canvas, shortAudioHubCircuit = false, orientation = 'horizontal') {
+    constructor(canvas, localStorageKeyPrefix) {
         if (!(canvas instanceof HTMLCanvasElement)) {
             throw new TypeError(`'canvas' must be an HTMLCanvasElement`);
         }
 
-        if (orientation !== 'horizontal' && orientation !== 'vertical') {
-            throw new TypeError(`'orientation' must be 'horizontal' or 'vertical'`);
+        if (!localStorageKeyPrefix || typeof localStorageKeyPrefix !== 'string') {
+            throw new TypeError(`'localStorageKeyPrefix' is a required string parameter`);
         }
 
         this.canvas = canvas;
-        this.orientation = orientation;
-        this.shortAudioHubCircuit = shortAudioHubCircuit;
+        this.localStorageKeyPrefix = localStorageKeyPrefix;
+
+        this.shortAudioHubCircuit = false;
+        this.orientation = 'horizontal';
+        this.visualizers = [];
     }
 
     start() {
@@ -24,14 +27,10 @@ export class VisualizerHandler {
             new VolumeBarsVisualizer(this.canvas)
         ];
 
-        const savedCurrentVisualizer = localStorage.getItem('spectro-current-visualizer');
-        this.currentVisualizer = savedCurrentVisualizer === null ? 0 : Number(savedCurrentVisualizer) % this.visualizers.length;
+        this.initOrientation();
+        this.initCurrentVisualizer();
 
-        this.canvas.onclick = () => {
-            this.currentVisualizer = (this.currentVisualizer + 1) % this.visualizers.length;
-            this.visualizers[this.currentVisualizer].reset();
-            localStorage.setItem('spectro-current-visualizer', this.currentVisualizer);
-        };
+        this.canvas.onclick = this.cycleCurrentVisualizer.bind(this);
 
         const nextVisualizerDraw = () => {
             const visualizer = this.visualizers[this.currentVisualizer];
@@ -62,6 +61,8 @@ export class VisualizerHandler {
         this.visualizers.forEach(visualizer => {
             visualizer.setOrientation(this.orientation);
         });
+
+        this.saveOrientation();
     }
 
     setHue(hue) {
@@ -80,5 +81,40 @@ export class VisualizerHandler {
         this.visualizers.forEach(visualizer => {
             visualizer.setLit(lit);
         });
+    }
+
+    saveVisualizerColor(hue, sat, lit) {
+        localStorage.setItem(`${this.localStorageKeyPrefix}-visualizer-color`, JSON.stringify({ hue, sat, lit }));
+    }
+
+    getSavedVisualizerColor() {
+        return JSON.parse(localStorage.getItem(`${this.localStorageKeyPrefix}-visualizer-color`));
+    }
+
+    // private
+    initOrientation() {
+        const orientation = localStorage.getItem(`${this.localStorageKeyPrefix}-visualizer-orientation`);
+        this.orientation = orientation === null ? 'horizontal' : orientation;
+        this.visualizers.forEach(visualizer => {
+            visualizer.setOrientation(this.orientation);
+        });
+    }
+
+    //private
+    saveOrientation() {
+        localStorage.setItem(`${this.localStorageKeyPrefix}-visualizer-orientation`, this.orientation);
+    }
+
+    // private
+    initCurrentVisualizer() {
+        const savedCurrentVisualizer = localStorage.getItem(`${this.localStorageKeyPrefix}-current-visualizer`);
+        this.currentVisualizer = savedCurrentVisualizer === null ? 0 : Number(savedCurrentVisualizer) % this.visualizers.length;
+    }
+
+    // private
+    cycleCurrentVisualizer() {
+        this.currentVisualizer = (this.currentVisualizer + 1) % this.visualizers.length;
+        this.visualizers[this.currentVisualizer].reset();
+        localStorage.setItem(`${this.localStorageKeyPrefix}-current-visualizer`, this.currentVisualizer);
     }
 }

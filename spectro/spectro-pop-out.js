@@ -13,7 +13,7 @@ const resizeCanvas = () => {
 window.onresize = resizeCanvas;
 window.onload = resizeCanvas;
 
-const visualizerHandler = new VisualizerHandler(spectroCanvas);
+const visualizerHandler = new VisualizerHandler(spectroCanvas, 'spectro-pop-out');
 visualizerHandler.start();
 
 document.getElementById('spectro-canvas-toggle-orientation-button').onclick = () => {
@@ -35,6 +35,13 @@ const litSlider = document.getElementById('spectro-lit-slider');
 const hueLabel = document.getElementById('spectro-hue-slider-label');
 const satLabel = document.getElementById('spectro-sat-slider-label');
 const litLabel = document.getElementById('spectro-lit-slider-label');
+
+const color = visualizerHandler.getSavedVisualizerColor();
+if (color) {
+    hueSlider.value = color.hue;
+    satSlider.value = color.sat;
+    litSlider.value = color.lit;
+}
 
 hueSlider.oninput = () => {
     const sliderValue = Number(hueSlider.value);
@@ -60,6 +67,10 @@ litSlider.oninput = () => {
     const sliderValue = Number(litSlider.value);
     visualizerHandler.setLit(sliderValue);
     litLabel.style.left = sliderValue + 11;
+};
+
+hueSlider.onchange = satSlider.onchange = litSlider.onchange = () => {
+    visualizerHandler.saveVisualizerColor(hueSlider.value, satSlider.value, litSlider.value);
 };
 
 hueSlider.oninput();
