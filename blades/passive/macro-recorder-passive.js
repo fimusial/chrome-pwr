@@ -53,7 +53,9 @@ document.macroNext = (clicks, index, loop, initialDelay) => {
         document.lastTimeoutId = setTimeout(() => {
             const element = document.elementFromPoint(capturedClick.clientX, capturedClick.clientY);
             const parameters = { view: window, bubbles: true, cancelable: true, clientX: capturedClick.clientX, clientY: capturedClick.clientY, button: 0 };
+
             element.dispatchEvent(new MouseEvent('mousedown', parameters));
+            element.dispatchEvent(new FocusEvent('focus', parameters));
             element.dispatchEvent(new MouseEvent('mouseup', parameters));
             element.dispatchEvent(new MouseEvent('click', parameters));
 
