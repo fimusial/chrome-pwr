@@ -43,8 +43,8 @@ document.macroNext = (clicks, index, loop, initialDelay) => {
 
         const blink = document.createElement('div');
         blink.classList.add('chrome-pwr-blink');
-        blink.style.left = `${capturedClick.clientX - 15}px`;
-        blink.style.top = `${capturedClick.clientY - 15}px`;
+        blink.style.left = `${capturedClick.clientX - 25}px`;
+        blink.style.top = `${capturedClick.clientY - 25}px`;
         document.body.appendChild(blink);
         setTimeout(() => {
             blink.remove();
