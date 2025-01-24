@@ -1,7 +1,24 @@
 import { scriptRequiresApis } from '../script-requires-apis.js';
 import { VisualizerHandler } from './visualizers/visualizer-handler.js';
 
-scriptRequiresApis(['tabs', 'runtime']);
+scriptRequiresApis(['windows', 'tabs', 'runtime']);
+
+chrome.windows.getCurrent({ populate: true }, (spectroPopOutWindow) => {
+    chrome.windows.onBoundsChanged.addListener((window) => {
+        if (window.id !== spectroPopOutWindow.id) {
+            return;
+        }
+
+        const windowBounds = JSON.stringify({
+            left: window.left,
+            top: window.top,
+            width: window.width,
+            height: window.height
+        });
+
+        localStorage.setItem('spectro-pop-out-window-bounds', windowBounds);
+    });
+});
 
 const spectroCanvas = document.getElementById('spectro-canvas');
 

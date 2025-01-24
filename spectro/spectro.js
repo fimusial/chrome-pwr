@@ -11,7 +11,17 @@ const spectroCanvasPopOutButton = document.getElementById('spectro-canvas-pop-ou
 spectroCanvasPopOutButton.onclick = async () => {
     const openTabs = await chrome.tabs.query({ title: 'chrome-extension://*/spectro/spectro-pop-out.html#chrome-pwr' });
     if (!openTabs || !openTabs.length) {
-        chrome.windows.create({ url: 'spectro/spectro-pop-out.html#chrome-pwr', type: 'popup' });
+        let windowBounds = localStorage.getItem('spectro-pop-out-window-bounds');
+        windowBounds = windowBounds ? JSON.parse(windowBounds) : {};
+
+        chrome.windows.create({
+            url: 'spectro/spectro-pop-out.html#chrome-pwr',
+            type: 'popup',
+            left: windowBounds.left,
+            top: windowBounds.top,
+            width: windowBounds.width,
+            height: windowBounds.height
+        });
     }
 };
 
