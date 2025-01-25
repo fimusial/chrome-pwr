@@ -11,7 +11,7 @@ Browser's tiny Swiss Army knife
 ## Features
 #### Audio
 - **Recording** - PWRToy provides a simple way to record audio from one of the browser's tabs. Toggle recording on or off with a single button click and save it in `.wav` format.
-- **Visualizers & Filters** - When capturing audio from a tab, three live visualizers are available - a moving spectrogram, a jumping volume bar chart and a waveform graph. They can be opened in a pop-out window and cycled through with a click. The extension also offers a high-pass and a low-pass filter, which you can control with two sliders to cut out unwanted frequencies from the sound.
+- **Visualizers & Filters** - When capturing audio from a tab, you can choose between three different live visualizers: a spectrogram, a volume bar chart, and a waveform graph. These can be cycled through with a click. The visualizers can also be popped out to a separate window, where you can adjust their color and size. Additionally, the extension includes a high-pass and a low-pass filter, which can be controlled with two sliders to remove unwanted frequencies from the sound.
 - **Volume Duck** - Have you ever encountered a website, which played annoyingly loud sounds with no way of turning them down, forcing you to lower the volume in your device's settings? PWRToy has got you covered! Use the Volume Duck feature to configure a volume multiplier for each pesky website.
 
 #### Mouse Macros
