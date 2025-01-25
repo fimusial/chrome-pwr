@@ -13,7 +13,6 @@ spectroCanvasPopOutButton.onclick = async () => {
     if (!openTabs || !openTabs.length) {
         let windowBounds = localStorage.getItem('spectro-pop-out-window-bounds');
         windowBounds = windowBounds ? JSON.parse(windowBounds) : {};
-
         chrome.windows.create({
             url: 'spectro/spectro-pop-out.html#chrome-pwr',
             type: 'popup',
@@ -21,6 +20,12 @@ spectroCanvasPopOutButton.onclick = async () => {
             top: windowBounds.top,
             width: windowBounds.width,
             height: windowBounds.height
+        }).catch(() => {
+            localStorage.setItem('spectro-pop-out-window-bounds', '{}');
+            chrome.windows.create({
+                url: 'spectro/spectro-pop-out.html#chrome-pwr',
+                type: 'popup'
+            });
         });
     }
 };
