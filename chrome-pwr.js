@@ -75,9 +75,9 @@ document.getElementById('max-scroll-cancel').onclick = async () => {
     });
 };
 
-document.getElementById('forced-css-add').onclick = async () => {
+document.getElementById('forced-css-upload').onclick = async () => {
     await chrome.runtime.sendMessage({
-        triggerBlade: 'forcedCssAdd'
+        triggerBlade: 'forcedCssUpload'
     });
 };
 
