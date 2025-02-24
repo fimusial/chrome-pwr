@@ -3,8 +3,6 @@ export async function blade_forcedCssUpload() {
         return;
     }
 
-    document.forcedCssUploadActive = true;
-
     const [fileHandle] = await window.showOpenFilePicker({
         excludeAcceptAllOption: true,
         multiple: false,
@@ -17,6 +15,8 @@ export async function blade_forcedCssUpload() {
             }
         ]
     });
+
+    document.forcedCssUploadActive = true;
 
     const reader = new FileReader();
     reader.onload = () => {
@@ -45,7 +45,6 @@ export async function blade_forcedCssUpload() {
     }
 
     watchFile();
-
 }
 
 export function blade_forcedCssClear() {
