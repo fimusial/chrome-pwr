@@ -3,18 +3,29 @@ export async function blade_forcedCssUpload() {
         return;
     }
 
-    const [fileHandle] = await window.showOpenFilePicker({
-        excludeAcceptAllOption: true,
-        multiple: false,
-        types: [
-            {
-                description: 'Cascading Style Sheets',
-                accept: {
-                    'text/css': ['.css']
+    let fileHandle = null;
+    try {
+        [fileHandle] = await window.showOpenFilePicker({
+            excludeAcceptAllOption: true,
+            multiple: false,
+            types: [
+                {
+                    description: 'Cascading Style Sheets',
+                    accept: {
+                        'text/css': ['.css']
+                    }
                 }
-            }
-        ]
-    });
+            ]
+        });
+    } catch (error) {
+        if (error.name === 'SecurityError') {
+            alert(`Please interact with the website first, then try uploading again!\n\n${error}`);
+        } else {
+            alert(`Could not upload file.\n\n${error}`);
+        }
+
+        return;
+    }
 
     document.forcedCssUploadActive = true;
 
