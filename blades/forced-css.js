@@ -1,4 +1,4 @@
-export async function blade_forcedCssDownload() {
+export function blade_forcedCssDownload() {
     const forcedCss = localStorage.getItem('chrome-pwr-forced-css');
 
     if (!forcedCss) {
