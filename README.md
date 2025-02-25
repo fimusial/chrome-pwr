@@ -19,7 +19,7 @@ This feature allows you to record a sequence of mouse clicks on a website and pl
 
 #### Miscellaneous features
 - **Maxscroll** - This one enables you to quickly traverse a page with lazily loaded content by forcing it to constantly scroll up or down as fast as possible.
-- **Page CSS** - The extension injects any user-provided CSS into a webpage each time it loads, applying the styles across the entire domain. This can be used to hide unwanted elements or to customize the website's design.
+- **Page CSS** - The extension injects any user-provided CSS file into a webpage each time it loads, applying the styles across the entire domain. This can be used to hide unwanted elements or to customize the website's design. While the webpage remains open after uploading a style sheet, PWRToy monitors the file for changes, making it easy to experiment with styles.
 - **Content Edit** - This feature provides a quick way to edit any text on a page without using the developer tools. Simply click the "Content Edit On" button, place your cursor at the desired text location and start typing. Essentially, it activates the `contenteditable` HTML attribute for the entire document body.
 
 ## Get it from Chrome Web Store
