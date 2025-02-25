@@ -2,7 +2,7 @@ export async function blade_forcedCssDownload() {
     const forcedCss = localStorage.getItem('chrome-pwr-forced-css');
 
     if (!forcedCss) {
-        alert(`PWRToy: ${location.hostname} has no page CSS yet.`);
+        alert(`PWRToy: ${location.hostname} has no Page CSS yet.`);
         return;
     }
 
@@ -38,9 +38,9 @@ export async function blade_forcedCssUpload() {
         });
     } catch (error) {
         if (error.name === 'SecurityError') {
-            alert(`PWRToy: Please interact with the website first, then try uploading again!\n\n${error}`);
+            alert(`PWRToy: Please interact with the website first, then try uploading Page CSS again!\n\n${error}`);
         } else {
-            alert(`PWRToy: Could not upload file.\n\n${error}`);
+            alert(`PWRToy: Could not upload Page CSS file.\n\n${error}`);
         }
 
         return;
