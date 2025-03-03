@@ -30,10 +30,12 @@
     content: 'capture current tab';
 }
 
-#spectro-capture-button[audioCaptureLive='true'],
+#spectro-capture-button[audioCaptureLive='true'] {
+    animation: outline-color-pulse 1s linear 0s infinite alternate;
+}
+
 #spectro-recording-button[audioRecordingLive='true'] {
     outline-color: red;
-    animation: outline-color-pulse 1s linear 0s infinite alternate;
 }
 
 #spectro-recording-button:not([audioCaptureLive='true']) {
@@ -62,12 +64,11 @@
     width: 28px;
     text-align: center;
     aspect-ratio: 1;
-    outline: 2px solid white;
+    outline: 2px solid var(--outline-color);
     border-radius: 5px;
     cursor: pointer;
-    color: white;
     font-size: 20;
-    background-color: #ff3d84;
+    background-color: var(--primary-color);
     transition: all 0.1s ease;
 }
 
@@ -103,5 +104,5 @@
     top: 1px;
     left: 20px;
     height: 2px;
-    background-color: #ff3d84;
+    background-color: var(--primary-color);
 }

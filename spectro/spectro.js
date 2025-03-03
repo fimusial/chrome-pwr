@@ -178,11 +178,17 @@ tabButton.onclick = async () => {
     }
 };
 
-const setRecordingButtonText = (audioRecordingState) => {
-    recordingButton.textContent = audioRecordingState === 'recording' ? 'stop audio recording' : 'start audio recording';
+const setRecordingInfo = (audioRecordingState) => {
+    if (audioRecordingState === 'recording') {
+        recordingButton.textContent = 'stop audio recording';
+        recordingButton.setAttribute('audioRecordingLive', 'true');
+    } else {
+        recordingButton.textContent = 'start audio recording';
+        recordingButton.removeAttribute('audioRecordingLive');
+    }
 };
 
-chrome.runtime.sendMessage({ audioHub: 'getAudioRecordingState', params: {} }).then(setRecordingButtonText);
+chrome.runtime.sendMessage({ audioHub: 'getAudioRecordingState', params: {} }).then(setRecordingInfo);
 
 recordingButton.onclick = async () => {
     const response = await chrome.runtime.sendMessage({
@@ -190,5 +196,5 @@ recordingButton.onclick = async () => {
         params: {}
     });
 
-    setRecordingButtonText(response);
+    setRecordingInfo(response);
 };

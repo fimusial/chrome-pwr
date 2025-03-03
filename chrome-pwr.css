@@ -3,20 +3,27 @@
     src: url('./font/8bitwonder.ttf') format('truetype');
 }
 
-* {
-    font-family: '8BIT WONDER', sans-serif;
-    color: white;
-    user-select: none;
+html {
+    --primary-color: #ff3d84;
+    --secondary-color: #222;
+    --third-color: #545454;
+    --outline-color: #fff;
+    --text-color: #fff;
+    --text-shadow-color: #aaa;
+
+    height: 0;
 }
 
-html {
-    height: 0;
+* {
+    font-family: '8BIT WONDER', sans-serif;
+    color: var(--text-color);
+    user-select: none;
 }
 
 body {
     width: 300px;
     margin: 5px;
-    background-color: #222222;
+    background-color: var(--secondary-color);
 }
 
 a {
@@ -31,8 +38,8 @@ button {
     cursor: pointer;
     height: 30px;
     border-radius: 5px;
-    outline: 2px solid #ff3d84;
-    background-color: #222222;
+    outline: 2px solid var(--primary-color);
+    background-color: var(--secondary-color);
     transition: all 0.1s ease;
     font-size: 12px;
 }
@@ -50,7 +57,7 @@ button.thin {
 }
 
 input[type='checkbox'] {
-    accent-color: #ff3d84;
+    accent-color: var(--primary-color);
     transition: all 0.1s ease;
 }
 
@@ -62,8 +69,8 @@ input[type='radio'] {
     cursor: pointer;
     appearance: none;
     margin: 0;
-    border: 10px solid #545454;
-    box-shadow: 0px 0px 0px 3px white;
+    border: 10px solid var(--third-color);
+    box-shadow: 0px 0px 0px 3px var(--outline-color);
     border-radius: 15%;
     transition: all 0.1s ease;
 }
@@ -73,13 +80,13 @@ input[type='radio']:hover {
 }
 
 input[type='radio']:checked {
-    border-color: #ff3d84;
+    border-color: var(--primary-color);
 }
 
 input[type='range'] {
     appearance: none;
     height: 30px;
-    background-color: #545454;
+    background-color: var(--third-color);
     border-radius: 5px;
 }
 
@@ -87,10 +94,10 @@ input[type='range']::-webkit-slider-thumb {
     appearance: none;
     width: 28px;
     height: 28px;
-    background: #ff3d84;
+    background: var(--primary-color);
     cursor: pointer;
     border-radius: 15%;
-    box-shadow: inset 0px 0px 0px 3px white;
+    box-shadow: inset 0px 0px 0px 3px var(--outline-color);
     transition: all 0.1s ease;
 }
 
@@ -152,10 +159,10 @@ input[type='range']:hover::-webkit-slider-thumb {
     height: 32px;
     padding-bottom: 2px;
     text-align: center;
-    background: #ff3d84;
-    color: white;
+    background: var(--primary-color);
+    color: var(--text-color);
     letter-spacing: -3px;
-    text-shadow: 3px 3px #aaaaaa;
+    text-shadow: 3px 3px var(--text-shadow-color);
     border-radius: 32px;
     font-size: 26px;
 }
