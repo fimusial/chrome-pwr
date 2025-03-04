@@ -40,7 +40,7 @@ const createWebsiteHtmlElements = (website) => {
 
     const inputsContainerDiv = document.createElement('div');
     containerDiv.appendChild(inputsContainerDiv);
-    inputsContainerDiv.className = 'volume-duck-website-inputs-container';
+    inputsContainerDiv.className = 'flex-row';
 
     const enabledCheckboxLabel = document.createElement('label');
     inputsContainerDiv.appendChild(enabledCheckboxLabel);

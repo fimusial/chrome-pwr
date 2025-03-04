@@ -13,13 +13,6 @@
     height: auto;
 }
 
-.volume-duck-website-inputs-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-}
-
 .volume-duck-website-volume-slider {
     height: 2px !important;
     width: 100px;

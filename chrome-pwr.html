@@ -10,7 +10,7 @@
         <div class="mb-4 bar">pwrtoy</div>
     </a>
 
-    <div id="foldable-controls" class="pb">
+    <div class="pb flex-row">
         <label for="foldable-misc-checkbox">misc</label>
         <input type="checkbox" id="foldable-misc-checkbox" />
         <label for="foldable-macros-checkbox">macros</label>
@@ -21,7 +21,7 @@
 
     <div id="foldable-misc">
         <div class="pb grid3">
-            <div class="radio-and-label-container">
+            <div class="radio-and-label-container flex-row">
                 <label for="max-scroll-direction-up"><img src="images/up-arrow-24px.png" /></label>
                 <input type="radio" id="max-scroll-direction-up" name="max-scroll-direction" value="up" />
             </div>
@@ -29,7 +29,7 @@
             <button id="max-scroll-start-element">scroll element</button>
             <button id="max-scroll-start-window">scroll window</button>
 
-            <div class="radio-and-label-container">
+            <div class="radio-and-label-container flex-row">
                 <label for="max-scroll-direction-down"><img src="images/down-arrow-24px.png" /></label>
                 <input type="radio" id="max-scroll-direction-down" name="max-scroll-direction" value="down" />
             </div>
@@ -70,7 +70,7 @@
             <input id="spectro-hp-slider" type="range" value="0" min="0" max="100" />
             <input id="spectro-lp-slider" type="range" value="100" min="0" max="100" />
             <div id="spectro-sliders-bar"></div>
-            <div style="display: flex; flex-direction: row; justify-content: space-between;">
+            <div class="flex-row">
                 <p>hp <span id="spectro-hp-value-display">100</span> hz</p><p>lp <span id="spectro-lp-value-display">100</span> hz</p>
             </div>
         </div>

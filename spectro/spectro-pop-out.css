@@ -15,9 +15,6 @@ body:not(:hover) #spectro-canvas-controls {
 #spectro-canvas-controls {
     position: absolute;
     padding: 5px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
 }
 
 #spectro-canvas-controls div {
@@ -42,9 +39,6 @@ body:not(:hover) #spectro-canvas-controls {
 
 #spectro-canvas-color-picker {
     padding: 5px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
 }
 
 #spectro-canvas-color-picker div {
