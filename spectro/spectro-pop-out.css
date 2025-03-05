@@ -68,7 +68,7 @@ body:not(:hover) #spectro-canvas-controls {
 
 #spectro-sat-slider::-webkit-slider-thumb,
 #spectro-lit-slider::-webkit-slider-thumb {
-    background: var(--secondary-color);
+    background-color: var(--secondary-color);
 }
 
 :root {
@@ -76,7 +76,7 @@ body:not(:hover) #spectro-canvas-controls {
 }
 
 #spectro-hue-slider::-webkit-slider-thumb {
-    background: var(--spectro-hue-slider-thumb-color);
+    background-color: var(--spectro-hue-slider-thumb-color);
 }
 
 #spectro-hue-slider-label {
