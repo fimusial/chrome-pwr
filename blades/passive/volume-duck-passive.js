@@ -3,7 +3,7 @@ const duckVolume = (volume) => {
 };
 
 chrome.runtime.sendMessage({
-    audioHub: 'getVolumeDuckSetting',
+    hub: 'getVolumeDuckSetting',
     params: {
         hostname: location.hostname
     }

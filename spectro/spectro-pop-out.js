@@ -39,9 +39,9 @@ document.getElementById('spectro-canvas-toggle-orientation-button').onclick = ()
 };
 
 chrome.tabs.onRemoved.addListener((removedTabId, removeInfo) => {
-    chrome.runtime.sendMessage({ audioHub: 'getCapturedTabId', params: {} }).then((response) => {
+    chrome.runtime.sendMessage({ hub: 'getCapturedTabId', params: {} }).then((response) => {
         if (response && response.capturedTabId && removedTabId === response.capturedTabId) {
-            chrome.runtime.sendMessage({ audioHub: 'stopTabCapture', params: {} });
+            chrome.runtime.sendMessage({ hub: 'stopTabCapture', params: {} });
         }
     });
 });

@@ -42,7 +42,7 @@ export class MovingSpectrogramVisualizer {
     }
 
     nextDrawDelayMs = 10;
-    audioHubMethod = 'getByteFrequencyData';
+    hubAction = 'getByteFrequencyAudioData';
 
     setHue(hue) {
         if (!Number.isInteger(hue) || hue < 0) {

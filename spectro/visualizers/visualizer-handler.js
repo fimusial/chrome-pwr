@@ -15,7 +15,7 @@ export class VisualizerHandler {
         this.canvas = canvas;
         this.localStorageKeyPrefix = localStorageKeyPrefix;
 
-        this.shortAudioHubCircuit = false;
+        this.shortHubCircuit = false;
         this.orientation = 'horizontal';
         this.visualizers = [];
     }
@@ -36,13 +36,13 @@ export class VisualizerHandler {
             const visualizer = this.visualizers[this.currentVisualizer];
             setTimeout(nextVisualizerDraw, visualizer.nextDrawDelayMs);
 
-            if (this.shortAudioHubCircuit) {
+            if (this.shortHubCircuit) {
                 visualizer.pushPlaceholder();
                 visualizer.draw();
                 return;
             }
 
-            chrome.runtime.sendMessage({ audioHub: visualizer.audioHubMethod, params: {} }).then((response) => {
+            chrome.runtime.sendMessage({ hub: visualizer.hubAction, params: {} }).then((response) => {
                 if (response && response.data) {
                     visualizer.pushData(response.data);
                 } else {

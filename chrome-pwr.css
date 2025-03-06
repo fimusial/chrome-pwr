@@ -170,6 +170,6 @@ input[type='range']:hover::-webkit-slider-thumb {
     font-size: 26px;
 }
 
-#macro-recorder-delay-display {
+#macro-delay-display {
     margin: 0;
 }

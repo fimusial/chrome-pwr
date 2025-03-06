@@ -7,7 +7,7 @@ let capturedTabId = null;
 let audioAnalyzer = null;
 let highpassFilter = null;
 let lowpassFilter = null;
-let recorder = null;
+let audioRecorder = null;
 
 const setAudioFiltersValues = (hp, lp) => {
     if (!capturedTabId || !audioContext || !lowpassFilter || !highpassFilter) {
@@ -27,17 +27,17 @@ const setAudioFiltersValues = (hp, lp) => {
 };
 
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
-    if (!request.audioHub || typeof request.audioHub !== 'string') {
+    if (!request.hub || typeof request.hub !== 'string') {
         return;
     }
 
     let response = null;
-    switch (request.audioHub) {
+    switch (request.hub) {
         case 'startTabCapture': response = await startTabCapture(request.params); break;
         case 'stopTabCapture': response = await stopTabCapture(); break;
         case 'getCapturedTabId': response = await getCapturedTabId(); break;
-        case 'getFloatTimeDomainData': response = await getFloatTimeDomainData(); break;
-        case 'getByteFrequencyData': response = await getByteFrequencyData(); break;
+        case 'getFloatTimeDomainAudioData': response = await getFloatTimeDomainAudioData(); break;
+        case 'getByteFrequencyAudioData': response = await getByteFrequencyAudioData(); break;
         case 'updateAudioFilters': response = await updateAudioFilters(request.params); break;
         case 'toggleAudioRecording': response = await toggleAudioRecording(); break;
         case 'getAudioRecordingState': response = await getAudioRecordingState(); break;
@@ -83,9 +83,9 @@ const startTabCapture = async (params) => {
 
     setAudioFiltersValues(params.hp, params.lp);
 
-    recorder = new MediaRecorder(audioMedia, { mimeType: 'audio/webm' });
+    audioRecorder = new MediaRecorder(audioMedia, { mimeType: 'audio/webm' });
 
-    recorder.ondataavailable = (event) => {
+    audioRecorder.ondataavailable = (event) => {
         const webmBlob = new Blob([event.data], { type: 'audio/webm' });
         webm2wav(webmBlob, 32).then(wavBlob => {
             const wavBlobUrl = URL.createObjectURL(wavBlob);
@@ -114,14 +114,14 @@ const stopTabCapture = async () => {
 
     audioContextSource.connect(audioContext.destination);
     capturedTabId = null;
-    recorder = null;
+    audioRecorder = null;
 };
 
 const getCapturedTabId = async () => {
     return { capturedTabId: capturedTabId };
 };
 
-const getFloatTimeDomainData = async () => {
+const getFloatTimeDomainAudioData = async () => {
     if (!capturedTabId || !audioAnalyzer) {
         return { data: null };
     }
@@ -131,7 +131,7 @@ const getFloatTimeDomainData = async () => {
     return { data: Array.from(data) };
 };
 
-const getByteFrequencyData = async () => {
+const getByteFrequencyAudioData = async () => {
     if (!capturedTabId || !audioAnalyzer) {
         return { data: null };
     }
@@ -147,27 +147,27 @@ const updateAudioFilters = (params) => {
 };
 
 const toggleAudioRecording = () => {
-    if (!recorder) {
+    if (!audioRecorder) {
         return 'capture must be started first';
     }
 
-    if (recorder.state === 'inactive') {
-        recorder.start();
-    } else if (recorder.state === 'recording') {
-        recorder.stop();
+    if (audioRecorder.state === 'inactive') {
+        audioRecorder.start();
+    } else if (audioRecorder.state === 'recording') {
+        audioRecorder.stop();
     } else {
-        throw new Error('unexpected recorder state');
+        throw new Error('unexpected audioRecorder state');
     }
 
-    return recorder.state;
+    return audioRecorder.state;
 };
 
 const getAudioRecordingState = () => {
-    if (!recorder) {
+    if (!audioRecorder) {
         return 'no-capture';
     }
 
-    return recorder.state;
+    return audioRecorder.state;
 };
 
 const getVolumeDuckSetting = (params) => {

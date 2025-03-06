@@ -88,7 +88,7 @@ const onFilterSliderInput = async (event) => {
     updateFilterSliderDisplayValues();
 
     await chrome.runtime.sendMessage({
-        audioHub: 'updateAudioFilters',
+        hub: 'updateAudioFilters',
         params: {
             hp: filterSliderValueToFrequency(hpSlider.value),
             lp: filterSliderValueToFrequency(lpSlider.value)
@@ -109,7 +109,7 @@ const setCaptureInfo = (tab) => {
     capturedTabId = tab.id;
     tabButton.setAttribute('audioCaptureLive', 'true');
     recordingButton.setAttribute('audioCaptureLive', 'true');
-    visualizerHandler.shortAudioHubCircuit = false;
+    visualizerHandler.shortHubCircuit = false;
 };
 
 const clearCaptureInfo = () => {
@@ -117,7 +117,7 @@ const clearCaptureInfo = () => {
     capturedTabId = 0;
     tabButton.removeAttribute('audioCaptureLive');
     recordingButton.removeAttribute('audioCaptureLive');
-    visualizerHandler.shortAudioHubCircuit = true;
+    visualizerHandler.shortHubCircuit = true;
 };
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
@@ -126,7 +126,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     }
 });
 
-chrome.runtime.sendMessage({ audioHub: 'getCapturedTabId', params: {} }).then((response) => {
+chrome.runtime.sendMessage({ hub: 'getCapturedTabId', params: {} }).then((response) => {
     if (!response || !response.capturedTabId) {
         clearCaptureInfo();
         return;
@@ -139,7 +139,7 @@ chrome.runtime.sendMessage({ audioHub: 'getCapturedTabId', params: {} }).then((r
         } else {
             // tab was closed while capturing
             chrome.runtime.sendMessage({
-                audioHub: 'stopTabCapture',
+                hub: 'stopTabCapture',
                 params: {}
             });
 
@@ -149,10 +149,10 @@ chrome.runtime.sendMessage({ audioHub: 'getCapturedTabId', params: {} }).then((r
 });
 
 tabButton.onclick = async () => {
-    const response = await chrome.runtime.sendMessage({ audioHub: 'getCapturedTabId', params: {} });
+    const response = await chrome.runtime.sendMessage({ hub: 'getCapturedTabId', params: {} });
     if (response && response.capturedTabId > 0) {
         await chrome.runtime.sendMessage({
-            audioHub: 'stopTabCapture',
+            hub: 'stopTabCapture',
             params: {}
         });
 
@@ -165,7 +165,7 @@ tabButton.onclick = async () => {
 
         const streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tab.id });
         await chrome.runtime.sendMessage({
-            audioHub: 'startTabCapture',
+            hub: 'startTabCapture',
             params: {
                 streamId: streamId,
                 tabId: tab.id,
@@ -188,11 +188,11 @@ const setRecordingInfo = (audioRecordingState) => {
     }
 };
 
-chrome.runtime.sendMessage({ audioHub: 'getAudioRecordingState', params: {} }).then(setRecordingInfo);
+chrome.runtime.sendMessage({ hub: 'getAudioRecordingState', params: {} }).then(setRecordingInfo);
 
 recordingButton.onclick = async () => {
     const response = await chrome.runtime.sendMessage({
-        audioHub: 'toggleAudioRecording',
+        hub: 'toggleAudioRecording',
         params: {}
     });
 

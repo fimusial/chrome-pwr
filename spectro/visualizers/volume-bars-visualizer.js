@@ -37,7 +37,7 @@ export class VolumeBarsVisualizer {
     }
 
     nextDrawDelayMs = 20;
-    audioHubMethod = 'getByteFrequencyData';
+    hubAction = 'getByteFrequencyAudioData';
 
     setHue(hue) {
         if (!Number.isInteger(hue) || hue < 0) {

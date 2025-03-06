@@ -10,10 +10,10 @@ window.onload = () => {
         document.getElementById('max-scroll-direction-down').checked = true;
     }
 
-    const delaySliderValue = localStorage.getItem('macro-recorder-delay-slider');
+    const delaySliderValue = localStorage.getItem('macro-delay-slider');
     if (delaySliderValue) {
-        document.getElementById('macro-recorder-delay-slider').value = delaySliderValue;
-        document.getElementById('macro-recorder-delay-value').textContent = `${delaySliderValue / 1000}`;
+        document.getElementById('macro-delay-slider').value = delaySliderValue;
+        document.getElementById('macro-delay-value').textContent = `${delaySliderValue / 1000}`;
     }
 
     const savedShowMisc = localStorage.getItem('show-misc');
@@ -53,7 +53,7 @@ document.getElementById('foldable-audio-checkbox').onclick = (event) => {
 
 document.getElementById('max-scroll-start-element').onclick = async () => {
     await chrome.runtime.sendMessage({
-        triggerBlade: 'maxScrollStartElement',
+        blade: 'maxScrollStartElement',
         params: {
             direction: document.getElementById('max-scroll-direction-up').checked ? 'up' : 'down'
         }
@@ -62,7 +62,7 @@ document.getElementById('max-scroll-start-element').onclick = async () => {
 
 document.getElementById('max-scroll-start-window').onclick = async () => {
     await chrome.runtime.sendMessage({
-        triggerBlade: 'maxScrollStartWindow',
+        blade: 'maxScrollStartWindow',
         params: {
             direction: document.getElementById('max-scroll-direction-up').checked ? 'up' : 'down'
         }
@@ -71,73 +71,73 @@ document.getElementById('max-scroll-start-window').onclick = async () => {
 
 document.getElementById('max-scroll-cancel').onclick = async () => {
     await chrome.runtime.sendMessage({
-        triggerBlade: 'maxScrollCancel'
+        blade: 'maxScrollCancel'
     });
 };
 
 document.getElementById('forced-css-download').onclick = async () => {
     await chrome.runtime.sendMessage({
-        triggerBlade: 'forcedCssDownload'
+        blade: 'forcedCssDownload'
     });
 };
 
 document.getElementById('forced-css-upload').onclick = async () => {
     await chrome.runtime.sendMessage({
-        triggerBlade: 'forcedCssUpload'
+        blade: 'forcedCssUpload'
     });
 };
 
 document.getElementById('forced-css-clear').onclick = async () => {
     await chrome.runtime.sendMessage({
-        triggerBlade: 'forcedCssClear'
+        blade: 'forcedCssClear'
     });
 };
 
 document.getElementById('content-edit-on').onclick = async () => {
     await chrome.runtime.sendMessage({
-        triggerBlade: 'contentEditOn'
+        blade: 'contentEditOn'
     });
 };
 
 document.getElementById('content-edit-off').onclick = async () => {
     await chrome.runtime.sendMessage({
-        triggerBlade: 'contentEditOff'
+        blade: 'contentEditOff'
     });
 };
 
-document.getElementById('macro-recorder-start').onclick = async () => {
+document.getElementById('macro-start').onclick = async () => {
     await chrome.runtime.sendMessage({
-        triggerBlade: 'macroRecorderStart'
+        blade: 'macroStart'
     });
 };
 
-document.getElementById('macro-recorder-stop').onclick = async () => {
+document.getElementById('macro-stop').onclick = async () => {
     await chrome.runtime.sendMessage({
-        triggerBlade: 'macroRecorderStop'
+        blade: 'macroStop'
     });
 };
 
-document.getElementById('macro-recorder-play-once').onclick = async () => {
+document.getElementById('macro-play-once').onclick = async () => {
     await chrome.runtime.sendMessage({
-        triggerBlade: 'macroRecorderPlayOnce',
+        blade: 'macroPlayOnce',
         params: {
-            initialDelay: document.getElementById('macro-recorder-delay-slider').value
+            initialDelay: document.getElementById('macro-delay-slider').value
         }
     });
 };
 
-document.getElementById('macro-recorder-play-loop-start').onclick = async () => {
+document.getElementById('macro-play-loop-start').onclick = async () => {
     await chrome.runtime.sendMessage({
-        triggerBlade: 'macroRecorderPlayLoopStart',
+        blade: 'macroPlayLoopStart',
         params: {
-            initialDelay: document.getElementById('macro-recorder-delay-slider').value
+            initialDelay: document.getElementById('macro-delay-slider').value
         }
     });
 };
 
-document.getElementById('macro-recorder-stop-playback').onclick = async () => {
+document.getElementById('macro-stop-playback').onclick = async () => {
     await chrome.runtime.sendMessage({
-        triggerBlade: 'macroRecorderStopPlayback'
+        blade: 'macroStopPlayback'
     });
 };
 
@@ -151,19 +151,19 @@ document.querySelectorAll('[name=max-scroll-direction]').forEach((element) => {
     };
 });
 
-document.getElementById('macro-recorder-delay-slider').oninput = (event) => {
-    document.getElementById('macro-recorder-delay-value').textContent = `${event.target.value / 1000}`;
+document.getElementById('macro-delay-slider').oninput = (event) => {
+    document.getElementById('macro-delay-value').textContent = `${event.target.value / 1000}`;
 };
 
-document.getElementById('macro-recorder-delay-slider').onchange = (event) => {
-    localStorage.setItem('macro-recorder-delay-slider', event.target.value);
+document.getElementById('macro-delay-slider').onchange = (event) => {
+    localStorage.setItem('macro-delay-slider', event.target.value);
 };
 
 chrome.commands.onCommand.addListener(async (command) => {
     const supportedCommands = [
-        'macroRecorderPlayOnce',
-        'macroRecorderPlayLoopStart',
-        'macroRecorderStopPlayback'
+        'macroPlayOnce',
+        'macroPlayLoopStart',
+        'macroStopPlayback'
     ];
 
     if (!supportedCommands.includes(command)) {
@@ -171,9 +171,9 @@ chrome.commands.onCommand.addListener(async (command) => {
     }
 
     await chrome.runtime.sendMessage({
-        triggerBlade: command,
+        blade: command,
         params: {
-            initialDelay: document.getElementById('macro-recorder-delay-slider').value
+            initialDelay: document.getElementById('macro-delay-slider').value
         }
     });
 });

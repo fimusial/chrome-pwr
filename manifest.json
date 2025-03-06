@@ -30,8 +30,8 @@
     },
     {
       "matches": ["*://*/*"],
-      "js": ["blades/passive/macro-recorder-passive.js"],
-      "css": ["blades/passive/macro-recorder-passive.css"]
+      "js": ["blades/passive/macro-passive.js"],
+      "css": ["blades/passive/macro-passive.css"]
     },
     {
       "matches": ["*://*/*"],
@@ -51,19 +51,19 @@
     }
   ],
   "commands": {
-    "macroRecorderPlayOnce": {
+    "macroPlayOnce": {
       "suggested_key": {
-        "default": "Alt+1"
+        "default": "Alt+S"
       },
       "description": "Play the recorded macro once"
     },
-    "macroRecorderPlayLoopStart": {
+    "macroPlayLoopStart": {
       "suggested_key": {
-        "default": "Alt+2"
+        "default": "Alt+L"
       },
       "description": "Start playing the recorded macro in a loop"
     },
-    "macroRecorderStopPlayback": {
+    "macroStopPlayback": {
       "suggested_key": {
         "default": "Alt+X"
       },

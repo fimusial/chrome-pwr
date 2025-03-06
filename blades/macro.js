@@ -1,4 +1,4 @@
-export function blade_macroRecorderStart() {
+export function blade_macroStart() {
     if (!document.captureClick) {
         console.error('chrome-pwr: macro functions not initialized');
         return;
@@ -15,7 +15,7 @@ export function blade_macroRecorderStart() {
     document.setIndicator('recording');
 }
 
-export function blade_macroRecorderStop() {
+export function blade_macroStop() {
     if (!document.captureClick) {
         console.error('chrome-pwr: macro functions not initialized');
         return;
@@ -26,7 +26,7 @@ export function blade_macroRecorderStop() {
     document.clearIndicator('recording');
 }
 
-export function blade_macroRecorderPlayOnce() {
+export function blade_macroPlayOnce() {
     if (!document.playMacro) {
         console.error('chrome-pwr: macro functions not initialized');
         return;
@@ -37,10 +37,10 @@ export function blade_macroRecorderPlayOnce() {
         return;
     }
 
-    document.playMacro(0, false, document.blade_macroRecorderPlayOnce_params.initialDelay);
+    document.playMacro(0, false, document.blade_macroPlayOnce_params.initialDelay);
 }
 
-export function blade_macroRecorderPlayLoopStart() {
+export function blade_macroPlayLoopStart() {
     if (!document.playMacro) {
         console.error('chrome-pwr: macro functions not initialized');
         return;
@@ -51,10 +51,10 @@ export function blade_macroRecorderPlayLoopStart() {
         return;
     }
 
-    document.playMacro(0, true, document.blade_macroRecorderPlayLoopStart_params.initialDelay);
+    document.playMacro(0, true, document.blade_macroPlayLoopStart_params.initialDelay);
 }
 
-export function blade_macroRecorderStopPlayback() {
+export function blade_macroStopPlayback() {
     clearTimeout(document.lastTimeoutId);
     document.lastTimeoutId = 0;
     localStorage.removeItem('chrome-pwr-macro-playback-in-progress');

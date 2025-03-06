@@ -32,7 +32,7 @@ export class WaveformGraphVisualizer {
     }
 
     nextDrawDelayMs = 25;
-    audioHubMethod = 'getFloatTimeDomainData';
+    hubAction = 'getFloatTimeDomainAudioData';
 
     setHue(hue) {
         if (!Number.isInteger(hue) || hue < 0) {
