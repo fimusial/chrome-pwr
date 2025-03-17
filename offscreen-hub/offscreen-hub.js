@@ -1,4 +1,5 @@
 import webm2wav from './webm2wav.js';
+import { MacroStorage } from '../macro-storage.js';
 
 let audioContext = null;
 let audioContextSource = null;
@@ -26,22 +27,23 @@ const setAudioFiltersValues = (hp, lp) => {
     lowpassFilter.frequency.setValueAtTime(lp, audioContext.currentTime);
 };
 
-chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (!request.hub || typeof request.hub !== 'string') {
         return;
     }
 
     let response = null;
     switch (request.hub) {
-        case 'startTabCapture': response = await startTabCapture(request.params); break;
-        case 'stopTabCapture': response = await stopTabCapture(); break;
-        case 'getCapturedTabId': response = await getCapturedTabId(); break;
-        case 'getFloatTimeDomainAudioData': response = await getFloatTimeDomainAudioData(); break;
-        case 'getByteFrequencyAudioData': response = await getByteFrequencyAudioData(); break;
-        case 'updateAudioFilters': response = await updateAudioFilters(request.params); break;
-        case 'toggleAudioRecording': response = await toggleAudioRecording(); break;
-        case 'getAudioRecordingState': response = await getAudioRecordingState(); break;
-        case 'getVolumeDuckSetting': response = await getVolumeDuckSetting(request.params); break;
+        case 'startTabCapture': response = startTabCapture(request.params); break;
+        case 'stopTabCapture': response = stopTabCapture(); break;
+        case 'getCapturedTabId': response = getCapturedTabId(); break;
+        case 'getFloatTimeDomainAudioData': response = getFloatTimeDomainAudioData(); break;
+        case 'getByteFrequencyAudioData': response = getByteFrequencyAudioData(); break;
+        case 'updateAudioFilters': response = updateAudioFilters(request.params); break;
+        case 'toggleAudioRecording': response = toggleAudioRecording(); break;
+        case 'getAudioRecordingState': response = getAudioRecordingState(); break;
+        case 'getVolumeDuckSetting': response = getVolumeDuckSetting(request.params); break;
+        case 'saveMacro': response = saveMacro(request.params); break;
         default: throw new Error('unknown message', request);
     }
 
@@ -49,60 +51,61 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     return true;
 });
 
-const startTabCapture = async (params) => {
+const startTabCapture = (params) => {
     if (!params || !params.tabId || !params.streamId) {
         return;
     }
 
     capturedTabId = params.tabId;
 
-    audioMedia = await navigator.mediaDevices.getUserMedia({
+    navigator.mediaDevices.getUserMedia({
         audio: {
             mandatory: {
                 chromeMediaSource: 'tab',
                 chromeMediaSourceId: params.streamId
             }
         }
+    }).then((result) => {
+        audioMedia = result;
+        audioContext = new AudioContext();
+        audioContextSource = audioContext.createMediaStreamSource(audioMedia);
+
+        lowpassFilter = audioContext.createBiquadFilter();
+        lowpassFilter.type = 'lowpass';
+        highpassFilter = audioContext.createBiquadFilter();
+        highpassFilter.type = 'highpass';
+
+        audioAnalyzer = audioContext.createAnalyser();
+        audioAnalyzer.fftSize = 512;
+
+        audioContextSource.connect(lowpassFilter);
+        lowpassFilter.connect(highpassFilter);
+        highpassFilter.connect(audioAnalyzer);
+        audioAnalyzer.connect(audioContext.destination);
+
+        setAudioFiltersValues(params.hp, params.lp);
+
+        audioRecorder = new MediaRecorder(audioMedia, { mimeType: 'audio/webm' });
+
+        audioRecorder.ondataavailable = (event) => {
+            const webmBlob = new Blob([event.data], { type: 'audio/webm' });
+            webm2wav(webmBlob, 32).then(wavBlob => {
+                const wavBlobUrl = URL.createObjectURL(wavBlob);
+                const anchor = document.createElement('a');
+                anchor.href = wavBlobUrl;
+                anchor.download = 'chrome-pwr-recording.wav';
+                document.body.appendChild(anchor);
+                anchor.click();
+                document.body.removeChild(anchor);
+                URL.revokeObjectURL(wavBlobUrl);
+            });
+        };
+
+        return 'capture started';
     });
-
-    audioContext = new AudioContext();
-    audioContextSource = audioContext.createMediaStreamSource(audioMedia);
-
-    lowpassFilter = audioContext.createBiquadFilter();
-    lowpassFilter.type = 'lowpass';
-    highpassFilter = audioContext.createBiquadFilter();
-    highpassFilter.type = 'highpass';
-
-    audioAnalyzer = audioContext.createAnalyser();
-    audioAnalyzer.fftSize = 512;
-
-    audioContextSource.connect(lowpassFilter);
-    lowpassFilter.connect(highpassFilter);
-    highpassFilter.connect(audioAnalyzer);
-    audioAnalyzer.connect(audioContext.destination);
-
-    setAudioFiltersValues(params.hp, params.lp);
-
-    audioRecorder = new MediaRecorder(audioMedia, { mimeType: 'audio/webm' });
-
-    audioRecorder.ondataavailable = (event) => {
-        const webmBlob = new Blob([event.data], { type: 'audio/webm' });
-        webm2wav(webmBlob, 32).then(wavBlob => {
-            const wavBlobUrl = URL.createObjectURL(wavBlob);
-            const anchor = document.createElement('a');
-            anchor.href = wavBlobUrl;
-            anchor.download = 'chrome-pwr-recording.wav';
-            document.body.appendChild(anchor);
-            anchor.click();
-            document.body.removeChild(anchor);
-            URL.revokeObjectURL(wavBlobUrl);
-        });
-    };
-
-    return 'capture started';
 };
 
-const stopTabCapture = async () => {
+const stopTabCapture = () => {
     if (!capturedTabId || !audioMedia || !audioContext || !audioContextSource) {
         return 'capture must be started first';
     }
@@ -115,13 +118,15 @@ const stopTabCapture = async () => {
     audioContextSource.connect(audioContext.destination);
     capturedTabId = null;
     audioRecorder = null;
+
+    return 'capture stopped';
 };
 
-const getCapturedTabId = async () => {
+const getCapturedTabId = () => {
     return { capturedTabId: capturedTabId };
 };
 
-const getFloatTimeDomainAudioData = async () => {
+const getFloatTimeDomainAudioData = () => {
     if (!capturedTabId || !audioAnalyzer) {
         return { data: null };
     }
@@ -131,7 +136,7 @@ const getFloatTimeDomainAudioData = async () => {
     return { data: Array.from(data) };
 };
 
-const getByteFrequencyAudioData = async () => {
+const getByteFrequencyAudioData = () => {
     if (!capturedTabId || !audioAnalyzer) {
         return { data: null };
     }
@@ -177,4 +182,9 @@ const getVolumeDuckSetting = (params) => {
 
     const settings = localStorage.getItem('volume-duck-settings');
     return (settings ? JSON.parse(settings) : []).find(x => x.hostname === params.hostname);
+};
+
+const saveMacro = (params) => {
+    new MacroStorage().saveMacro(params.hostname, params.slotIndex, params.clicks);
+    return 'macro saved';
 };

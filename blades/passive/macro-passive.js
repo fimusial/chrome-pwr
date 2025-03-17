@@ -71,9 +71,7 @@ document.playMacro = (startIndex, loop, initialDelay) => {
 
     document.lastTimeoutId = 0;
 
-    let recordedClicks = localStorage.getItem('chrome-pwr-macro');
-    recordedClicks = recordedClicks ? JSON.parse(recordedClicks) : null;
-
+    const recordedClicks = JSON.parse(localStorage.getItem('chrome-pwr-macro'));
     if (!recordedClicks) {
         return;
     }
@@ -115,9 +113,8 @@ if (localStorage.getItem('chrome-pwr-macro-recording-in-progress')) {
     document.setIndicator('recording');
 }
 
-const playbackProgressJson = localStorage.getItem('chrome-pwr-macro-playback-in-progress');
-if (playbackProgressJson) {
-    const playbackProgress = JSON.parse(playbackProgressJson);
+const playbackProgress = JSON.parse(localStorage.getItem('chrome-pwr-macro-playback-in-progress'));
+if (playbackProgress) {
     document.playMacro(playbackProgress.index, playbackProgress.loop, playbackProgress.initialDelay);
 }
 

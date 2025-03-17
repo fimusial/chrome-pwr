@@ -1,8 +1,61 @@
 import { scriptRequiresApis } from './script-requires-apis.js';
+import { MacroStorage } from './macro-storage.js';
 
-scriptRequiresApis(['runtime', 'commands']);
+scriptRequiresApis(['tabs', 'runtime', 'commands']);
 
-window.onload = () => {
+const macroStorage = new MacroStorage();
+const macroSlotsSelect = document.getElementById('macro-slots');
+
+const createMacroSlotOption = (macro) => {
+    const option = document.createElement('option');
+    option.textContent = macro.name;
+    option.setAttribute('slotIndex', macro.slotIndex);
+    return option;
+};
+
+const createNewMacroSlotOption = (slotIndex) => {
+    const option = createMacroSlotOption({ name: 'new slot', slotIndex: slotIndex });
+    option.setAttribute('newSlot', 'true');
+    return option;
+};
+
+const renderMacroSlotOptions = (hostname) => {
+    const { macros, maxSlotIndex } = macroStorage.getPageMacrosInfo(hostname);
+
+    macroSlotsSelect.replaceChildren(
+        ...macros.map(createMacroSlotOption),
+        createNewMacroSlotOption(maxSlotIndex + 1));
+
+    macroSlotsSelect.firstChild.selected = true;
+};
+
+const loadMacroSlots = async () => {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (!tab) {
+        return;
+    }
+
+    const hostname = new URL(tab.url).hostname;
+    renderMacroSlotOptions(hostname);
+
+    macroSlotsSelect.ondblclick = () => {
+        const promptResult = prompt('slot name:');
+        if (!promptResult) {
+            return;
+        }
+
+        const slotName = promptResult.slice(0, 16);
+        const selectedOption = Array.from(macroSlotsSelect.children).find(x => x.selected);
+        const slotIndex = Number(selectedOption.getAttribute('slotIndex'));
+
+        selectedOption.textContent = slotName;
+        macroStorage.setSlotName(hostname, slotIndex, slotName);
+        renderMacroSlotOptions(hostname);
+        Array.from(macroSlotsSelect.children)[slotIndex].selected = true;
+    };
+};
+
+window.onload = async () => {
     const maxScrollDirection = localStorage.getItem('max-scroll-direction');
     if (maxScrollDirection) {
         document.getElementById(`max-scroll-direction-${maxScrollDirection}`).checked = true;
@@ -30,6 +83,8 @@ window.onload = () => {
     const showAudio = savedShowAudio === 'true' || savedShowAudio === null;
     document.getElementById('foldable-audio').classList.toggle('hidden', !showAudio);
     document.getElementById('foldable-audio-checkbox').checked = showAudio;
+
+    await loadMacroSlots();
 };
 
 window.onblur = () => {
@@ -105,32 +160,39 @@ document.getElementById('content-edit-off').onclick = async () => {
     });
 };
 
-document.getElementById('macro-start').onclick = async () => {
+document.getElementById('macro-start-recording').onclick = async () => {
     await chrome.runtime.sendMessage({
-        blade: 'macroStart'
+        blade: 'macroStartRecording',
+        params: {
+            slotIndex: Number(document.querySelector('#macro-slots option:checked').getAttribute('slotIndex'))
+        }
     });
 };
 
-document.getElementById('macro-stop').onclick = async () => {
-    await chrome.runtime.sendMessage({
-        blade: 'macroStop'
+document.getElementById('macro-stop-recording').onclick = async () => {
+    const response = await chrome.runtime.sendMessage({
+        blade: 'macroStopRecording'
     });
+
+    console.log(`popup callback time: ${new Date().getTime()}, response: ${response}`);
 };
 
 document.getElementById('macro-play-once').onclick = async () => {
     await chrome.runtime.sendMessage({
         blade: 'macroPlayOnce',
         params: {
-            initialDelay: document.getElementById('macro-delay-slider').value
+            initialDelay: document.getElementById('macro-delay-slider').value,
+            slotIndex: Number(document.querySelector('#macro-slots option:checked').getAttribute('slotIndex'))
         }
     });
 };
 
-document.getElementById('macro-play-loop-start').onclick = async () => {
+document.getElementById('macro-play-loop').onclick = async () => {
     await chrome.runtime.sendMessage({
-        blade: 'macroPlayLoopStart',
+        blade: 'macroPlayLoop',
         params: {
-            initialDelay: document.getElementById('macro-delay-slider').value
+            initialDelay: document.getElementById('macro-delay-slider').value,
+            slotIndex: Number(document.querySelector('#macro-slots option:checked').getAttribute('slotIndex'))
         }
     });
 };
@@ -162,7 +224,7 @@ document.getElementById('macro-delay-slider').onchange = (event) => {
 chrome.commands.onCommand.addListener(async (command) => {
     const supportedCommands = [
         'macroPlayOnce',
-        'macroPlayLoopStart',
+        'macroPlayLoop',
         'macroStopPlayback'
     ];
 

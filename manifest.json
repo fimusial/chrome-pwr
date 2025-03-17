@@ -57,7 +57,7 @@
       },
       "description": "Play the recorded macro once"
     },
-    "macroPlayLoopStart": {
+    "macroPlayLoop": {
       "suggested_key": {
         "default": "Alt+L"
       },

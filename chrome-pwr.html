@@ -49,11 +49,12 @@
 
     <div id="foldable-macros">
         <div class="pb grid">
-            <button id="macro-start">record macro</button>
-            <button id="macro-stop">stop macro recording</button>
+            <button id="macro-start-recording">record macro</button>
+            <button id="macro-stop-recording">stop macro recording</button>
             <button id="macro-play-once">play macro</button>
-            <button id="macro-play-loop-start">loop macro</button>
-            <button id="macro-stop-playback" class="wide">stop macro playback</button>
+            <select id="macro-slots"></select>
+            <button id="macro-play-loop">loop macro</button>
+            <button id="macro-stop-playback">stop macro</button>
             <input id="macro-delay-slider" type="range" min="100" max="10000" value="500" step="100"></input>
             <p>macro delay: <span id="macro-delay-value">0.5</span> seconds</p>
         </div>
