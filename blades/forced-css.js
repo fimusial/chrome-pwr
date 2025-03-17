@@ -31,7 +31,8 @@ export async function blade_forcedCssUpload() {
                 {
                     description: 'Cascading Style Sheets',
                     accept: {
-                        'text/css': ['.css']
+                        'text/css': ['.css'],
+                        'text/plain': ['.txt']
                     }
                 }
             ]
