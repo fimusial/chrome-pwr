@@ -19,29 +19,28 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         return;
     }
 
-    chrome.tabs.query({ active: true, currentWindow: true })
-    .then((tabs) => {
-        if (!tabs || !tabs[0]) {
-            throw new Error('active tab could not be found');
+    new Promise(async (resolve, reject) => {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (!tab) {
+            reject('active tab could not be found');
+            return;
         }
 
-        return tabs[0];
-    }).then((tab) => {
-        chrome.scripting.executeScript({
+        await chrome.scripting.executeScript({
             target: { tabId: tab.id },
             func: (bladeName, params) => {
                 document[`blade_${bladeName}_params`] = params;
             },
             args: [request.blade, request.params ? request.params : null]
-        }).then(() => {
-            chrome.scripting.executeScript({
-                target: { tabId: tab.id },
-                func: blades[`blade_${request.blade}`]
-            }).then(() => {
-                sendResponse(`blade triggered ${request.blade}`);
-            });
         });
-    });
+
+        await chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            func: blades[`blade_${request.blade}`]
+        });
+
+        resolve(`blade triggered ${request.blade}`);
+    }).then(sendResponse);
 
     return true;
 });
