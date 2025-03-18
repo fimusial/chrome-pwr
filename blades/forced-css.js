@@ -25,14 +25,13 @@ export async function blade_forcedCssUpload() {
     let fileHandle = null;
     try {
         [fileHandle] = await window.showOpenFilePicker({
-            excludeAcceptAllOption: true,
+            excludeAcceptAllOption: false,
             multiple: false,
             types: [
                 {
                     description: 'Cascading Style Sheets',
                     accept: {
-                        'text/css': ['.css'],
-                        'text/plain': ['.txt']
+                        'text/css': ['.css']
                     }
                 }
             ]
