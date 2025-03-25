@@ -177,6 +177,15 @@ input[type='range']:hover::-webkit-slider-thumb {
     font-size: 26px;
 }
 
+.text-button:hover {
+    color: var(--primary-color);
+}
+
+#macro-slots {
+    height: 100%;
+    width: 125px;
+}
+
 #macro-delay-display {
     margin: 0;
 }

@@ -43,7 +43,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         case 'toggleAudioRecording': response = toggleAudioRecording(); break;
         case 'getAudioRecordingState': response = getAudioRecordingState(); break;
         case 'getVolumeDuckSetting': response = getVolumeDuckSetting(request.params); break;
-        case 'saveMacro': response = saveMacro(request.params); break;
+        case 'setMacro': response = setMacro(request.params); break;
         default: throw new Error('unknown message', request);
     }
 
@@ -184,7 +184,7 @@ const getVolumeDuckSetting = (params) => {
     return (settings ? JSON.parse(settings) : []).find(x => x.hostname === params.hostname);
 };
 
-const saveMacro = (params) => {
-    new MacroStorage().saveMacro(params.hostname, params.slotIndex, params.clicks);
+const setMacro = (params) => {
+    new MacroStorage(params.hostname).setMacro(params.slotIndex, params.clicks);
     return 'macro saved';
 };

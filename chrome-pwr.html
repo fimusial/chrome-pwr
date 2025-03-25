@@ -52,7 +52,13 @@
             <button id="macro-start-recording">record macro</button>
             <button id="macro-stop-recording">stop macro recording</button>
             <button id="macro-play-once">play macro</button>
-            <select id="macro-slots"></select>
+            <div class="flex-row">
+                <select id="macro-slots"></select>
+                <div>
+                    <div id="macro-slot-rename" class="text-button">&#9998;</div>
+                    <div id="macro-slot-delete" class="text-button">&#128473;</div>
+                </div>
+            </div>
             <button id="macro-play-loop">loop macro</button>
             <button id="macro-stop-playback">stop macro</button>
             <input id="macro-delay-slider" type="range" min="100" max="10000" value="500" step="100"></input>

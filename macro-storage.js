@@ -1,5 +1,10 @@
 export class MacroStorage {
-    constructor() {
+    constructor(hostname) {
+        if (!hostname || typeof hostname !== 'string') {
+            throw new TypeError(`'hostname' is a required string parameter`);
+        }
+
+        this.hostname = hostname;
         this.storage = localStorage.getItem('macro-storage');
         this.storage = this.storage ? JSON.parse(this.storage) : [];
 
@@ -8,28 +13,21 @@ export class MacroStorage {
         }
     }
 
-    getPageMacrosInfo(hostname) {
-        const page = this.storage.find(x => x.hostname === hostname);
-        const macros = page && page.macros ? page.macros.sort((a, b) => a - b) : [];
-        const maxSlotIndex = macros.reduce((max, curr) => max > curr.slotIndex ? max : curr.slotIndex, -1);
-
-        return {
-            macros: macros.map(macro => { return { name: macro.name, slotIndex: macro.slotIndex }; }),
-            maxSlotIndex
-        };
+    getNames() {
+        const page = this.storage.find(x => x.hostname === this.hostname);
+        return page && page.macros ? page.macros.map(x => x.name) : [];
     }
 
-    setSlotName(hostname, slotIndex, name) {
-        let page = this.storage.find(x => x.hostname === hostname);
+    setSlotName(slotIndex, name) {
+        let page = this.storage.find(x => x.hostname === this.hostname);
         if (!page) {
-            page = { hostname, macros: [] };
+            page = { hostname: this.hostname, macros: [] };
             this.storage.push(page);
         }
 
-        let macro = page.macros.find(x => x.slotIndex === slotIndex);
+        let macro = page.macros[slotIndex];
         if (!macro) {
-            macro = { slotIndex, name };
-            page.macros.push(macro);
+            page.macros.push({ name });
         } else {
             macro.name = name;
         }
@@ -37,21 +35,35 @@ export class MacroStorage {
         localStorage.setItem('macro-storage', JSON.stringify(this.storage));
     }
 
-    saveMacro(hostname, slotIndex, clicks) {
-        let page = this.storage.find(x => x.hostname === hostname);
+    setMacro(slotIndex, clicks) {
+        let page = this.storage.find(x => x.hostname === this.hostname);
         if (!page) {
-            page = { hostname, macros: [] };
+            page = { hostname: this.hostname, macros: [] };
             this.storage.push(page);
         }
 
-        let macro = page.macros.find(x => x.slotIndex === slotIndex);
+        let macro = page.macros[slotIndex];
         if (!macro) {
-            macro = { slotIndex, name: `macro ${slotIndex}`, clicks };
-            page.macros.push(macro);
+            page.macros.push({ name: `macro ${page.macros.length + 1}`, clicks });
         } else {
             macro.clicks = clicks;
         }
 
+        localStorage.setItem('macro-storage', JSON.stringify(this.storage));
+    }
+
+    deleteMacro(slotIndex) {
+        let page = this.storage.find(x => x.hostname === this.hostname);
+        if (!page) {
+            return;
+        }
+
+        let macro = page.macros[slotIndex];
+        if (!macro) {
+            return;
+        }
+
+        page.macros.splice(slotIndex, 1);
         localStorage.setItem('macro-storage', JSON.stringify(this.storage));
     }
 }

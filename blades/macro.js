@@ -32,7 +32,7 @@ export async function blade_macroStopRecording() {
     }
 
     await chrome.runtime.sendMessage({
-        hub: 'saveMacro', params: {
+        hub: 'setMacro', params: {
             hostname: location.hostname,
             slotIndex: slotIndex,
             clicks: recordedClicks,
