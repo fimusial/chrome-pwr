@@ -2,10 +2,6 @@ import { scriptRequiresApis } from '../script-requires-apis.js';
 
 scriptRequiresApis(['tabs']);
 
-window.onblur = () => {
-    window.close();
-};
-
 let settings = localStorage.getItem('volume-duck-settings');
 settings = settings ? JSON.parse(settings) : [];
 

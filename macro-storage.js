@@ -52,6 +52,20 @@ export class MacroStorage {
         localStorage.setItem('macro-storage', JSON.stringify(this.storage));
     }
 
+    getMacro(slotIndex) {
+        let page = this.storage.find(x => x.hostname === this.hostname);
+        if (!page) {
+            return null;
+        }
+
+        let macro = page.macros[slotIndex];
+        if (!macro) {
+            return null;
+        }
+
+        return macro;
+    }
+
     deleteMacro(slotIndex) {
         let page = this.storage.find(x => x.hostname === this.hostname);
         if (!page) {

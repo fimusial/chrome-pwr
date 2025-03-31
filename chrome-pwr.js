@@ -31,6 +31,16 @@ const loadMacroSlots = async () => {
     renderMacroSlotOptions();
 };
 
+macroSlotsSelect.addEventListener('wheel', (event) => {
+    if (event.deltaY < 0) {
+        macroSlotsSelect.selectedIndex = Math.max(macroSlotsSelect.selectedIndex - 1, 0);
+    }
+
+    if (event.deltaY > 0) {
+        macroSlotsSelect.selectedIndex = Math.min(macroSlotsSelect.selectedIndex + 1, macroSlotsSelect.length - 1);
+    }
+});
+
 window.onload = async () => {
     const maxScrollDirection = localStorage.getItem('max-scroll-direction');
     if (maxScrollDirection) {
@@ -61,10 +71,6 @@ window.onload = async () => {
     document.getElementById('foldable-audio-checkbox').checked = showAudio;
 
     await loadMacroSlots();
-};
-
-window.onblur = () => {
-    window.close();
 };
 
 document.getElementById('macro-slot-rename').onclick = () => {
@@ -171,11 +177,11 @@ document.getElementById('macro-start-recording').onclick = async () => {
 };
 
 document.getElementById('macro-stop-recording').onclick = async () => {
-    const response = await chrome.runtime.sendMessage({
+    await chrome.runtime.sendMessage({
         blade: 'macroStopRecording'
     });
 
-    console.log(`popup callback time: ${new Date().getTime()}, response: ${response}`);
+    await loadMacroSlots();
 };
 
 document.getElementById('macro-play-once').onclick = async () => {

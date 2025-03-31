@@ -1,5 +1,5 @@
 export function blade_macroStartRecording() {
-    if (!document.captureClick) {
+    if (!document.captureClick || !document.setIndicator) {
         console.error('chrome-pwr: macro functions not initialized');
         return;
     }
@@ -16,7 +16,7 @@ export function blade_macroStartRecording() {
 }
 
 export async function blade_macroStopRecording() {
-    if (!document.captureClick) {
+    if (!document.captureClick || !document.clearIndicator) {
         console.error('chrome-pwr: macro functions not initialized');
         return;
     }
@@ -24,10 +24,11 @@ export async function blade_macroStopRecording() {
     document.removeEventListener('mouseup', document.captureClick);
     const slotIndex = Number(localStorage.getItem('chrome-pwr-macro-recording-in-progress'));
     localStorage.removeItem('chrome-pwr-macro-recording-in-progress');
-    document.clearIndicator('recording');
-
+    document.clearIndicator();
     const recordedClicks = JSON.parse(localStorage.getItem('chrome-pwr-macro'));
-    if (!recordedClicks || recordedClicks.length === 0) {
+    localStorage.removeItem('chrome-pwr-macro');
+
+    if (!recordedClicks || !recordedClicks.length) {
         return;
     }
 
@@ -51,6 +52,19 @@ export async function blade_macroPlayOnce() {
         return;
     }
 
+    const macro = await chrome.runtime.sendMessage({
+        hub: 'getMacro',
+        params: {
+            hostname: location.hostname,
+            slotIndex: document.blade_macroPlayOnce_params.slotIndex
+        }
+    });
+
+    if (!macro) {
+        return;
+    }
+
+    localStorage.setItem('chrome-pwr-macro', JSON.stringify(macro.clicks));
     document.playMacro(0, false, document.blade_macroPlayOnce_params.initialDelay);
 }
 
@@ -65,12 +79,22 @@ export async function blade_macroPlayLoop() {
         return;
     }
 
+    const macro = await chrome.runtime.sendMessage({
+        hub: 'getMacro',
+        params: {
+            hostname: location.hostname,
+            slotIndex: document.blade_macroPlayLoop_params.slotIndex
+        }
+    });
+
+    if (!macro) {
+        return;
+    }
+
+    localStorage.setItem('chrome-pwr-macro', JSON.stringify(macro.clicks));
     document.playMacro(0, true, document.blade_macroPlayLoop_params.initialDelay);
 }
 
 export function blade_macroStopPlayback() {
-    clearTimeout(document.lastTimeoutId);
-    document.lastTimeoutId = 0;
-    localStorage.removeItem('chrome-pwr-macro-playback-in-progress');
-    document.clearIndicator('playback');
+    document.stopMacro();
 }

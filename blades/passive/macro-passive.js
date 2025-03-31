@@ -13,14 +13,20 @@ document.captureClick = (event) => {
     localStorage.setItem('chrome-pwr-macro', JSON.stringify(recordedClicks));
 };
 
+document.stopMacro = () => {
+    clearTimeout(document.lastTimeoutId);
+    document.lastTimeoutId = 0;
+    localStorage.removeItem('chrome-pwr-macro-playback-in-progress');
+    localStorage.removeItem('chrome-pwr-macro');
+    document.clearIndicator();
+};
+
 document.macroNext = (clicks, index, loop, initialDelay) => {
     if (index >= clicks.length) {
         if (loop) {
             index = 0;
         } else {
-            document.lastTimeoutId = 0;
-            localStorage.removeItem('chrome-pwr-macro-playback-in-progress');
-            document.clearIndicator('playback');
+            document.stopMacro();
             return;
         }
     }
@@ -51,13 +57,18 @@ document.macroNext = (clicks, index, loop, initialDelay) => {
         }, blinkDuration / 2);
 
         document.lastTimeoutId = setTimeout(() => {
-            const element = document.elementFromPoint(capturedClick.clientX, capturedClick.clientY);
-            const parameters = { view: window, bubbles: true, cancelable: true, clientX: capturedClick.clientX, clientY: capturedClick.clientY, button: 0 };
+            try {
+                const element = document.elementFromPoint(capturedClick.clientX, capturedClick.clientY);
+                const parameters = { view: window, bubbles: true, cancelable: true, clientX: capturedClick.clientX, clientY: capturedClick.clientY, button: 0 };
 
-            element.dispatchEvent(new MouseEvent('mousedown', parameters));
-            element.dispatchEvent(new FocusEvent('focus', parameters));
-            element.dispatchEvent(new MouseEvent('mouseup', parameters));
-            element.dispatchEvent(new MouseEvent('click', parameters));
+                element.dispatchEvent(new MouseEvent('mousedown', parameters));
+                element.dispatchEvent(new FocusEvent('focus', parameters));
+                element.dispatchEvent(new MouseEvent('mouseup', parameters));
+                element.dispatchEvent(new MouseEvent('click', parameters));
+            } catch {
+                document.stopMacro();
+                return;
+            }
 
             document.macroNext(clicks, index + 1, loop, initialDelay);
         }, blinkDuration);
@@ -101,9 +112,9 @@ document.setIndicator = (type) => {
     document.body.appendChild(indicatorElement);
 };
 
-document.clearIndicator = (type) => {
+document.clearIndicator = () => {
     const indicatorElement = document.getElementById('chrome-pwr-macro-indicator');
-    if (indicatorElement && indicatorElement.classList.contains(type)) {
+    if (indicatorElement) {
         indicatorElement.remove();
     }
 };
@@ -128,7 +139,7 @@ window.navigation.onnavigate = (event) => {
 
         document.removeEventListener('mouseup', document.captureClick);
 
-        document.clearIndicator('playback');
-        document.clearIndicator('recording');
+        document.clearIndicator();
+        document.clearIndicator();
     }
 };
