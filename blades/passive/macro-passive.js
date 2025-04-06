@@ -21,7 +21,7 @@ document.stopMacro = () => {
     document.clearIndicator();
 };
 
-document.macroNext = (clicks, index, loop, initialDelay) => {
+document.macroNext = (clicks, index, loop, initialDelay, macroName) => {
     if (index >= clicks.length) {
         if (loop) {
             index = 0;
@@ -31,7 +31,7 @@ document.macroNext = (clicks, index, loop, initialDelay) => {
         }
     }
 
-    localStorage.setItem('chrome-pwr-macro-playback-in-progress', JSON.stringify({ index, loop, initialDelay }));
+    localStorage.setItem('chrome-pwr-macro-playback-in-progress', JSON.stringify({ index, loop, initialDelay, macroName }));
 
     let delay = initialDelay ? initialDelay : console.error('chrome-pwr: macro initial delay not set or 0');
     if (index > 0) {
@@ -70,12 +70,12 @@ document.macroNext = (clicks, index, loop, initialDelay) => {
                 return;
             }
 
-            document.macroNext(clicks, index + 1, loop, initialDelay);
+            document.macroNext(clicks, index + 1, loop, initialDelay, macroName);
         }, blinkDuration);
     }, delay);
 };
 
-document.playMacro = (startIndex, loop, initialDelay) => {
+document.playMacro = (startIndex, loop, initialDelay, macroName) => {
     if (document.lastTimeoutId > 0) {
         return;
     }
@@ -87,11 +87,11 @@ document.playMacro = (startIndex, loop, initialDelay) => {
         return;
     }
 
-    document.setIndicator('playback');
-    document.macroNext(recordedClicks, startIndex, loop, initialDelay);
+    document.setIndicator('playback', macroName, loop);
+    document.macroNext(recordedClicks, startIndex, loop, initialDelay, macroName);
 };
 
-document.setIndicator = (type) => {
+document.setIndicator = (type, macroName, loop = false) => {
     let indicatorElement = document.getElementById('chrome-pwr-macro-indicator');
     if (indicatorElement || (type !== 'playback' && type !== 'recording')) {
         return;
@@ -101,10 +101,10 @@ document.setIndicator = (type) => {
     indicatorElement.id = 'chrome-pwr-macro-indicator';
 
     if (type === 'playback') {
-        indicatorElement.textContent = '\u25B6 Macro Playback';
+        indicatorElement.textContent = `\u25B6 Macro Playback${loop ? ' looped': ''}: ${macroName}`;
         indicatorElement.style.backgroundColor = 'green';
     } else {
-        indicatorElement.textContent = '\u2B24 Macro Recording';
+        indicatorElement.textContent = `\u2B24 Macro Recording: ${macroName}`;
         indicatorElement.style.backgroundColor = 'red';
     }
 
@@ -119,14 +119,15 @@ document.clearIndicator = () => {
     }
 };
 
-if (localStorage.getItem('chrome-pwr-macro-recording-in-progress')) {
+const slotIndex = Number(localStorage.getItem('chrome-pwr-macro-recording-in-progress'));
+if (slotIndex) {
     document.addEventListener('mouseup', document.captureClick);
-    document.setIndicator('recording');
+    document.setIndicator('recording', `macro ${slotIndex + 1}`);
 }
 
-const playbackProgress = JSON.parse(localStorage.getItem('chrome-pwr-macro-playback-in-progress'));
-if (playbackProgress) {
-    document.playMacro(playbackProgress.index, playbackProgress.loop, playbackProgress.initialDelay);
+const playback = JSON.parse(localStorage.getItem('chrome-pwr-macro-playback-in-progress'));
+if (playback) {
+    document.playMacro(playback.index, playback.loop, playback.initialDelay, playback.macroName);
 }
 
 window.navigation.onnavigate = (event) => {
@@ -138,8 +139,6 @@ window.navigation.onnavigate = (event) => {
         localStorage.removeItem('chrome-pwr-macro-recording-in-progress');
 
         document.removeEventListener('mouseup', document.captureClick);
-
-        document.clearIndicator();
         document.clearIndicator();
     }
 };
