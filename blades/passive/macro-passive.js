@@ -1,4 +1,8 @@
 document.captureClick = (event) => {
+    if (event.button !== 0) {
+        return;
+    }
+
     const capturedClick = {
         timestamp: new Date().valueOf(),
         clientX: event.clientX,
