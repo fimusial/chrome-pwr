@@ -17,6 +17,8 @@ Browser's tiny Swiss Army knife
 #### Mouse Macros
 This feature allows you to record a sequence of mouse clicks on a website and play it back - either once or in a loop. Keyboard shortcuts can be configured to trigger macro playback conveniently. Both the recording and the playback will be maintained across page loads within the same website.
 
+New in v1.4: You can now keep a collection of macros for each website. Recording and playback occur with respect to the macro slot currently selected in the dropdown. Select the "empty" slot to create a new macro, use the pencil icon to name it, and the "X" icon to delete it - simple as that.
+
 #### Miscellaneous features
 - **Maxscroll** - This one enables you to quickly traverse a page with lazily loaded content by forcing it to constantly scroll up or down as fast as possible.
 - **Page CSS** - The extension injects any user-provided CSS file into a webpage each time it loads, applying the styles across the entire domain. This can be used to hide unwanted elements or to customize the website's design. After you upload a stylesheet, PWRToy monitors the file for changes as long as the webpage remains open, making it easy to experiment with styles.
