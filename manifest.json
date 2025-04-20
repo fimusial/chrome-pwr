@@ -55,13 +55,13 @@
       "suggested_key": {
         "default": "Alt+S"
       },
-      "description": "Play the recorded macro once"
+      "description": "Play the selected macro once"
     },
     "macroPlayLoop": {
       "suggested_key": {
         "default": "Alt+L"
       },
-      "description": "Start playing the recorded macro in a loop"
+      "description": "Start playing the selected macro in a loop"
     },
     "macroStopPlayback": {
       "suggested_key": {

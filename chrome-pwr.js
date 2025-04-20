@@ -243,7 +243,8 @@ chrome.commands.onCommand.addListener(async (command) => {
     await chrome.runtime.sendMessage({
         blade: command,
         params: {
-            initialDelay: document.getElementById('macro-delay-slider').value
+            initialDelay: document.getElementById('macro-delay-slider').value,
+            slotIndex: macroSlotsSelect.selectedIndex
         }
     });
 });
