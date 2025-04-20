@@ -3,6 +3,10 @@ document.captureClick = (event) => {
         return;
     }
 
+    if (event.target instanceof HTMLCanvasElement) {
+        return;
+    }
+
     const capturedClick = {
         timestamp: new Date().valueOf(),
         clientX: event.clientX,
