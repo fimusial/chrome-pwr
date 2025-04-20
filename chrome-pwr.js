@@ -6,18 +6,18 @@ scriptRequiresApis(['tabs', 'runtime', 'commands']);
 const macroSlotsSelect = document.getElementById('macro-slots');
 let macroStorage = null;
 
-const renderMacroSlotOptions = () => {
-    const createMacroSlotOption = (name) => {
+const renderMacroSlotOptions = (selectedIndex) => {
+    const createOption = (name) => {
         const option = document.createElement('option');
         option.textContent = name;
         return option;
     };
 
-    macroSlotsSelect.replaceChildren(
-        ...macroStorage.getNames().map(createMacroSlotOption),
-        createMacroSlotOption('empty'));
-
-    macroSlotsSelect.firstChild.selected = true;
+    const options = [...macroStorage.getNames(), 'empty'].map(createOption);
+    selectedIndex = selectedIndex && options[selectedIndex] ? selectedIndex : 0;
+    options[selectedIndex].selected = true;
+    macroSlotsSelect.replaceChildren(...options);
+    localStorage.setItem('macro-slot-index', selectedIndex);
 };
 
 const loadMacroSlots = async () => {
@@ -28,7 +28,9 @@ const loadMacroSlots = async () => {
 
     const hostname = new URL(tab.url).hostname;
     macroStorage = new MacroStorage(hostname);
-    renderMacroSlotOptions();
+
+    const slotIndex = Number(localStorage.getItem('macro-slot-index'));
+    renderMacroSlotOptions(slotIndex);
 };
 
 macroSlotsSelect.addEventListener('wheel', (event) => {
@@ -39,7 +41,31 @@ macroSlotsSelect.addEventListener('wheel', (event) => {
     if (event.deltaY > 0) {
         macroSlotsSelect.selectedIndex = Math.min(macroSlotsSelect.selectedIndex + 1, macroSlotsSelect.length - 1);
     }
+
+    macroSlotsSelect.dispatchEvent(new Event('change'));
 });
+
+macroSlotsSelect.addEventListener('change', () => {
+    localStorage.setItem('macro-slot-index', macroSlotsSelect.selectedIndex);
+});
+
+document.getElementById('macro-slot-rename').onclick = () => {
+    const promptResult = prompt('slot name:');
+    if (!promptResult) {
+        return;
+    }
+
+    const slotName = promptResult.slice(0, 16);
+    macroSlotsSelect.options[macroSlotsSelect.selectedIndex].textContent = slotName;
+    macroStorage.setSlotName(macroSlotsSelect.selectedIndex, slotName);
+    renderMacroSlotOptions(macroSlotsSelect.selectedIndex);
+};
+
+document.getElementById('macro-slot-delete').onclick = () => {
+    macroStorage.deleteMacro(macroSlotsSelect.selectedIndex);
+    macroSlotsSelect.options[macroSlotsSelect.selectedIndex].remove();
+    renderMacroSlotOptions();
+};
 
 window.onload = async () => {
     const maxScrollDirection = localStorage.getItem('max-scroll-direction');
@@ -71,31 +97,6 @@ window.onload = async () => {
     document.getElementById('foldable-audio-checkbox').checked = showAudio;
 
     await loadMacroSlots();
-};
-
-document.getElementById('macro-slot-rename').onclick = () => {
-    const promptResult = prompt('slot name:');
-    if (!promptResult) {
-        return;
-    }
-
-    const slotName = promptResult.slice(0, 16);
-    const selectedOption = Array.from(macroSlotsSelect.children).find(x => x.selected);
-    const slotIndex = macroSlotsSelect.selectedIndex;
-
-    selectedOption.textContent = slotName;
-    macroStorage.setSlotName(slotIndex, slotName);
-    renderMacroSlotOptions();
-    Array.from(macroSlotsSelect.children)[slotIndex].selected = true;
-};
-
-document.getElementById('macro-slot-delete').onclick = () => {
-    const selectedOption = Array.from(macroSlotsSelect.children).find(x => x.selected);
-
-    macroStorage.deleteMacro(macroSlotsSelect.selectedIndex);
-    selectedOption.remove();
-    renderMacroSlotOptions();
-    Array.from(macroSlotsSelect.children)[0].selected = true;
 };
 
 document.getElementById('foldable-misc-checkbox').onclick = (event) => {
