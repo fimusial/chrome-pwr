@@ -42,6 +42,11 @@
       "matches": ["*://*/*"],
       "js": ["blades/passive/volume-duck-passive.js"],
       "css": ["blades/passive/volume-duck-passive.css"]
+    },
+    {
+      "matches": ["*://*/*"],
+      "js": ["blades/passive/url-grab-passive.js"],
+      "css": ["blades/passive/url-grab-passive.css"]
     }
   ],
   "web_accessible_resources": [
