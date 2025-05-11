@@ -24,8 +24,8 @@ document.addEventListener('mouseup', (event) => {
 
     const left = event.clientX + 400 >= window.innerWidth ? event.clientX - 400 : event.clientX;
     const top = event.clientY + 100 >= window.innerHeight ? event.clientY - 100 : event.clientY;
-    div.style.top = `${top}px`;
-    div.style.left = `${left}px`;
+    div.style.left = `${left + window.scrollX}px`;
+    div.style.top = `${top + window.scrollY}px`;
 
     const button = document.createElement('button');
     button.innerText = 'open all';
