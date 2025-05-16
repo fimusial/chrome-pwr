@@ -23,6 +23,7 @@ New in v1.4: You can now keep a collection of macros for each website. Recording
 - **Maxscroll** - This one enables you to quickly traverse a page with lazily loaded content by forcing it to constantly scroll up or down as fast as possible.
 - **Page CSS** - The extension injects any user-provided CSS file into a webpage each time it loads, applying the styles across the entire domain. This can be used to hide unwanted elements or to customize the website's design. After you upload a stylesheet, PWRToy monitors the file for changes as long as the webpage remains open, making it easy to experiment with styles.
 - **Content Edit** - This feature provides a quick way to edit any text on a page without using the developer tools. Simply click the "Content Edit On" button, place your cursor at the desired text location and start typing. Essentially, it activates the `contenteditable` HTML attribute for the entire document body.
+- **URL Grab** - It helps with inspecting, opening, and copying links on web pages. To use it, hold down the Alt key and select any text that contains one or more hyperlinks. A small popup box will appear, containing all the URLs extracted from the selection.
 
 ## Get it from Chrome Web Store
 [PWRToy](https://chromewebstore.google.com/detail/pwrtoy/bhnjkagdoajnhojbecjgjcimidlmogbo)
