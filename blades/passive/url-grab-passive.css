@@ -4,34 +4,65 @@
 }
 
 .chrome-pwr-url-grab-box {
-    position: absolute;
-    z-index: 2147483647;
+    position: absolute !important;
+    z-index: 2147483647 !important;
+    min-width: 400px;
     width: 400px;
     height: 100px;
-    padding: 5px;
-    border-radius: 5px;
-    overflow-x: hidden;
-    overflow-y: scroll;
-    background-color: #222;
-    outline: 2px solid #ff3d84;
-    resize: both;
+    padding: 5px !important;
+    border-radius: 5px !important;
+    overflow-x: hidden !important;
+    overflow-y: scroll !important;
+    background-color: #222 !important;
+    outline: 2px solid #ff3d84 !important;
+    resize: both !important;
+    scrollbar-color: white #222 !important;
+}
+
+.chrome-pwr-url-grab-box a {
+    all: unset !important;
+    color: white !important;
+    font-family: Arial, sans-serif !important;
+    font-size: 16px !important;
+    margin: auto !important;
+    padding: auto !important;
+}
+
+.chrome-pwr-url-grab-box a:visited {
+    color: #e19eb7 !important;
+}
+
+.chrome-pwr-url-grab-box a:hover {
+    color: #ff3d84 !important;
+    text-decoration: underline !important;
+}
+
+.chrome-pwr-url-grab-box a:active {
+    color: #ff3d84 !important;
 }
 
 .chrome-pwr-url-grab-box button {
-    width: 100%;
-    padding: 5px 15px;
-    margin-bottom: 5px;
-    border-radius: 5px;
-    border-color: black;
-    opacity: 0.71;
+    all: unset !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    padding: 5px 15px !important;
+    margin-bottom: 5px !important;
+    border-radius: 5px !important;
+    border-color: black !important;
+    border-style: outset !important;
+    opacity: 0.71 !important;
     font-family: '8BIT WONDER', sans-serif !important;
-    color: white;
-    text-align: center;
-    outline: 2px solid #ff3d84;
-    background-color: #222;
-    transition: all 0.1s ease;
+    color: white !important;
+    text-align: center !important;
+    outline: 2px solid #ff3d84 !important;
+    background-color: #222 !important;
+    transition: all 0.1s ease !important;
+}
+
+.chrome-pwr-url-grab-box button:active {
+    border-style: inset !important;
 }
 
 .chrome-pwr-url-grab-box button:hover {
-    transform: scale(0.95);
+    transform: scale(0.95) !important;
 }
