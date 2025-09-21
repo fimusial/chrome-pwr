@@ -1,9 +1,5 @@
 document.captureClick = (event) => {
-    if (event.button !== 0) {
-        return;
-    }
-
-    if (event.target instanceof HTMLCanvasElement) {
+    if (event.button !== 0 && event.button !== 2) {
         return;
     }
 
@@ -11,6 +7,7 @@ document.captureClick = (event) => {
         timestamp: new Date().valueOf(),
         clientX: event.clientX,
         clientY: event.clientY,
+        button: event.button,
         scrollX: window.scrollX,
         scrollY: window.scrollY
     };
@@ -67,12 +64,21 @@ document.macroNext = (clicks, index, loop, initialDelay, macroName) => {
         document.lastTimeoutId = setTimeout(() => {
             try {
                 const element = document.elementFromPoint(capturedClick.clientX, capturedClick.clientY);
-                const parameters = { view: window, bubbles: true, cancelable: true, clientX: capturedClick.clientX, clientY: capturedClick.clientY, button: 0 };
+
+                const parameters = {
+                    view: window,
+                    bubbles: true,
+                    cancelable: true,
+                    clientX: capturedClick.clientX,
+                    clientY: capturedClick.clientY,
+                    button: capturedClick.button || 0,
+                    buttons: capturedClick.button || 1,
+                };
 
                 element.dispatchEvent(new MouseEvent('mousedown', parameters));
                 element.dispatchEvent(new FocusEvent('focus', parameters));
                 element.dispatchEvent(new MouseEvent('mouseup', parameters));
-                element.dispatchEvent(new MouseEvent('click', parameters));
+                element.dispatchEvent(new MouseEvent(capturedClick.button === 2 ? 'contextmenu' : 'click', parameters));
             } catch {
                 document.stopMacro();
                 return;
@@ -127,10 +133,10 @@ document.clearIndicator = () => {
     }
 };
 
-const slotIndex = Number(localStorage.getItem('chrome-pwr-macro-recording-in-progress'));
-if (slotIndex) {
+const recording = localStorage.getItem('chrome-pwr-macro-recording-in-progress');
+if (recording) {
     document.addEventListener('mouseup', document.captureClick);
-    document.setIndicator('recording', `macro ${slotIndex + 1}`);
+    document.setIndicator('recording', `macro ${Number(recording) + 1}`);
 }
 
 const playback = JSON.parse(localStorage.getItem('chrome-pwr-macro-playback-in-progress'));
