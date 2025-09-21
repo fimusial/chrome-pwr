@@ -26,10 +26,11 @@ document.stopMacro = () => {
     document.clearIndicator();
 };
 
-document.macroNext = (clicks, index, loop, initialDelay, macroName) => {
+document.macroNext = (clicks, index, loop, initialDelay, macroName, iteration = 0) => {
     if (index >= clicks.length) {
         if (loop) {
             index = 0;
+            iteration++;
         } else {
             document.stopMacro();
             return;
@@ -49,13 +50,25 @@ document.macroNext = (clicks, index, loop, initialDelay, macroName) => {
     }
 
     document.lastTimeoutId = setTimeout(() => {
-        const capturedClick = clicks[index];
-        window.scroll(capturedClick.scrollX, capturedClick.scrollY);
+        const click = clicks[index];
+
+        const xOffset = click.xOffsetIterationMultiplier
+            ? iteration * click.xOffsetIterationMultiplier
+            : 0;
+                
+        const yOffset = click.yOffsetIterationMultiplier
+            ? iteration * click.yOffsetIterationMultiplier
+            : 0;
+
+        const x = click.clientX + xOffset;
+        const y = click.clientY + yOffset;
+
+        window.scroll(click.scrollX, click.scrollY);
 
         const blink = document.createElement('div');
         blink.classList.add('chrome-pwr-blink');
-        blink.style.left = `${capturedClick.clientX - 25}px`;
-        blink.style.top = `${capturedClick.clientY - 25}px`;
+        blink.style.left = `${x - 25}px`;
+        blink.style.top = `${y - 25}px`;
         document.body.appendChild(blink);
         setTimeout(() => {
             blink.remove();
@@ -63,28 +76,28 @@ document.macroNext = (clicks, index, loop, initialDelay, macroName) => {
 
         document.lastTimeoutId = setTimeout(() => {
             try {
-                const element = document.elementFromPoint(capturedClick.clientX, capturedClick.clientY);
+                const element = document.elementFromPoint(x, y);
 
                 const parameters = {
                     view: window,
                     bubbles: true,
                     cancelable: true,
-                    clientX: capturedClick.clientX,
-                    clientY: capturedClick.clientY,
-                    button: capturedClick.button || 0,
-                    buttons: capturedClick.button || 1,
+                    clientX: x,
+                    clientY: y,
+                    button: click.button || 0,
+                    buttons: click.button || 1,
                 };
 
                 element.dispatchEvent(new MouseEvent('mousedown', parameters));
                 element.dispatchEvent(new FocusEvent('focus', parameters));
                 element.dispatchEvent(new MouseEvent('mouseup', parameters));
-                element.dispatchEvent(new MouseEvent(capturedClick.button === 2 ? 'contextmenu' : 'click', parameters));
+                element.dispatchEvent(new MouseEvent(click.button === 2 ? 'contextmenu' : 'click', parameters));
             } catch {
                 document.stopMacro();
                 return;
             }
 
-            document.macroNext(clicks, index + 1, loop, initialDelay, macroName);
+            document.macroNext(clicks, index + 1, loop, initialDelay, macroName, iteration);
         }, blinkDuration);
     }, delay);
 };
