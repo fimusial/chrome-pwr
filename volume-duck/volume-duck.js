@@ -1,3 +1,5 @@
+'use strict';
+
 import { scriptRequiresApis } from '../script-requires-apis.js';
 
 scriptRequiresApis(['tabs']);
@@ -83,7 +85,8 @@ const createWebsiteHtmlElements = (website) => {
     return containerDiv;
 };
 
-document.getElementById('volume-duck-websites-list').replaceChildren(...settings.map(website => createWebsiteHtmlElements(website)));
+document.getElementById('volume-duck-websites-list')
+    .replaceChildren(...settings.map(website => createWebsiteHtmlElements(website)));
 
 document.getElementById('volume-duck-add-website-button').onclick = async () => {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -92,7 +95,6 @@ document.getElementById('volume-duck-add-website-button').onclick = async () => 
     }
 
     const hostname = new URL(tab.url).hostname;
-
     if (settings.some(x => x.hostname === hostname)) {
         return;
     }
@@ -104,6 +106,8 @@ document.getElementById('volume-duck-add-website-button').onclick = async () => 
     };
 
     settings.push(newWebsite);
-    document.getElementById('volume-duck-websites-list').appendChild(createWebsiteHtmlElements(newWebsite));
+    document.getElementById('volume-duck-websites-list')
+        .appendChild(createWebsiteHtmlElements(newWebsite));
+
     saveSettings();
 };

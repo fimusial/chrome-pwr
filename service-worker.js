@@ -1,3 +1,5 @@
+'use strict';
+
 import * as blades from './blades.js';
 
 const startOffscreenHub = async () => {

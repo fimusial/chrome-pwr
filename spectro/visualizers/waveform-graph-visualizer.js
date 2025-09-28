@@ -1,3 +1,5 @@
+'use strict';
+
 export class WaveformGraphVisualizer {
     constructor(canvas, hue = 338, sat = 100, lit = 50) {
         if (!(canvas instanceof HTMLCanvasElement)) {

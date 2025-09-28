@@ -1,3 +1,5 @@
+'use strict';
+
 export function blade_forcedCssDownload() {
     const forcedCss = localStorage.getItem('chrome-pwr-forced-css');
 

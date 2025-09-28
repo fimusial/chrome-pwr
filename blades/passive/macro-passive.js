@@ -1,3 +1,5 @@
+'use strict';
+
 document.captureClick = (event) => {
     if (event.button !== 0 && event.button !== 2) {
         return;

@@ -1,3 +1,5 @@
+'use strict';
+
 import { MovingSpectrogramVisualizer } from './moving-spectrogram-visualizer.js';
 import { WaveformGraphVisualizer } from './waveform-graph-visualizer.js';
 import { VolumeBarsVisualizer } from './volume-bars-visualizer.js';

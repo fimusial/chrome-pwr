@@ -1,3 +1,5 @@
+'use strict';
+
 export function blade_maxScrollStartElement() {
     const cancel = () => {
         clearTimeout(document.lastTimeoutId);

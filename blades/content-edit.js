@@ -1,3 +1,5 @@
+'use strict';
+
 export function blade_contentEditOn() {
     document.body.contentEditable = 'true';
 }

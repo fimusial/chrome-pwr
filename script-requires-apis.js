@@ -1,3 +1,5 @@
+'use strict';
+
 export function scriptRequiresApis(apis) {
     apis.forEach(api => {
         if (!chrome || !chrome[api]) {

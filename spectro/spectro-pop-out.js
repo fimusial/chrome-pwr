@@ -1,3 +1,5 @@
+'use strict';
+
 import { scriptRequiresApis } from '../script-requires-apis.js';
 import { VisualizerHandler } from './visualizers/visualizer-handler.js';
 

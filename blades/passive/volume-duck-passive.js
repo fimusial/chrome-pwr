@@ -1,3 +1,5 @@
+'use strict';
+
 const duckVolume = (volume) => {
     [...document.getElementsByTagName('audio'), ...document.getElementsByTagName('video')].forEach(element => element.volume = volume);
 };

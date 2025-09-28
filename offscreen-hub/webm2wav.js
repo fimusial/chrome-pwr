@@ -1,3 +1,5 @@
+'use strict';
+
 export default async function webm2wav(webmBlob, wavBitDepth = 16) {
     if (wavBitDepth !== 32 && wavBitDepth !== 16) {
         throw new RangeError(`'wavBitDepth' must be either 16 or 32`);

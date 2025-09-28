@@ -1,3 +1,5 @@
+'use strict';
+
 document.initNodePicker = (callback) => {
     if (document.nodePickerActive) {
         return;

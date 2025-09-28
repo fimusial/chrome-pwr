@@ -1,3 +1,5 @@
+'use strict';
+
 export class MacroStorage {
     constructor(hostname) {
         if (!hostname || typeof hostname !== 'string') {

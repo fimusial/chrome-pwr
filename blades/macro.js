@@ -1,3 +1,5 @@
+'use strict';
+
 export function blade_macroStartRecording() {
     if (!document.captureClick || !document.setIndicator) {
         console.error('chrome-pwr: macro functions not initialized');

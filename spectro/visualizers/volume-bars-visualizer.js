@@ -1,3 +1,5 @@
+'use strict';
+
 export class VolumeBarsVisualizer {
     constructor(canvas, hue = 338, sat = 100, lit = 50, freqRes = 64) {
         if (!(canvas instanceof HTMLCanvasElement)) {

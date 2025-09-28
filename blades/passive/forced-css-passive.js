@@ -1,3 +1,5 @@
+'use strict';
+
 const style = document.createElement('style');
 style.id = 'chrome-pwr-forced-css';
 document.head.appendChild(style);

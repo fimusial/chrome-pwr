@@ -1,3 +1,5 @@
+'use strict';
+
 document.addEventListener('mouseup', (event) => {
     const existingBox = document.querySelector('.chrome-pwr-url-grab-box');
     if (!event.altKey || existingBox) {

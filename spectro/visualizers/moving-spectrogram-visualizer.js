@@ -1,3 +1,5 @@
+'use strict';
+
 export class MovingSpectrogramVisualizer {
     constructor(canvas, hue = 338, sat = 100, lit = 50, freqRes = 100, timeRes = 50) {
         if (!(canvas instanceof HTMLCanvasElement)) {

@@ -1,3 +1,5 @@
+'use strict';
+
 import webm2wav from './webm2wav.js';
 import { MacroStorage } from '../macro-storage.js';
 
