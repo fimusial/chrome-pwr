@@ -69,11 +69,42 @@ export class WaveformGraphVisualizer {
             throw new TypeError(`'values' must be an Array of Numbers`);
         }
 
+        if (values.length < 2) {
+            throw new RangeError(`'values' must contain at least 2 elements`);
+        }
+
         if (values.some((value => value < -1 || 1 < value))) {
             throw new RangeError(`'values' must only contain numbers within [-1, 1] range`);
         }
 
-        this.frame = values;
+        const size = values.length;
+        const fillStart = this.frame.length;
+        this.frame.length = size;
+        this.frame.fill(0.0, fillStart);
+
+        const step = 4;
+        let shift = 0;
+        let bestError = 4.0 * size;
+        for (let i = 0; i < size; i++)
+        {
+            let totalError = 0.0;
+            for (let j = 0; j < size && totalError < bestError; j += step)
+            {
+                const error = values[(i + j) % size] - this.frame[j];
+                totalError += error * error;
+            }
+
+            if (totalError < bestError)
+            {
+                bestError = totalError;
+                shift = i;
+            }
+        }
+
+        for (let i = 0; i < size; i++)
+        {
+            this.frame[i] = values[(shift + i) % size];
+        }
     }
 
     pushPlaceholder() {
